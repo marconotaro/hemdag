@@ -4,7 +4,7 @@
 \alias{Do.HTD.holdout}
 \title{HTD-DAG holdout}
 \usage{
-Do.HTD.holdout(norm = TRUE, norm.type = "NONE", flat.file = flat.file,
+Do.HTD.holdout(norm = TRUE, norm.type = NULL, flat.file = flat.file,
   ann.file = ann.file, dag.file = dag.file, ind.test.set = ind.test.set,
   ind.dir = ind.dir, flat.dir = flat.dir, ann.dir = ann.dir,
   dag.dir = dag.dir, flat.norm.dir = NULL, n.round = 3,
@@ -19,8 +19,8 @@ Do.HTD.holdout(norm = TRUE, norm.type = "NONE", flat.file = flat.file,
 
 \item{norm.type}{can be one of the following three values:
 \enumerate{
-\item \code{NONE} (def.): set \code{norm.type} to \code{NONE} if and only if the parameter \code{norm} is set to \code{TRUE};
-\item \code{MaxNorm}: each score is divided w.r.t. the max of each class;
+\item \code{NULL} (def.): set \code{norm.type} to \code{NULL} if and only if the parameter \code{norm} is set to \code{TRUE};
+\item \code{MaxNorm}: each score is divided for the maximum of each class;
 \item \code{Qnorm}: quantile normalization. \pkg{preprocessCore} package is used. 
 }}
 
@@ -97,7 +97,7 @@ ind.test.set <- "test.index";
 dag.file <- "graph";
 flat.file <- "scores";
 ann.file <- "labels";
-Do.HTD.holdout(norm=FALSE, norm.type= "MaxNorm", flat.file=flat.file, ann.file=ann.file, 
+Do.HTD.holdout(norm=FALSE, norm.type="MaxNorm", flat.file=flat.file, ann.file=ann.file, 
 dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, 
 ann.dir=ann.dir, dag.dir=dag.dir, flat.norm.dir=flat.norm.dir, n.round=3, f.criterion ="F", 
 hierScore.dir=hierScore.dir, perf.dir=perf.dir);
