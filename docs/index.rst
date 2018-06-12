@@ -7,7 +7,13 @@ Welcome to HEMDAG's documentation!
 ==================================
 
 
-*Here can you add text*
+*HEMDAG* library:
+
+- implements several Hierarchical Ensemble Methods (HEM) for Directed Acyclic Graphs (DAGs);
+- can be used to *reconcile* flat predictions by considering the topology of the ontology;
+- provides biologically consistent predictions according to the hierarchical nature of the ontology classes;
+- is specifically designed for exploiting the hierarchical relationships of DAG-structured taxonomies, such as the Human Phenotype Ontology (``HPO``) or the Gene Ontology (``GO``). However ``HEMDAG`` can be also safely applied to tree-structured taxonomies (as ``FunCat``), since trees are DAGs;
+- scales nicely both in terms of the complexity of the taxonomy and in the cardinality of the examples.
 
 .. toctree::
    :caption: Installation & Getting Started
