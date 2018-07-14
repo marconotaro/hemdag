@@ -1,83 +1,26 @@
+#' @name HEMDAG-defunct
+#' @title Defunct functions in package \pkg{HEMDAG}.
+#' @description The functions listed below are defunct. The alternative function is supplied.
+#' Help page for defunct functions is available by typing \code{help("HEMDAG-defunct")}
+
 ##*********##
 ## DESCENS ##
 ##*********##
-#' @name DESCENS
-#' @aliases descens.threshold
-#' @aliases descens.threshold.free
-#' @aliases descens.weighted.threshold.free
-#' @aliases descens.weighted.threshold
-#' @aliases descens.tau
-#' @seealso \code{\link{TPR-DAG}}
-#' @title DESCENS variants 
-#' @description The novelty of DESCENS with respect to TPR-DAG algorithm consists in considering the contribution of all the descendants 
-#' of each node instead of only that of its children, since with the TPR-DAG algorithm the contribution of the descendants of a given node 
-#' decays exponentially with their distance from the node itself, thus reducing the impact of the predictions made at the most specific levels of the ontology. 
-#' On the contrary DESCENS predictions are more influenced by the information embedded in the most specific terms of the taxonomy (e.g. leaf nodes), 
-#' thus putting more emphasis on the terms that most characterize the gene under study. 
-#' @details The \emph{vanilla} DESCENS adopts a per-level bottom-up traversal of the DAG to correct the flat predictions \eqn{\hat{y}_i}:
-#' \deqn{
-#' 	\bar{y}_i := \frac{1}{1 + |\Delta_i|} (\hat{y}_i + \sum_{j \in \Delta_i} \bar{y}_j)
-#' }
-#' where \eqn{\Delta_i} are the positive descendants of \eqn{i}.
-#' Different strategies to select the positive descendants \eqn{\Delta_i} can be applied:
-#' \enumerate{
-#' 	\item \strong{Threshold-Free} strategy: as positive descendants we choose those nodes that achieve a score higher than that of their ancestor node \eqn{i}:
-#' 	\deqn{
-#' 		\Delta_i := \{ j \in descendats(i) | \bar{y}_j > \hat{y}_i \}
-#' 	}
-#' 	\item \strong{Threshold} strategy: the positive descendants are selected on the basis of a threshold that can ben selected in two different ways:
-#' 	\enumerate{
-#' 		\item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
-#'		\deqn{
-#'			\phi_i := \{ j \in descendats(i) | \bar{y}_j > \bar{t} \}
-#'		}
-#' 		For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
-#' 		\item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
-#' 		the F-score or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions 
-#' 		\eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}. 
-#' 		The corresponding set of positives \eqn{\forall i \in V} is:
-#' 		\deqn{
-#' 			\phi_i := \{ j \in descendants(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
-#' 		}
-#' 		For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
-#'	}
-#' }
-#' The weighted DESCENS variants can be simply designed by adding a weight \eqn{w \in [0,1]} to balance the contribution between 
-#' the prediction of the classifier associated with the node \eqn{i} and that of its positive descendants:
-#' \deqn{
-#' 	\bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\Delta_i|} \sum_{j \in \phi_i} \bar{y}_j
-#' }
-#' The DESCENS-\eqn{\tau} variants balances the contribution between the positives children of a node \eqn{i} and that of
-#' its positives descendants excluding the children by adding a weight \eqn{\tau \in [0,1]}:
-#' \deqn{
-#' \bar{y}_i := \frac{\tau}{ 1 +|\phi_i|} ( \hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j ) + \frac{1-\tau}{1+|\delta_i|} ( \hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j )
-#' }
-#' where \eqn{\phi_i} are the positive children of \eqn{i} and \eqn{\delta_i=\Delta_i \setminus \phi_i} the descendants of \eqn{i} without its children. 
-#' If \eqn{\tau=1} we consider only the contribution of the positive children of \eqn{i}; if \eqn{\tau=0} only the descendants that are not
-#' children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and 
-#' \eqn{\delta_i} positive nodes.
 #' @param S a named flat scores matrix with examples on rows and classes on columns
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes
 #' @param root name of the class that it is on the top-level of the hierarchy (\code{def. root="00"})
 #' @param t threshold for the choice of the positive descendants (\code{def. t=0.5}); whereas in the \code{descens.tau} variant 
 #' the parameter \code{t} balances the contribution between the positives children of a node \eqn{i} and that of its
-#' positives descendants excluding the positives children
+#' positives descendants excluding its positives children
 #' @param w weight to balance between the contribution of the node \eqn{i} and that of its positive descendants
-#' @return a named matrix with the scores of the classes corrected according to the DESCENS algorithm.
-#' @examples
-#' data(graph);
-#' data(scores);
-#' data(labels);
-#' root <- root.node(g);
-#' S.descensTF <- descens.threshold.free(S,g,root);
-#' S.descensT <- descens.threshold(S,g,root,t=0.5);
-#' S.descensW <- descens.weighted.threshold.free(S,g,root,w=0.5);
-#' S.descensWT <- descens.weighted.threshold(S,g,root,w=0.5, t=0.5);
-#' S.descensTAU <- descens.tau(S,g,root, t=0.5);
+#' @return a named matrix with the scores of the classes corrected according to the chosen hierarchical variant.
 
-#' @rdname DESCENS
+#' @templateVar old descens.threshold
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
 #' @export 
 descens.threshold <- function(S, g, root="00", t=0.5){
+	.Defunct("TPR.DAG");
 	if(!(root %in% colnames(S))){
 		max.score <- max(S);
 		z <- rep(max.score,nrow(S));
@@ -128,9 +71,12 @@ descens.threshold <- function(S, g, root="00", t=0.5){
 	return(S);
 }
 
-#' @rdname DESCENS
+#' @templateVar old descens.threshold.free
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
 #' @export 
 descens.threshold.free <- function(S, g, root="00"){
+	.Defunct("TPR.DAG");
 	if(!(root %in% colnames(S))){
 		max.score <- max(S);
 		z <- rep(max.score,nrow(S));
@@ -181,9 +127,12 @@ descens.threshold.free <- function(S, g, root="00"){
 	return(S);
 }
 
-#' @rdname DESCENS
+#' @templateVar old descens.weighted.threshold.free
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
 #' @export 
 descens.weighted.threshold.free <- function(S, g, root="00", w=0.5){
+	.Defunct("TPR.DAG");
 	if(!(root %in% colnames(S))){
 		max.score <- max(S);
 		z <- rep(max.score,nrow(S));
@@ -236,9 +185,12 @@ descens.weighted.threshold.free <- function(S, g, root="00", w=0.5){
 	return(S);
 }
 
-#' @rdname DESCENS
+#' @templateVar old descens.weighted.threshold
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
 #' @export 
 descens.weighted.threshold <- function(S, g, root="00", t=0.5, w=0.5){
+	.Defunct("TPR.DAG");
 	if(!(root %in% colnames(S))){
 		max.score <- max(S);
 		z <- rep(max.score,nrow(S));
@@ -291,9 +243,12 @@ descens.weighted.threshold <- function(S, g, root="00", t=0.5, w=0.5){
 	return(S);
 }
 
-#' @rdname DESCENS
+#' @templateVar old descens.tau
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
 #' @export 
 descens.tau <- function(S, g, root="00", t=0.5){
+	.Defunct("TPR.DAG");
 	if(!(root %in% colnames(S))){
 		max.score <- max(S);
 		z <- rep(max.score,nrow(S));
@@ -346,3 +301,220 @@ descens.tau <- function(S, g, root="00", t=0.5){
 	S <- S[,-which(colnames(S)==root)];
 	return(S);
 }
+
+##*********##
+## TPR-DAG ##
+##*********##
+#' @templateVar old tpr.threshold
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
+#' @export
+tpr.threshold <- function(S, g, root="00", t=0.5){
+	.Defunct("TPR.DAG");
+	if(!(root %in% colnames(S))){
+		max.score <- max(S);
+		z <- rep(max.score,nrow(S));
+		S <- cbind(z,S);
+		colnames(S)[1] <- root;
+	}
+	## check consistency between nodes of g and classes of S
+	class.check <- ncol(S)!=numNodes(g);
+	if(class.check)
+		stop("TPR-DAG: the number of nodes of the graph and the number of classes of the flat scores matrix does not match", call.=FALSE);
+	## compute graph levels
+	levels <- graph.levels(g,root);
+	# bottom-up visit
+	chd.bup <- get.children.bottom.up(g,levels);
+	for(i in 1:length(chd.bup)){
+		if(length(chd.bup[[i]])!=0){
+			parent <- S[,names(chd.bup[i])];
+			children <- as.matrix(S[,chd.bup[[i]]]);
+			# colnames(children) <- chd.bup[[i]]
+			for(j in 1:length(parent)){
+				child.set <- children[j,] > t;    # positive children selection
+				child.pos <- children[j,][child.set];
+				parent[j] <- (parent[j] + sum(child.pos))/(1+length(child.pos));  # flat scores correction
+			}
+			S[,names(chd.bup[i])] <- parent;
+		}
+	}
+	# top-down visit
+	par.tod <- get.parents.top.down(g,levels,root)
+	for(i in 1:length(par.tod)){
+		child <- S[,names(par.tod[i])];
+		parents <- as.matrix(S[,par.tod[[i]]]);
+		# colnames(parents) <- par.tod[[i]]
+		# Note: the version with an apply and an ifelse statement is slower ...
+		for(j in 1:length(child)){
+			x <- min(parents[j,]);
+			if(x < child[j]){
+				child[j] <- x;    # hierarchical correction
+			}
+		}
+		S[,names(par.tod[i])] <- child;
+	}
+	S <- S[,-which(colnames(S)==root)];
+	return(S);
+}
+
+#' @templateVar old tpr.threshold.free
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
+#' @export
+tpr.threshold.free <- function(S, g, root="00"){
+	.Defunct("TPR.DAG");
+	if(!(root %in% colnames(S))){
+		max.score <- max(S);
+		z <- rep(max.score,nrow(S));
+		S <- cbind(z,S);
+		colnames(S)[1] <- root;
+	}
+	## check consistency between nodes of g and classes of S
+	class.check <- ncol(S)!=numNodes(g);
+	if(class.check)
+		stop("TPR-DAG: the number of nodes of the graph and the number of classes of the flat scores matrix does not match", call.=FALSE);
+	## compute graph levels	
+	levels <- graph.levels(g,root);
+	# bottom-up visit
+	chd.bup <- get.children.bottom.up(g,levels);
+	for(i in 1:length(chd.bup)){
+		if(length(chd.bup[[i]])!=0){
+			parent <- S[,names(chd.bup[i])];
+			children <- as.matrix(S[,chd.bup[[i]]]);
+			# colnames(children) <- chd.bup[[i]]
+			for(j in 1:length(parent)){
+				child.set <- children[j,] > parent[j]; # positive children selection
+				child.pos <- children[j,][child.set];
+				parent[j] <- (parent[j] + sum(child.pos))/(1+length(child.pos));  # flat score correction
+			}
+			S[,names(chd.bup[i])] <- parent;
+		} 
+	}
+	# top-down visit
+	par.tod <- get.parents.top.down(g,levels,root);
+	for(i in 1:length(par.tod)){
+		child <- S[,names(par.tod[i])];
+		parents <- as.matrix(S[,par.tod[[i]]]);
+		# colnames(parents) <- par.tod[[i]]
+		# Note: the version with an apply and an ifelse statement is slower ...
+		for(j in 1:length(child)){
+			x <- min(parents[j,]);
+			if(x < child[j]){
+				child[j] <- x;   # hierarchical correction
+			}
+		}
+		S[,names(par.tod[i])] <- child;
+	}
+	S <- S[,-which(colnames(S)==root)];
+	return(S);
+}
+
+#' @templateVar old tpr.weighted.threshold.free
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
+#' @export
+tpr.weighted.threshold.free <- function(S, g, root="00", w=0.5){
+	.Defunct("TPR.DAG");
+	if(!(root %in% colnames(S))){
+		max.score <- max(S);
+		z <- rep(max.score,nrow(S));
+		S <- cbind(z,S);
+		colnames(S)[1] <- root;
+	}
+	## check consistency between nodes of g and classes of S
+	class.check <- ncol(S)!=numNodes(g);
+	if(class.check)
+		stop("TPR-DAG: the number of nodes of the graph and the number of classes of the flat scores matrix does not match", call.=FALSE);
+	## compute graph levels
+	levels <- graph.levels(g,root);
+	# bottom-up visit
+	chd.bup <- get.children.bottom.up(g,levels);
+	for(i in 1:length(chd.bup)){
+		if(length(chd.bup[[i]])!=0){
+			parent <- S[,names(chd.bup[i])];
+			children <- as.matrix(S[,chd.bup[[i]]]);
+			# colnames(children) <- chd.bup[[i]]
+			for(j in 1:length(parent)){
+				child.set <- children[j,] > parent[j];    # positive children selection
+				child.pos <- children[j,][child.set];
+				if(length(child.pos)!=0){
+					parent[j] <- w*parent[j] + (1-w)*sum(child.pos)/length(child.pos);  # flat score correction
+				}
+			}
+			S[,names(chd.bup[i])] <- parent;
+		}
+	}
+	# top-down visit
+	par.tod <- get.parents.top.down(g,levels,root)
+	for(i in 1:length(par.tod)){
+		child <- S[,names(par.tod[i])];
+		parents <- as.matrix(S[,par.tod[[i]]]);
+		# colnames(parents) <- par.tod[[i]]
+		# Note: the version with an apply and an ifelse statement is slower ...
+		for(j in 1:length(child)){
+			x <- min(parents[j,]);
+			if(x < child[j]){
+				child[j] <- x;    # hierarchical correction
+			}
+		}
+		S[,names(par.tod[i])] <- child;
+	}
+	S <- S[,-which(colnames(S)==root)];
+	return(S);
+}
+
+#' @templateVar old tpr.weighted.threshold
+#' @templateVar new TPR.DAG
+#' @template template-defun_pkg
+#' @export
+tpr.weighted.threshold <- function(S, g, root="00", t=0.5, w=0.5){
+	.Defunct("TPR.DAG");
+	if(!(root %in% colnames(S))){
+		max.score <- max(S);
+		z <- rep(max.score,nrow(S));
+		S <- cbind(z,S);
+		colnames(S)[1] <- root;
+	}
+	## check consistency between nodes of g and classes of S
+	class.check <- ncol(S)!=numNodes(g);
+	if(class.check)
+		stop("TPR-DAG: the number of nodes of the graph and the number of classes of the flat scores matrix does not match", call.=FALSE);
+	## compute graph levels
+	levels <- graph.levels(g,root);
+	# bottom-up visit
+	chd.bup <- get.children.bottom.up(g,levels);
+	for(i in 1:length(chd.bup)){
+		if(length(chd.bup[[i]])!=0){
+			parent <- S[,names(chd.bup[i])];
+			children <- as.matrix(S[,chd.bup[[i]]]);
+			# colnames(children) <- chd.bup[[i]]
+			for(j in 1:length(parent)){
+				child.set <- children[j,] > t;    # positive children selection
+				child.pos <- children[j,][child.set];
+				if(length(child.pos)!=0){
+					parent[j] <- w*parent[j] + (1-w)*sum(child.pos)/length(child.pos);  # flat score prediction
+				}
+			}
+			S[,names(chd.bup[i])] <- parent;
+		}
+	}
+	# top-down visit grafo
+	par.tod <- get.parents.top.down(g,levels,root)
+	for(i in 1:length(par.tod)){
+		child <- S[,names(par.tod[i])];
+		parents <- as.matrix(S[,par.tod[[i]]]);
+		# colnames(parents) <- par.tod[[i]]
+		# Note: the version with an apply and an ifelse statement is slower ...
+		for(j in 1:length(child)){
+			x <- min(parents[j,]);
+			if(x < child[j]){
+				child[j] <- x;    # hierarchical correction
+			}
+		}
+		S[,names(par.tod[i])] <- child;
+	}
+	S <- S[,-which(colnames(S)==root)];
+	return(S);
+}
+
+
