@@ -967,7 +967,7 @@ do.unstratified.cv.data <- function(S, kk=5, seed=NULL){
 	size <- c();
 	folds <- vector(mode="list", length=kk)
 	names(folds) <- paste0(rep("fold",kk), 1:kk)
-	for (k in 1:kk) {
+	for(k in 1:kk){
 		first <- ((k - 1) * n) %/% kk
 		last <- (k * n) %/% kk
 		size <- last-first;

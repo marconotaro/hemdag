@@ -2,9 +2,76 @@
 ## TPR-DAG VARIANTS ##
 ##******************##
 #' @name TPR-DAG-variants
-#' @seealso \code{\link{TPR-DAG}}, \code{\link{DESCENS}}, \code{\link{HTD-DAG}}
-#' @title TPR-DAG Variants
-#' @description Function gathering several hierarchical ensemble algorithms
+#' @seealso \code{\link{GPAV}}, \code{\link{HTD-DAG}}
+#' @title TPR-DAG Ensemble Variants
+#' @description Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
+#' In their more general form the \code{TPR-DAG} algorithms adopt a two step learnig strategy:
+#' \enumerate{
+#'	\item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
+#'  across the hierarchy;
+#'	\item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the hierarchical 
+#' 	consistency of the predictions
+#' }
+#' @details The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions \eqn{\hat{y}_i}:
+#' \deqn{
+#' 	\bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
+#' }
+#' where \eqn{\phi_i} are the positive children of \eqn{i}.
+#' Different strategies to select the positive children \eqn{\phi_i} can be applied:
+#' \enumerate{
+#' 	\item \strong{Threshold-Free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes 
+#' 	that achieve a score higher than that of their parents:
+#' 	\deqn{
+#' 		\phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
+#' 	}
+#' 	\item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can ben selected in two different ways:
+#' 	\enumerate{
+#' 		\item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
+#'		\deqn{
+#'			\phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
+#'		}
+#' 		For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
+#' 		\item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
+#' 		the F-score or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions 
+#' 		\eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}. 
+#' 		The corresponding set of positives \eqn{\forall i \in V} is:
+#' 		\deqn{
+#' 			\phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
+#' 		}
+#' 		For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
+#'	}
+#' }
+#' The weighted \code{TPR-DAG} version can be designed by adding a weight \eqn{w \in [0,1]} to balance between the 
+#' contribution of the node \eqn{i} and that of its positive children \eqn{\phi}, through their convex combination:
+#' \deqn{
+#' 	\bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
+#' }
+#' If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
+#' way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors 
+#' associated to the children nodes vote to predict node \eqn{i}. In the intermediate cases we attribute more importance to the predictor for the
+#' node \eqn{i} or to its children depending on the values of \eqn{w}. \cr
+#'
+#' The contribution of the descendants of a given node decays exponentially with their distance from the node itself. To enhance the 
+#' contribution of the most specific nodes to the overall decision of the ensemble we designed a novel variant that we named \code{DESCENS}. 
+#' The novelty of \code{DESCENS} consists in strongly considering the contribution of all the descendants of each node instead of 
+#' only that of its children. Therefore \code{DESCENS} predictions are more influenced by the information embedded in the leaves nodes, 
+#' that are the classes containing the most informative and meaningful information from a biological and medical standpoint. 
+#' For the choice of the ``positive'' descendants we use the same strategies adopted for the selection of the ``positive'' 
+#' children shown above. Furthermore, we designed a variant specific only for \code{DESCENS}, that we named \code{DESCENS}-\eqn{\tau}.
+#' The \code{DESCENS}-\eqn{\tau} variants balances the contribution between the ``positives'' children of a node \eqn{i} 
+#' and that of its ``positives'' descendants excluding its children by adding a weight \eqn{\tau \in [0,1]}:
+#' \deqn{
+#' \bar{y}_i := \frac{\tau}{ 1 +|\phi_i|} ( \hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j ) + \frac{1-\tau}{1+|\delta_i|} ( \hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j )
+#' }
+#' where \eqn{\phi_i} are the ``positive'' children of \eqn{i} and \eqn{\delta_i=\Delta_i \setminus \phi_i} the descendants of \eqn{i} without its children. 
+#' If \eqn{\tau=1} we consider only the contribution of the ``positive'' children of \eqn{i}; if \eqn{\tau=0} only the descendants that are not
+#' children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and 
+#' \eqn{\delta_i} positive nodes. \cr
+#'
+#' Simply by replacing the \code{HTD} (\code{\link{HTD-DAG}}) top-down step with the \code{GPAV} approach (\code{\link{GPAV}}) we can desing the
+#' \code{TPR-DAG} variant \code{ISO-TPR}. The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by
+#' construction and selects the closest solution (in the sense of the least squared error) to the flat predictions that obeys to the true path rule.
+#' Obviously, any aforementioned strategy for the selection of ``positive'' children or descendants can be applied before executing the \code{GPAV} correction.
 #' @param S a named flat scores matrix with examples on rows and classes on columns
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes
 #' @param root name of the class that it is on the top-level of the hierarchy (\code{def. root="00"})
@@ -23,10 +90,26 @@
 #' 	\item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
 #'	NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 #' }
-#' @param t threshold for the choice of positive nodes (\code{def. t=0.5}). Set \code{t} only for the variants that requiring 
+#' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
+#' \itemize{
+#' 	\item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+#' 	\item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+#' }
+#' @param t threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants that requiring 
 #' a threshold for the selection of the positive nodes, otherwise set \code{t} to zero
 #' @param w weight to balance between the contribution of the node \eqn{i} and that of its positive nodes. Set \code{w} only for the
 #' \emph{weighted} variants, otherwise set \code{w} to zero
+#' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def. W=NULL}), \code{W} is a unitary 
+#' vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.
+#' @param parallel boolean value:
+#' \itemize{
+#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+#'	\item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+#' }
+#' Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
+#' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
+#' otherwise set \code{ncores} to the desired number of cores.
+#' Use \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
 #' @return a named matrix with the scores of the classes corrected according to the chosen algorithm
 #' @export 
 #' @examples
@@ -34,13 +117,15 @@
 #' data(scores);
 #' data(labels);
 #' root <- root.node(g);
-#' S.hier <- TPR.DAG(S, g, root, positive="children", bottomup="threshold.free", t=0, w=0);
-TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.free", t=0, w=0){
+#' S.hier <- TPR.DAG(S, g, root, positive="children", bottomup="threshold.free", topdown="HTD", 
+#' t=0, w=0, W=NULL, parallel=FALSE, ncores=1);
+TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.free", topdown="HTD",
+	t=0, w=0, W=NULL, parallel=FALSE, ncores=1){
 	
 	## Setting Check
 	if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && 
-		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau")
-		stop("TPR-DAG: positive or bottomup value misspelled", call.=FALSE);
+		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
+		stop("TPR-DAG: positive or bottomup or topdown value misspelled", call.=FALSE);
 	if(positive=="children" && bottomup=="tau")
 		stop("TPR-DAG: tau is a descendants variants. Please set positive to descendants", call.=FALSE);
 	if(bottomup=="threshold" || bottomup=="tau")
@@ -53,6 +138,14 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 		t <-0;
 	if(t==1 || w==1)
 		warning("TPR-DAG: when t or w is equal to 1, TPR-DAG is reduced to HTD-DAG", call.=FALSE);	
+	if(topdown=="GPAV" && parallel==TRUE && ncores<2)
+		warning("GPAV: set ncores greater than 2 to exploit the GPAV parallel version", call.=FALSE);
+	if(topdown=="GPAV" && parallel==FALSE && ncores>=2)
+		warning("TPR-DAG: no GPAV parallel version is running, but ncores is higher or equal to 2.", 
+			" Set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version", call.=FALSE);
+	if(topdown=="HTD" && (parallel==TRUE || ncores>=2))
+		warning("TPR-DAG: does not exist a parallel version of HTD. The parameters 'parallel' and 'ncores' do not effect on 'HTD'", 
+			". Set 'parallel' to FALSE and/or 'ncores' to 1 to avoid this warning message", call.=FALSE);	
 
 	## add root node to S if it does not exist
 	if(!(root %in% colnames(S))){
@@ -155,24 +248,32 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 		}
 	}
 	# top-down visit
-	# top-down visit
-	par.tod <- get.parents.top.down(g,levels,root);
-	for(i in 1:length(par.tod)){
-		child <- S[,names(par.tod[i])];
-		parents <- as.matrix(S[,par.tod[[i]]]);
-		# colnames(parents) <- par.tod[[i]]
-		# Note: the version with an apply and an ifelse statement is slower ...
-		for(j in 1:length(child)){
-			x <- min(parents[j,]);
-			if(x < child[j]){
-				child[j] <- x;    # hierarchical correction
+	if(topdown=="HTD"){
+		par.tod <- get.parents.top.down(g,levels,root);
+		for(i in 1:length(par.tod)){
+			child <- S[,names(par.tod[i])];
+			parents <- as.matrix(S[,par.tod[[i]]]);
+			# colnames(parents) <- par.tod[[i]]
+			# Note: the version with an apply and an ifelse statement is slower ...
+			for(j in 1:length(child)){
+				x <- min(parents[j,]);
+				if(x < child[j]){
+					child[j] <- x;    # hierarchical correction
+				}
 			}
+			S[,names(par.tod[i])] <- child;
 		}
-		S[,names(par.tod[i])] <- child;
-	}
+	}else if(topdown=="GPAV"){
+		if(parallel){
+			S <- GPAV.parallel(S, g, W=W, ncores=ncores);
+		}else{
+			S <- GPAV.over.examples(S, W=W, g);
+		}
+	}	
 	S <- S[,-which(colnames(S)==root)];
 	return(S);
 }
+
 
 #' @name TPR-DAG-cross-validation
 #' @title TPR-DAG cross-validation experiments
@@ -224,6 +325,21 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' 	\item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
 #'	NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 #' }
+#' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
+#' \itemize{
+#' 	\item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+#' 	\item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+#' }
+#' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def. W=NULL}), \code{W} is a unitary 
+#' vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.
+#' @param parallel boolean value:
+#' \itemize{
+#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+#' }
+#' Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
+#' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
+#' otherwise set \code{ncores} to the desired number of cores. Use \code{ncores} only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
 #' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
@@ -284,22 +400,23 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' norm.type <- "MaxNorm";
 #' positive <- "children";
 #' bottomup <- "threshold.free";
+#' topdown <- "HTD";
 #' rec.levels <- seq(from=0.1, to=1, by=0.1);
 #' Do.TPR.DAG(threshold=threshold, weight=weight, kk=5, folds=5, seed=23, norm=FALSE, 
-#' norm.type=norm.type, positive=positive, bottomup=bottomup, n.round=3, f.criterion="F",
-#' metric=NULL, rec.levels=rec.levels, flat.file=flat.file, ann.file=ann.file, 
-#' dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
-#' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
+#' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
+#' parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, rec.levels=rec.levels, 
+#' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
+#' ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), 
 	kk=5, folds=5, seed=23, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", 
-	rec.levels=seq(from=0.1, to=1, by=0.1), n.round=3, f.criterion="F", metric=NULL, flat.file=flat.file, 
-	ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
-	hierScore.dir=hierScore.dir, perf.dir=perf.dir){
+	topdown="HTD", W=NULL, parallel=FALSE, ncores=1, rec.levels=seq(from=0.1, to=1, by=0.1), n.round=3, 
+	f.criterion="F", metric=NULL, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
+	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 	
 	## Setting Check
 	if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && 
-		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau")
-		stop("TPR-DAG: positive or bottomup value misspelled", call.=FALSE);
+		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
+		stop("TPR-DAG: positive or bottomup or topdown value misspelled", call.=FALSE);
 	if(positive=="children" && bottomup=="tau")
 		stop("TPR-DAG: tau is a descendants variants. Please set positive to descendants", call.=FALSE);
 	if(bottomup=="threshold" || bottomup=="tau")
@@ -375,7 +492,8 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 
 	## Hierarchical Correction 
 	if(bottomup=="threshold.free"){
-		S <- TPR.DAG(S, g, root=root, positive=positive, bottomup=bottomup, t=0, w=0);
+		S <- TPR.DAG(S, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, 
+			parallel=parallel, ncores=ncores);
 		cat("HIERARCHICAL CORRECTION: DONE", "\n");
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
 		PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
@@ -404,7 +522,8 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 			bestW <- 0;
 			for(t in threshold){
 				for(w in weight){
-					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, w=w, t=t);
+					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, 
+						w=w, t=t, W=W, parallel=parallel, ncores=ncores);
 					if(metric=="FMAX"){
 						training.metric <- find.best.f(target.training, pred.training, n.round=n.round, f.criterion=f.criterion, 
 							verbose=FALSE, b.per.example=FALSE)[["F"]];
@@ -429,13 +548,14 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 				}
 			}
 			## test set 
-			pred.test <- TPR.DAG(test, g, root=root, positive=positive, bottomup=bottomup, t=bestT, w=bestW);
+			pred.test <- TPR.DAG(test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, 
+				W=W, parallel=parallel, ncores=ncores);
 			## assembling the hierarchical scores of each k sub-matrix
-			S.hier <- rbind(S.hier, pred.test);
-			cat("HIERARCHICAL CORRECTION: DONE", "\n");
+			S.hier <- rbind(S.hier, pred.test); 
 		}
 		## put the rows (i.e. genes) of assembled k sub-matrix in the same order of the beginning matrix
 		S.hier <- S.hier[rownames(S),];
+		cat("HIERARCHICAL CORRECTION: DONE", "\n");
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
 		PRC.hier <- AUPRC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
 		AUC.hier <- AUROC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
@@ -448,24 +568,43 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 	}
 
 	## Storing Results 
-	if(positive=="children" && bottomup=="threshold.free")
+	if(positive=="children" && bottomup=="threshold.free" && topdown=="HTD")
 		meth.name <- "tprTF";
-	if(positive=="children" && bottomup=="threshold")
+	if(positive=="children" && bottomup=="threshold" && topdown=="HTD")
 		meth.name <- "tprT";
-	if(positive=="children" && bottomup=="weighted.threshold.free")
+	if(positive=="children" && bottomup=="weighted.threshold.free" && topdown=="HTD")
 		meth.name <- "tprW";
-	if(positive=="children" && bottomup=="weighted.threshold")
+	if(positive=="children" && bottomup=="weighted.threshold" && topdown=="HTD")
 		meth.name <- "tprWT";
-	if(positive=="descendants" && bottomup=="threshold.free")
+	if(positive=="descendants" && bottomup=="threshold.free" && topdown=="HTD")
 		meth.name <- "descensTF";
-	if(positive=="descendants" && bottomup=="threshold")
+	if(positive=="descendants" && bottomup=="threshold" && topdown=="HTD")
 		meth.name <- "descensT";
-	if(positive=="descendants" && bottomup=="weighted.threshold.free")
+	if(positive=="descendants" && bottomup=="weighted.threshold.free" && topdown=="HTD")
 		meth.name <- "descensW";
-	if(positive=="descendants" && bottomup=="weighted.threshold")
+	if(positive=="descendants" && bottomup=="weighted.threshold" && topdown=="HTD")
 		meth.name <- "descensWT";
-	if(positive=="descendants" && bottomup=="tau")
+	if(positive=="descendants" && bottomup=="tau" && topdown=="HTD")
 		meth.name <- "descensTAU";
+
+	if(positive=="children" && bottomup=="threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOtprTF";
+	if(positive=="children" && bottomup=="threshold" && topdown=="GPAV")
+		meth.name <- "ISOtprT";
+	if(positive=="children" && bottomup=="weighted.threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOtprW";
+	if(positive=="children" && bottomup=="weighted.threshold" && topdown=="GPAV")
+		meth.name <- "ISOtprWT";
+	if(positive=="descendants" && bottomup=="threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOdescensTF";
+	if(positive=="descendants" && bottomup=="threshold" && topdown=="GPAV")
+		meth.name <- "ISOdescensT";
+	if(positive=="descendants" && bottomup=="weighted.threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOdescensW";
+	if(positive=="descendants" && bottomup=="weighted.threshold" && topdown=="GPAV")
+		meth.name <- "ISOdescensWT";
+	if(positive=="descendants" && bottomup=="tau" && topdown=="GPAV")
+		meth.name <- "ISOdescensTAU";
 
 	if(norm){
 		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
@@ -527,6 +666,22 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' 	\item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
 #'	NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 #' }
+#' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
+#' \itemize{
+#' 	\item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+#' 	\item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+#' }
+#' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def.} \code{W=NULL}), \code{W} is a unitary 
+#' vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.
+#' @param parallel boolean value:
+#' \itemize{
+#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+#' }
+#' Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
+#' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
+#' otherwise set \code{ncores} to the desired number of cores.
+#' Use \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
 #' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
@@ -540,7 +695,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' It can be one of the following values:
 #' \enumerate{
 #' \item \code{PRC}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{AUPRC}});
-#' \item \code{FMAX}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{Multilabel.F.measure}};
+#' \item \code{FMAX}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{Multilabel.F.measure}});
 #' \item \code{NULL}: on the \code{threshold.free} variant none parameter optimization is needed, since the variant is non-parametric. 
 #' So, if \code{bottomup=threshold.free} set \code{metric=NULL} (\code{def.}).
 #' }
@@ -594,22 +749,24 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' norm.type <- "MaxNorm";
 #' positive <- "children";
 #' bottomup <- "threshold.free";
+#' topdown <- "HTD";
 #' rec.levels <- seq(from=0.1, to=1, by=0.1);
 #' Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=5, folds=NULL, seed=23, norm=FALSE, 
-#' norm.type=norm.type, positive=positive, bottomup=bottomup, rec.levels=rec.levels, n.round=3, 
-#' f.criterion="F", metric=NULL, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
-#' ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, 
-#' dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
+#' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
+#' parallel=FALSE, ncores=1, rec.levels=rec.levels, n.round=3, f.criterion="F", metric=NULL,
+#' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 
+#' ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+#' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=1, by=0.1), kk=5, 
-	folds=5, seed=23, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", 
-	rec.levels=seq(from=0.1, to=1, by=0.1), n.round=3, f.criterion="F", metric=NULL,
+	folds=5, seed=23, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="HTD",
+	W=NULL, parallel=FALSE, ncores=1, rec.levels=seq(from=0.1, to=1, by=0.1), n.round=3, f.criterion="F", metric=NULL,
 	flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, 
 	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 
 	## Setting Check
 	if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && 
-		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau")
-		stop("TPR-DAG: positive or bottomup value misspelled", call.=FALSE);
+		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
+		stop("TPR-DAG: positive or bottomup or topdown value misspelled", call.=FALSE);
 	if(positive=="children" && bottomup=="tau")
 		stop("TPR-DAG: tau is a descendants variants. Please set positive to descendants", call.=FALSE);
 	if(bottomup=="threshold" || bottomup=="tau")weight<-0;
@@ -677,11 +834,11 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		g <- do.subgraph(nd, g, edgemode="directed");
 	}
 
-	## scores flat matrix shrunk to test and training test respectively
+	## scores flat matrix are shrunk to test and training test respectively
 	S.test <- S[ind.test,];
 	S.training <- S[-ind.test,];
 
-	## annotation table shrunk to test and training test respectively.
+	## annotation table are shrunk to test and training test respectively.
 	ann.test <- ann[ind.test,];
 	ann.training <- ann[-ind.test,];
 
@@ -695,7 +852,8 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 
 	## Hierarchical Correction 
 	if(bottomup=="threshold.free"){
-		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, t=0, w=0);
+		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, 
+			t=0, w=0, W=W, parallel=parallel, ncores=ncores);
 		cat("HIERARCHICAL CORRECTION: DONE", "\n");
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 		PRC.hier <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
@@ -720,7 +878,8 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 			bestW <- 0;
 			for(t in threshold){
 				for(w in weight){
-					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, w=w, t=t);
+					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, 
+						w=w, t=t, W=W, parallel=parallel, ncores=ncores);
 					if(metric=="FMAX"){
 						training.metric <- find.best.f(target.training, pred.training, n.round=n.round, f.criterion=f.criterion, 
 							verbose=FALSE, b.per.example=FALSE)[["F"]];
@@ -745,7 +904,8 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 				}
 			}
 		}
-		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, t=bestT, w=bestW);
+		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, 
+			W=W, parallel=parallel, ncores=ncores);
 		cat("HIERARCHICAL CORRECTION: DONE", "\n");
 
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
@@ -761,24 +921,45 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		rm(S, S.test, S.training, training);
 	}
 	## Storing Results 
-	if(positive=="children" && bottomup=="threshold.free")
+	if(positive=="children" && bottomup=="threshold.free" && topdown=="HTD")
 		meth.name <- "tprTF";
-	if(positive=="children" && bottomup=="threshold")
+	if(positive=="children" && bottomup=="threshold" && topdown=="HTD")
 		meth.name <- "tprT";
-	if(positive=="children" && bottomup=="weighted.threshold.free")
+	if(positive=="children" && bottomup=="weighted.threshold.free" && topdown=="HTD")
 		meth.name <- "tprW";
-	if(positive=="children" && bottomup=="weighted.threshold")
+	if(positive=="children" && bottomup=="weighted.threshold" && topdown=="HTD")
 		meth.name <- "tprWT";
-	if(positive=="descendants" && bottomup=="threshold.free")
+
+	if(positive=="descendants" && bottomup=="threshold.free" && topdown=="HTD")
 		meth.name <- "descensTF";
-	if(positive=="descendants" && bottomup=="threshold")
+	if(positive=="descendants" && bottomup=="threshold" && topdown=="HTD")
 		meth.name <- "descensT";
-	if(positive=="descendants" && bottomup=="weighted.threshold.free")
+	if(positive=="descendants" && bottomup=="weighted.threshold.free" && topdown=="HTD")
 		meth.name <- "descensW";
-	if(positive=="descendants" && bottomup=="weighted.threshold")
+	if(positive=="descendants" && bottomup=="weighted.threshold" && topdown=="HTD")
 		meth.name <- "descensWT";
-	if(positive=="descendants" && bottomup=="tau")
+	if(positive=="descendants" && bottomup=="tau" && topdown=="HTD")
 		meth.name <- "descensTAU";
+
+	if(positive=="children" && bottomup=="threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOtprTF";
+	if(positive=="children" && bottomup=="threshold" && topdown=="GPAV")
+		meth.name <- "ISOtprT";
+	if(positive=="children" && bottomup=="weighted.threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOtprW";
+	if(positive=="children" && bottomup=="weighted.threshold" && topdown=="GPAV")
+		meth.name <- "ISOtprWT";
+	
+	if(positive=="descendants" && bottomup=="threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOdescensTF";
+	if(positive=="descendants" && bottomup=="threshold" && topdown=="GPAV")
+		meth.name <- "ISOdescensT";
+	if(positive=="descendants" && bottomup=="weighted.threshold.free" && topdown=="GPAV")
+		meth.name <- "ISOdescensW";
+	if(positive=="descendants" && bottomup=="weighted.threshold" && topdown=="GPAV")
+		meth.name <- "ISOdescensWT";
+	if(positive=="descendants" && bottomup=="tau" && topdown=="GPAV")
+		meth.name <- "ISOdescensTAU";
 
 	if(norm){
 		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.",meth.name,".holdout.rda"), compress=TRUE);

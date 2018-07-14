@@ -559,7 +559,7 @@ find.best.f <- function(target, pred, n.round=3, f.criterion="F", verbose=TRUE, 
 	i <- 0;
 	for(t in thresh){
 		pred.labels <- matrix(numeric(n.examples*n.classes), nrow=n.examples);
-		pred.labels[pred>=t] <-1;
+		pred.labels[pred>=t] <- 1;
 		res <- F.measure.multilabel(target, pred.labels, b.per.example);
 		if(res$average[f.criterion] > best){
 			best <- res$average[f.criterion];
