@@ -8,7 +8,8 @@
 Do.TPR.DAG(threshold = seq(from = 0.1, to = 0.9, by = 0.1),
   weight = seq(from = 0.1, to = 0.9, by = 0.1), kk = 5, folds = 5,
   seed = 23, norm = TRUE, norm.type = NULL, positive = "children",
-  bottomup = "threshold.free", rec.levels = seq(from = 0.1, to = 1, by =
+  bottomup = "threshold.free", topdown = "HTD", W = NULL,
+  parallel = FALSE, ncores = 1, rec.levels = seq(from = 0.1, to = 1, by =
   0.1), n.round = 3, f.criterion = "F", metric = NULL,
   flat.file = flat.file, ann.file = ann.file, dag.file = dag.file,
   flat.dir = flat.dir, ann.dir = ann.dir, dag.dir = dag.dir,
@@ -63,6 +64,25 @@ It can be one of the following values:
     \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
 NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 }}
+
+\item{topdown}{strategy to make the scores hierarchy-consistent. It can be one of the following values:
+\itemize{
+    \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+    \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+}}
+
+\item{W}{vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def. W=NULL}), \code{W} is a unitary 
+vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.}
+
+\item{parallel}{boolean value:
+\itemize{
+\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+}
+Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.}
+
+\item{ncores}{number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
+otherwise set \code{ncores} to the desired number of cores. Use \code{ncores} only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.}
 
 \item{rec.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 the Precision at fixed Recall level (PXR)}
@@ -148,12 +168,13 @@ threshold <- weight <- 0;
 norm.type <- "MaxNorm";
 positive <- "children";
 bottomup <- "threshold.free";
+topdown <- "HTD";
 rec.levels <- seq(from=0.1, to=1, by=0.1);
 Do.TPR.DAG(threshold=threshold, weight=weight, kk=5, folds=5, seed=23, norm=FALSE, 
-norm.type=norm.type, positive=positive, bottomup=bottomup, n.round=3, f.criterion="F",
-metric=NULL, rec.levels=rec.levels, flat.file=flat.file, ann.file=ann.file, 
-dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
-hierScore.dir=hierScore.dir, perf.dir=perf.dir);
+norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
+parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, rec.levels=rec.levels, 
+flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
+ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 }
 \seealso{
 \code{\link{TPR-DAG-variants}}
