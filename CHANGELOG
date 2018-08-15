@@ -1,3 +1,18 @@
+HEMDAG 2.2.3
+---------------------------------------------------------------------
+NEW FEATURES
+* Added GPAV algorithm (Burdakov et al., Journal of Computational Mathematics, 2006);
+* Embedded GPAV algorithm in the top-down step of the functions 'TPR.DAG',
+	'Do.TPR.DAG' and 'Do.TPR.DAG.holdout';
+* Some functions have been defunct. To know the defunct functions just typing
+	in the R environment: help("HEMDAG-defunct");
+
+CHANGES
+* Manual Improved;
+
+AUTHOR
+* Added 'Alessandro Petrini' as author for his contribution in writing the C++ code of GPAV algorithm;
+
 HEMDAG 2.1.3
 ---------------------------------------------------------------------
 CHANGES
