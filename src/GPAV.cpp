@@ -1,12 +1,3 @@
-#ifdef __unix
-#define CSTACK_DEFNS 7
-#define R_INTERFACE_PTRS 1
-#include <R.h>
-#include <Rmath.h>
-#include <Rinternals.h>
-#include <R_ext/Rdynload.h>
-#endif
-
 #include <vector>
 #include <list>
 #include <set>
