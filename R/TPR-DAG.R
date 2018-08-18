@@ -292,8 +292,9 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' @param weight range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
 #' Set the parameter \code{weight} only for the \emph{weighted} variants, otherwise set the parameter \code{weight} to zero
-#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold} and \code{weight} and 
-# \code{tau} of the parametric variants of the hierarchical ensemble algorithms.
+#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
+#' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parmeteric variants
+#' (i.e. if \code{bottomup = threshol.free}) set \code{k=NULL}
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
@@ -382,17 +383,12 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' data(graph);
 #' data(scores);
 #' data(labels);
-#' if (!dir.exists("data")){
-#' 	dir.create("data");
-#' }
-#' if (!dir.exists("results")){
-#' 	dir.create("results");
-#' }
-#' save(g,file="data/graph.rda");
-#' save(L,file="data/labels.rda");
-#' save(S,file="data/scores.rda");
-#' dag.dir <- flat.dir <- ann.dir <- "data/";
-#' hierScore.dir <- perf.dir <- "results/";
+#' tmpdir <- paste0(tempdir(),"/");
+#' save(g, file=paste0(tmpdir,"graph.rda"));
+#' save(L, file=paste0(tmpdir,"labels.rda"));
+#' save(S, file=paste0(tmpdir,"scores.rda"));
+#' dag.dir <- flat.dir <- ann.dir <- tmpdir;
+#' hierScore.dir <- perf.dir <- tmpdir;
 #' dag.file <- "graph";
 #' flat.file <- "scores";
 #' ann.file <- "labels";
@@ -402,7 +398,7 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' bottomup <- "threshold.free";
 #' topdown <- "HTD";
 #' rec.levels <- seq(from=0.1, to=1, by=0.1);
-#' Do.TPR.DAG(threshold=threshold, weight=weight, kk=5, folds=5, seed=23, norm=FALSE, 
+#' Do.TPR.DAG(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 #' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
 #' parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, rec.levels=rec.levels, 
 #' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
@@ -432,8 +428,10 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 	if(norm==TRUE && !is.null(norm.type))
 		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", 
 			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-	if(kk==1)
+	if(is.null(kk) && bottomup!="threshold.free")
 		stop("TPR-DAG: Smallest number of folds to define test and training set is 2. Set kk larger or equal to 2", call.=FALSE);
+	if(!is.null(kk) && bottomup=="threshold.free")
+		kk <- NULL;			
 	if(f.criterion!="F" && f.criterion!="avF")
 		stop("TPR-DAG: value of parameter 'f.criterion' misspelled");	
 	if(metric!="FMAX" && metric!="PRC" && !is.null(metric))
@@ -445,7 +443,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 		warning("TPR-DAG: the bottom-up approach 'threshold.free' is non-parametric.", 
 			paste0(" The chosen parameter metric '", metric, "' does not effect on 'threshold.free' bottom-up approach"), 
 			". Set metric to NULL to avoid this warning message", call.=FALSE);
-	if(is.null(seed))
+	if(is.null(seed) && bottomup!="threshold.free")
 		warning("TPR-DAG: folds are generate without seed initialization", call.=FALSE);
 
 	## loading dag
@@ -633,8 +631,9 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' @param weight range of weight values to be tested in order to find the best weight (def: \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
 #' Set the parameter \code{weight} only for the \emph{weighted} variants, otherwise set the parameter \code{weight} to zero
-#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold} and \code{weight} and 
-# \code{tau} of the parametric variants of the hierarchical ensemble algorithms.
+#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
+#' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parmeteric variants 
+#' (i.e. if \code{bottomup = threshol.free}) set \code{k=NULL}
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
@@ -728,19 +727,13 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' data(scores);
 #' data(labels);
 #' data(test.index);
-#' if (!dir.exists("data")){
-#' 	dir.create("data");
-#' }
-#' if (!dir.exists("results")){
-#' 	dir.create("results");
-#' }
-#' save(g,file="data/graph.rda");
-#' save(L,file="data/labels.rda");
-#' save(S,file="data/scores.rda");
-#' save(test.index, file="data/test.index.rda");
-#' ind.dir <- dag.dir <- flat.dir <- ann.dir <- "data/";
-#' hierScore.dir <- perf.dir <- "results/";
-#' dag.dir <- flat.dir <- ann.dir <- "data/";
+#' tmpdir <- paste0(tempdir(),"/");
+#' save(g, file=paste0(tmpdir,"graph.rda"));
+#' save(L, file=paste0(tmpdir,"labels.rda"));
+#' save(S, file=paste0(tmpdir,"scores.rda"));
+#' save(test.index, file=paste0(tmpdir,"test.index.rda"));
+#' ind.dir <- dag.dir <- flat.dir <- ann.dir <- tmpdir;
+#' hierScore.dir <- perf.dir <- tmpdir;
 #' ind.test.set <- "test.index";
 #' dag.file <- "graph";
 #' flat.file <- "scores";
@@ -751,7 +744,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' bottomup <- "threshold.free";
 #' topdown <- "HTD";
 #' rec.levels <- seq(from=0.1, to=1, by=0.1);
-#' Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=5, folds=NULL, seed=23, norm=FALSE, 
+#' Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 #' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
 #' parallel=FALSE, ncores=1, rec.levels=rec.levels, n.round=3, f.criterion="F", metric=NULL,
 #' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 
@@ -785,6 +778,10 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 	if(norm==TRUE && !is.null(norm.type))
 		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", 
 			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+	if(is.null(kk) && bottomup!="threshold.free")
+		stop("TPR-DAG: Smallest number of folds to define test and training set is 2. Set kk larger or equal to 2", call.=FALSE);
+	if(!is.null(kk) && bottomup=="threshold.free")
+		kk <- NULL;			
 	if(is.null(metric) && bottomup!="threshold.free")
 		stop(paste0("TPR-DAG: metric cannot be NULL. The bottom-up approach '", bottomup, "' is parametric"), 
 			". Please select the metric on which maximize according to those available", call.=FALSE); 
@@ -792,7 +789,7 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		warning("TPR-DAG: the bottom-up approach 'threshold.free' is non-parametric.", 
 			paste0(" The chosen parameter metric '", metric, "' does not effect on 'threshold.free' bottom-up approach"), 
 			". Set metric to NULL to avoid this warning message", call.=FALSE);
-	if(is.null(seed))
+	if(is.null(seed) && bottomup!="threshold.free")
 		warning("TPR-DAG: folds are generate without seed initialization", call.=FALSE);
 
 	## Loading Data

@@ -516,5 +516,3 @@ tpr.weighted.threshold <- function(S, g, root="00", t=0.5, w=0.5){
 	S <- S[,-which(colnames(S)==root)];
 	return(S);
 }
-
-
