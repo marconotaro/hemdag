@@ -1,3 +1,8 @@
+HEMDAG 2.2.4
+---------------------------------------------------------------------
+CHANGES
+fixed CRAN Package Check Results: removed unneeded header and define from GPAV C++ source code
+
 HEMDAG 2.2.3
 ---------------------------------------------------------------------
 NEW FEATURES
