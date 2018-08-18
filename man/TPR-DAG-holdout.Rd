@@ -26,7 +26,9 @@ otherwise set the parameter \code{threshold} to zero}
 The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
 Set the parameter \code{weight} only for the \emph{weighted} variants, otherwise set the parameter \code{weight} to zero}
 
-\item{kk}{number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold} and \code{weight} and}
+\item{kk}{number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
+\code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parmeteric variants 
+(i.e. if \code{bottomup = threshol.free}) set \code{k=NULL}}
 
 \item{folds}{number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.}
@@ -157,19 +159,13 @@ data(graph);
 data(scores);
 data(labels);
 data(test.index);
-if (!dir.exists("data")){
-	dir.create("data");
-}
-if (!dir.exists("results")){
-	dir.create("results");
-}
-save(g,file="data/graph.rda");
-save(L,file="data/labels.rda");
-save(S,file="data/scores.rda");
-save(test.index, file="data/test.index.rda");
-ind.dir <- dag.dir <- flat.dir <- ann.dir <- "data/";
-hierScore.dir <- perf.dir <- "results/";
-dag.dir <- flat.dir <- ann.dir <- "data/";
+tmpdir <- paste0(tempdir(),"/");
+save(g, file=paste0(tmpdir,"graph.rda"));
+save(L, file=paste0(tmpdir,"labels.rda"));
+save(S, file=paste0(tmpdir,"scores.rda"));
+save(test.index, file=paste0(tmpdir,"test.index.rda"));
+ind.dir <- dag.dir <- flat.dir <- ann.dir <- tmpdir;
+hierScore.dir <- perf.dir <- tmpdir;
 ind.test.set <- "test.index";
 dag.file <- "graph";
 flat.file <- "scores";
@@ -180,7 +176,7 @@ positive <- "children";
 bottomup <- "threshold.free";
 topdown <- "HTD";
 rec.levels <- seq(from=0.1, to=1, by=0.1);
-Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=5, folds=NULL, seed=23, norm=FALSE, 
+Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
 parallel=FALSE, ncores=1, rec.levels=rec.levels, n.round=3, f.criterion="F", metric=NULL,
 flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 

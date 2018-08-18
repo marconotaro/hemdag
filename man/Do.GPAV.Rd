@@ -97,17 +97,12 @@ the corresponding subgraph is computed as well. N.B.: it is supposed that all th
 data(graph);
 data(scores);
 data(labels);
-if (!dir.exists("data")){
-	dir.create("data");
-}
-if (!dir.exists("results")){
-	dir.create("results");
-}
-save(g,file="data/graph.rda");
-save(L,file="data/labels.rda");
-save(S,file="data/scores.rda");
-dag.dir <- flat.dir <- ann.dir <- "data/";
-hierScore.dir <- perf.dir <- "results/";
+tmpdir <- paste0(tempdir(),"/");
+save(g, file=paste0(tmpdir,"graph.rda"));
+save(L, file=paste0(tmpdir,"labels.rda"));
+save(S, file=paste0(tmpdir,"scores.rda"));
+dag.dir <- flat.dir <- ann.dir <- tmpdir;
+hierScore.dir <- perf.dir <- tmpdir;
 rec.levels <- seq(from=0.1, to=1, by=0.1);
 dag.file <- "graph";
 flat.file <- "scores";
