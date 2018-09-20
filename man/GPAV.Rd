@@ -19,24 +19,24 @@ equal to the length of \code{Y} and \code{W}}
 \value{
 a list of 3 elements:
 \itemize{
-\item \code{YFit}: a named vector with the scores of the classes corrected according to the GPAV algorithm.
+\item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
 \code{NOTE}: the classes of \code{YFit} are topologically sorted, that is are in the same order of those of \code{adj}.
 \item \code{blocks}: list of vectors, containing the partitioning of nodes (represented with an integer number) into blocks;
 \item \code{W}: vector of weights.
 }
 }
 \description{
-Implementation of GPAV (Generalized Pool-Adjacent Violators) algorithm
-(\cite{Burdavok et al., Journal of Computational Mathematics,  2006 -- \href{http://www.jstor.org/stable/43693336}{link}})
+Implementation of \code{GPAV} (Generalized Pool-Adjacent Violators) algorithm
+(\cite{Burdavok et al., Journal of Computational Mathematics,  2006 -- \href{https://www.jstor.org/stable/43693336}{link}})
 to correct the scores of the hierarchy according to the constraints that the score of a node cannot be greater than a score of its parents.
-GPAV algorithm treats nodes sequentially (in accordance with the topological order of \code{adj}) and merges some adjacent nodes into sets
+\code{GPAV} algorithm treats nodes sequentially (in accordance with the topological order of \code{adj}) and merges some adjacent nodes into sets
 which are called blocks. The fitted values for the nodes of the same block are equal to the weighted average value of their response values.
 }
 \details{
 Given the constraints adjacency matrix of the graph, a vector of scores \eqn{\hat{y} \in R^n} and a vector of strictly positive
-weights \eqn{w \in R^n}, the GPAV algorithm returns a vector \eqn{\bar{y}} which is as close as possible, in the least-squares sense,
+weights \eqn{w \in R^n}, the \code{GPAV} algorithm returns a vector \eqn{\bar{y}} which is as close as possible, in the least-squares sense,
 to the response vector \eqn{\hat{y}} and whose components are partially ordered in accordance with the constraints matrix \code{adj}.
-In other words, GPAV solves the following problem:
+In other words, \code{GPAV} solves the following problem:
 \deqn{
 \bar{y} = \left\{
 \begin{array}{l}

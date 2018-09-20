@@ -4,22 +4,16 @@
 \alias{tupla.matrix}
 \title{Tupla Matrix}
 \usage{
-tupla.matrix(m, compressed = TRUE, output.file = "net.file.gz")
+tupla.matrix(m, output.file = "net.file.gz")
 }
 \arguments{
 \item{m}{a weighetd adjacency matrix of the graph. Rows and columns are examples. It must be a square named matrix.}
 
-\item{compressed}{boolean value:
-\itemize{
-\item TRUE (def.): the output file will be a \code{gz} compressed format;
-\item FALSE: the output file will be a plain \code{text} format;
-}}
-
-\item{output.file}{name of the file of the  to be written}
+\item{output.file}{name of the file of the  to be written.
+The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
-if \code{compressed=TRUE} the weighted adjacency matrix as tupla is stored in a compressed \code{gz}, 
-otherwise (\code{compressed=FALSE}) it is stored in a plain \code{text} file.
+the weighted adjacency matrix as tupla is stored in the output.file
 }
 \description{
 Trasform a Weighted Adjacency Matrix (wadj matrix) of a graph in a tupla, i.e. as a sequences of rows separated by 
@@ -32,6 +26,6 @@ In other words in the \code{output.file} are reported only those nodes having a 
 \examples{
 \dontrun{
 data(wadj);
-tupla.matrix(W,compressed=TRUE, output.file="tupla.wadj.gz");
-tupla.matrix(W,compressed=FALSE, output.file="tupla.wadj.txt");}
+tupla.matrix(W, output.file="tupla.wadj.gz");
+tupla.matrix(W, output.file="tupla.wadj.txt");}
 }

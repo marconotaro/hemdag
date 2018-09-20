@@ -6,22 +6,22 @@
 \alias{AUPRC.single.over.classes}
 \title{AUPRC measures}
 \usage{
-AUPRC.single.class(target, pred, folds = NULL, seed = NULL)
+AUPRC.single.class(labels, scores, folds = NULL, seed = NULL)
 
-AUPRC.single.over.classes(labels, predicted, folds = NULL, seed = NULL)
+AUPRC.single.over.classes(target, predicted, folds = NULL, seed = NULL)
 }
 \arguments{
-\item{target}{vector of the true labels (0 negative, 1 positive examples)}
+\item{labels}{vector of the true labels (0 negative, 1 positive examples)}
 
-\item{pred}{a numeric vector of the values of the predicted labels (scores)}
+\item{scores}{a numeric vector of the values of the predicted labels (scores)}
 
-\item{folds}{number of folds on which computing the AUPRC. If \code{folds=NULL} (\code{def.}), the one-shot AUPRC is computed, 
+\item{folds}{number of folds on which computing the AUPRC. If \code{folds=NULL} (\code{def.}), the AUPRC is computed one-shot, 
 otherwise the AUPRC is computed averaged across folds.}
 
 \item{seed}{initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
-If \code{seed}\eqn{\neq}\code{NULL} and \code{folds=NULL}, the AUPRC averaged across folds is computed without seed initialization.}
+If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUPRC averaged across folds is computed without seed initialization.}
 
-\item{labels}{matrix with the target multilabels: rows correspond to examples and columns to classes. 
+\item{target}{matrix with the target multilabels: rows correspond to examples and columns to classes. 
 \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.}
 
 \item{predicted}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.}

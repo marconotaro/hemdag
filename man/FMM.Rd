@@ -5,16 +5,17 @@
 \alias{compute.Fmeasure.multilabel}
 \title{Compute Multilabel F-measure}
 \usage{
-compute.Fmeasure.multilabel(target, pred, n.round = 3, f.criterion = "F",
-  verbose = TRUE, b.per.example = FALSE, folds = NULL, seed = NULL)
+compute.Fmeasure.multilabel(target, predicted, n.round = 3,
+  f.criterion = "F", verbose = TRUE, b.per.example = FALSE,
+  folds = NULL, seed = NULL)
 }
 \arguments{
 \item{target}{matrix with the target multilabels: rows correspond to examples and columns to classes.
 \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise}
 
-\item{pred}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes}
+\item{predicted}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes}
 
-\item{n.round}{number of rounding digits to be applied to pred (\code{default=3})}
+\item{n.round}{number of rounding digits to be applied to predicted (\code{default=3})}
 
 \item{f.criterion}{character. Type of F-measure to be used to select the best F-score. There are two possibilities:
 \enumerate{
@@ -30,11 +31,11 @@ compute.Fmeasure.multilabel(target, pred, n.round = 3, f.criterion = "F",
 \item \code{FALSE}: only the average results are returned
 }}
 
-\item{folds}{number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the one-shot AUROC is computed, 
+\item{folds}{number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the AUROC is computed one-shot, 
 otherwise the AUROC is computed averaged across folds.}
 
 \item{seed}{initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
-If \code{seed}\eqn{\neq}\code{NULL} and \code{folds=NULL}, the AUROC averaged across folds is computed without seed initialization.}
+If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUROC averaged across folds is computed without seed initialization.}
 }
 \value{
 Two different outputs respect to the input parameter \code{b.per.example}:
@@ -57,7 +58,7 @@ examples and T is the best selected threshold;
 Function to compute the best hierarchical F-score either one-shot or averaged across folds
 }
 \details{
-Names of rows and columns of \code{target} and \code{pred} matrix must be provided in the same order, otherwise a stop message is returned
+Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned
 }
 \examples{
 data(graph);

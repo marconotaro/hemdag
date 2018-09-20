@@ -9,8 +9,8 @@ Do.TPR.DAG(threshold = seq(from = 0.1, to = 0.9, by = 0.1),
   weight = seq(from = 0.1, to = 0.9, by = 0.1), kk = 5, folds = 5,
   seed = 23, norm = TRUE, norm.type = NULL, positive = "children",
   bottomup = "threshold.free", topdown = "HTD", W = NULL,
-  parallel = FALSE, ncores = 1, rec.levels = seq(from = 0.1, to = 1, by =
-  0.1), n.round = 3, f.criterion = "F", metric = NULL,
+  parallel = FALSE, ncores = 1, recall.levels = seq(from = 0.1, to = 1, by
+  = 0.1), n.round = 3, f.criterion = "F", metric = NULL,
   flat.file = flat.file, ann.file = ann.file, dag.file = dag.file,
   flat.dir = flat.dir, ann.dir = ann.dir, dag.dir = dag.dir,
   hierScore.dir = hierScore.dir, perf.dir = perf.dir)
@@ -19,16 +19,16 @@ Do.TPR.DAG(threshold = seq(from = 0.1, to = 0.9, by = 0.1),
 \item{threshold}{range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, 
 \code{to:0.9}, \code{by:0.1}).
 The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-Set the parameter \code{threshold} only for the variants that requiring a threshold for the positive nodes selection, 
-otherwise set the parameter \code{threshold} to zero}
+Use this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variant the functions automatically 
+sets \code{threshold} to zero}
 
 \item{weight}{range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-Set the parameter \code{weight} only for the \emph{weighted} variants, otherwise set the parameter \code{weight} to zero}
+Use this parameter only for the \emph{weighted} variants; for the other variants the function automatically sets \code{weight} to zero}
 
 \item{kk}{number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
-\code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parmeteric variants
-(i.e. if \code{bottomup = threshol.free}) set \code{k=NULL}}
+\code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parametric variants
+(i.e. if \code{bottomup = threshold.free}) the function automatically sets \code{kk=NULL} if the input \code{kk}\eqn{\ne}\code{NULL}}
 
 \item{folds}{number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.}
@@ -86,7 +86,7 @@ Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{para
 \item{ncores}{number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
 otherwise set \code{ncores} to the desired number of cores. Use \code{ncores} only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.}
 
-\item{rec.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+\item{recall.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 the Precision at fixed Recall level (PXR)}
 
 \item{n.round}{number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
@@ -128,11 +128,11 @@ Two \code{rda} files stored in the respective output directories:
 \enumerate{
 	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
 	for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
-	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
+	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performance results:
 	\enumerate{
 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 	\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 }}
 It is stored in the \code{perf.dir} directory.
@@ -166,10 +166,10 @@ norm.type <- "MaxNorm";
 positive <- "children";
 bottomup <- "threshold.free";
 topdown <- "HTD";
-rec.levels <- seq(from=0.1, to=1, by=0.1);
+recall.levels <- seq(from=0.25, to=1, by=0.25);
 Do.TPR.DAG(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
-parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, rec.levels=rec.levels, 
+parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, recall.levels=recall.levels, 
 flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
 ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 }

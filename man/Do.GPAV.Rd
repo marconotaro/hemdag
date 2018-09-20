@@ -6,7 +6,7 @@
 \usage{
 Do.GPAV(norm = TRUE, norm.type = NULL, W = NULL, parallel = FALSE,
   ncores = 1, folds = 5, seed = 23, n.round = 3, f.criterion = "F",
-  rec.levels = seq(from = 0.1, to = 1, by = 0.1), flat.file = flat.file,
+  recall.levels = seq(from = 0.1, to = 1, by = 0.1), flat.file = flat.file,
   ann.file = ann.file, dag.file = dag.file, flat.dir = flat.dir,
   ann.dir = ann.dir, dag.dir = dag.dir, hierScore.dir = hierScore.dir,
   perf.dir = perf.dir)
@@ -30,8 +30,8 @@ vector of the same length of the columns' number of the flat scores matrix (root
 
 \item{parallel}{boolean value:
 \itemize{
-\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}});
+\item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{GPAV.parallel}});
+\item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{GPAV.over.examples}});
 }}
 
 \item{ncores}{number of cores to use for parallel execution (\code{def. 8}). Set the parameter \code{ncores} to \code{1} if the
@@ -52,7 +52,7 @@ the best threshold on the basis of the best F-measure}
 \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
 }}
 
-\item{rec.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+\item{recall.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 the Precision at fixed Recall level (PXR)}
 
 \item{flat.file}{name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)}
@@ -80,13 +80,13 @@ Two \code{rda} files stored in the respective output directories:
 	\enumerate{
 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 	\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 }}
 It is stored in the \code{perf.dir} directory.
 }
 \description{
-High level function to correct the computed scores in a hierarchy according to the GPAV algorithm
+High level function to correct the computed scores in a hierarchy according to the \code{GPAV} algorithm
 }
 \details{
 The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
@@ -103,12 +103,12 @@ save(L, file=paste0(tmpdir,"labels.rda"));
 save(S, file=paste0(tmpdir,"scores.rda"));
 dag.dir <- flat.dir <- ann.dir <- tmpdir;
 hierScore.dir <- perf.dir <- tmpdir;
-rec.levels <- seq(from=0.1, to=1, by=0.1);
+recall.levels <- seq(from=0.25, to=1, by=0.25);
 dag.file <- "graph";
 flat.file <- "scores";
 ann.file <- "labels";
-Do.GPAV(norm=FALSE, norm.type= "MaxNorm", W=NULL, parallel=FALSE, ncores=1, folds=5, 
-seed=23, n.round=3, f.criterion ="F", rec.levels=rec.levels, flat.file=flat.file, 
+Do.GPAV(norm=FALSE, norm.type= "MaxNorm", W=NULL, parallel=FALSE, ncores=1, folds=NULL, 
+seed=23, n.round=3, f.criterion ="F", recall.levels=recall.levels, flat.file=flat.file, 
 ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, 
 dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 }

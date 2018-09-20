@@ -4,23 +4,24 @@
 \alias{do.edges.from.HPO.obo}
 \title{Parse an HPO OBO file}
 \usage{
-do.edges.from.HPO.obo(file = "hp.obo", output.file = "edge.file")
+do.edges.from.HPO.obo(obofile = "hp.obo", file = "edge.file")
 }
 \arguments{
-\item{file}{an HPO OBO file}
+\item{obofile}{an HPO OBO file. The extension of the obofile can be or plain format (".txt") or compressed (".gz").}
 
-\item{output.file}{name of the file of the edges to be written}
+\item{file}{name of the file of the edges to be written.
+The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
 a text file representing the edges in the format: source  destination (i.e. one row for each edge)
 }
 \description{
 Read an HPO OBO file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write 
-the edges of the DAG on a plain text file.The format of the file is a sequence of
+the edges of the DAG on a plain text file. The format of the file is a sequence of
 rows and each row corresponds to an edge represented through a pair of vertices separated by blanks
 }
 \examples{
 \dontrun{
 hpobo <- "http://purl.obolibrary.org/obo/hp.obo";
-do.edges.from.HPO.obo(file=hpobo, output.file="hp.edge");}
+do.edges.from.HPO.obo(obofile=hpobo, file="hp.edge");}
 }

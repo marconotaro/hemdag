@@ -64,7 +64,7 @@ a named matrix with the scores of the classes corrected according to the chosen 
 }
 \description{
 Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
-In their more general form the \code{TPR-DAG} algorithms adopt a two step learnig strategy:
+In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 \enumerate{
 \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
  across the hierarchy;

@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.utility.R
 \name{do.unstratified.cv.data}
 \alias{do.unstratified.cv.data}
-\title{Unstratified cross-validation}
+\title{Unstratified Cross Validation}
 \usage{
 do.unstratified.cv.data(S, kk = 5, seed = NULL)
 }
@@ -18,8 +18,8 @@ a list with \eqn{k=kk} components (folds). Each component of the list is a chara
 index of the rows of the matrix S
 }
 \description{
-This function splits a dataset in k-fold in an unstratified way (that is a fold may not have an equal amount of positive and 
-negative examples). This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where 
+This function splits a dataset in k-fold in an unstratified way, i.e. a fold does not contain an equal amount of positive and 
+negative examples. This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where 
 splitting dataset in a stratified way is not needed.
 }
 \examples{

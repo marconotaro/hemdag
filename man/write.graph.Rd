@@ -4,12 +4,12 @@
 \alias{write.graph}
 \title{Write a directed graph on file}
 \usage{
-write.graph(g, file = "graph.txt")
+write.graph(g, file = "graph.txt.gz")
 }
 \arguments{
 \item{g}{a graph of class \code{graphNEL}}
 
-\item{file}{name of the file to be written}
+\item{file}{name of the file to be written. The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
 a plain text file representing the graph. Each row corresponds to an edge represented through a pair of vertices separated by blanks
@@ -18,7 +18,8 @@ a plain text file representing the graph. Each row corresponds to an edge repres
 An object of class \code{graphNEL} is read and the graph is written on a plain text file as sequence of rows
 }
 \examples{
-\dontrun{
 data(graph);
-write.graph(g, file="graph.edges.txt");}
+tmpdir <- paste0(tempdir(),"/");
+file <- paste0(tmpdir,"graph.edges.txt.gz");
+write.graph(g, file=file);
 }

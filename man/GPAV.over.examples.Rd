@@ -15,10 +15,10 @@ GPAV.over.examples(S, g, W = NULL)
 \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included)}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the GPAV algorithm
+a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm
 }
 \description{
-Function to compute GPAV across all the examples
+Function to compute \code{GPAV} across all the examples
 }
 \examples{
 data(graph);

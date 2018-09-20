@@ -4,7 +4,7 @@
 \alias{specific.annotation.matrix}
 \title{HPO specific annotations matrix}
 \usage{
-specific.annotation.matrix(file = "gene2pheno.txt", genename = "TRUE")
+specific.annotation.matrix(file = "gene2pheno.txt.gz", genename = "TRUE")
 }
 \arguments{
 \item{file}{text file representing the most specific associations gene-HPO term \cr (\code{def: "gene2pheno.txt"}). 
@@ -27,10 +27,10 @@ Construct the labels matrix of the most specific HPO terms
 }
 \details{
 The input plain text file representing the most specific associations gene-HPO term can be obtained by forking the GitHub repositoty
-\href{https://github.com/gecko515/HPOparser}{HPOparser}, a collection of \code{Perl} subroutines to parse the HPO OBO file 
+\href{https://github.com/marconotaro/HPOparser}{HPOparser}, a collection of \code{Perl} subroutines to parse the HPO OBO file 
 and the HPO annotations file.
 }
 \examples{
-gene2pheno <- system.file("extdata/gene2pheno.txt", package="HEMDAG");
-spec.ann <- specific.annotation.matrix(gene2pheno, genename=TRUE);
+gene2pheno <- system.file("extdata/gene2pheno.txt.gz", package="HEMDAG");
+spec.ann <- specific.annotation.matrix(file=gene2pheno, genename=TRUE);
 }

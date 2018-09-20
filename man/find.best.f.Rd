@@ -4,16 +4,16 @@
 \alias{find.best.f}
 \title{Best hierarchical F-score}
 \usage{
-find.best.f(target, pred, n.round = 3, f.criterion = "F", verbose = TRUE,
-  b.per.example = FALSE)
+find.best.f(target, predicted, n.round = 3, f.criterion = "F",
+  verbose = TRUE, b.per.example = FALSE)
 }
 \arguments{
 \item{target}{matrix with the target multilabels: rows correspond to examples and columns to classes.
 \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise}
 
-\item{pred}{a numeric matrix with continuous predicted values (scores): rows correspond to examples and columns to classes}
+\item{predicted}{a numeric matrix with continuous predicted values (scores): rows correspond to examples and columns to classes}
 
-\item{n.round}{number of rounding digits to be applied to pred (\code{default=3})}
+\item{n.round}{number of rounding digits to be applied to predicted (\code{default=3})}
 
 \item{f.criterion}{character. Type of F-measure to be used to select the best F-score. There are two possibilities:
 \enumerate{
@@ -50,12 +50,12 @@ examples and T is the best selected threshold;
 Function to select the best hierarchical F-score by choosing an appropriate threshold in the scores
 }
 \details{
-All the examples having no positive annotations are discarded. The predicted scores matrix (\code{pred}) is rounded 
-according to parameter \code{n.round} and all the values of \code{pred} are divided by \code{max(pred)}.
-Then all the thresholds corresponding to all the different values included in \code{pred} are attempted, and the threshold 
+All the examples having no positive annotations are discarded. The predicted scores matrix (\code{predicted}) is rounded 
+according to parameter \code{n.round} and all the values of \code{predicted} are divided by \code{max(predicted)}.
+Then all the thresholds corresponding to all the different values included in \code{predicted} are attempted, and the threshold 
 leading to the maximum F-measure is selected.
 
-Names of rows and columns of \code{target} and \code{pred} matrix must be provided in the same order, otherwise a stop message is returned
+Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned
 }
 \examples{
 data(graph);
