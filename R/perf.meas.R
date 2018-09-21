@@ -12,14 +12,14 @@
 #' @details For all those classes having zero annotations, the AUPRC is set to 0. These classes are discarded in the computing of the AUPRC   
 #' averaged across classes, both when the AUPRC is computed one-shot or averaged across stratified folds.
 #' @details Names of rows and columns of \code{labels} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned
-#' @param folds number of folds on which computing the AUPRC. If \code{folds=NULL} (\code{def.}), the one-shot AUPRC is computed, 
+#' @param folds number of folds on which computing the AUPRC. If \code{folds=NULL} (\code{def.}), the AUPRC is computed one-shot, 
 #' otherwise the AUPRC is computed averaged across folds.
 #' @param seed initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
-#' If \code{seed}\eqn{\neq}\code{NULL} and \code{folds=NULL}, the AUPRC averaged across folds is computed without seed initialization.
-#' @param target vector of the true labels (0 negative, 1 positive examples)
-#' @param labels matrix with the target multilabels: rows correspond to examples and columns to classes. 
+#' If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUPRC averaged across folds is computed without seed initialization.
+#' @param labels vector of the true labels (0 negative, 1 positive examples)
+#' @param target matrix with the target multilabels: rows correspond to examples and columns to classes. 
 #' \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.
-#' @param pred a numeric vector of the values of the predicted labels (scores)
+#' @param scores a numeric vector of the values of the predicted labels (scores)
 #' @param predicted a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.
 #' @return \code{AUPRC.single.class} returns a numeric value corresponding to the AUPRC for the considered class;\cr
 #' \code{AUPR.single.over.classes} returns a list with two elements:
@@ -37,19 +37,19 @@
 #' S <- S[,-which(colnames(S)==root)];
 #' PRC.single.class <- AUPRC.single.class(L[,3], S[,3], folds=5, seed=23);
 #' PRC.over.classes <- AUPRC.single.over.classes(L, S, folds=5, seed=23);
-AUPRC.single.class <- function(target, pred, folds=NULL, seed=NULL){
-	if(is.matrix(target) || is.matrix(pred))
-		stop("target or pred must be a vector", call.=FALSE);
-	if(length(pred)!=length(target))
+AUPRC.single.class <- function(labels, scores, folds=NULL, seed=NULL){
+	if(is.matrix(labels) || is.matrix(scores))
+		stop("AUPRC.single.class: labels or scores must be a vector", call.=FALSE);
+	if(length(scores)!=length(labels))
 		stop("AUPRC.single.class: length of true and predicted labels does not match", call.=FALSE);
-	if(any((target!=0) & (target!=1)))
+	if(any((labels!=0) & (labels!=1)))
 		stop("AUPRC.single.class: labels variable must take values 0 or 1", call.=FALSE);
 	if(is.null(folds) && !is.null(seed))
 		seed <- NULL;
 	if(!is.null(folds) && is.null(seed))
-		warning("AUPRC.single.class: folds are generated without seed initialization", call.=FALSE);		
+		warning("AUPRC.single.class: folds are generated without seed initialization", call.=FALSE);
 	## degenerate case when all labels are equals
-	if((all(target==0)) || (all(target==1))){
+	if((all(labels==0)) || (all(labels==1))){
 		if(!is.null(folds)){
 			PRC.avg <- 0;
 			PRC.fold <- rep(0,folds);
@@ -64,8 +64,8 @@ AUPRC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 		seed <- NULL;
 	## compute PRC averaged across folds
 	if(!is.null(folds)){
-		indices <- 1:length(target);
-		positives <- which(target==1);
+		indices <- 1:length(labels);
+		positives <- which(labels==1);
 		foldIndex <- do.stratified.cv.data.single.class(indices, positives, kk=folds, seed=seed);
 		testIndex <- mapply(c, foldIndex$fold.positives, foldIndex$fold.negatives, SIMPLIFY=FALSE); ## index of examples used for test set..
 		fold.check <- unlist(lapply(testIndex,length));
@@ -73,13 +73,13 @@ AUPRC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 			stop("AUPRC.single.class: Number of folds selected too high: some folds have no examples. Please reduce the number of folds", call.=FALSE);
 		PRC.fold <- numeric(folds);
 		for(k in 1:folds){
-			target.test <- target[testIndex[[k]]];
-			pred.test <- pred[testIndex[[k]]];
-			if(sum(target.test) > 0){
-				if(all(target.test==0) || all(target.test==1)){ ## degenerate case when all labels in the k fold are equals 
+			labels.test <- labels[testIndex[[k]]];
+			scores.test <- scores[testIndex[[k]]];
+			if(sum(labels.test) > 0){
+				if(all(labels.test==0) || all(labels.test==1)){ ## degenerate case when all labels in the k fold are equals 
 					PRC.fold[k] <- 0;
 				}else{
-					res <- evalmod(scores=pred.test, labels=target.test);
+					res <- evalmod(scores=scores.test, labels=labels.test);
 					aucs <- auc(res);
 					prc <- subset(aucs, curvetypes=="PRC");
 					PRC.fold[k] <- prc$aucs;
@@ -99,7 +99,7 @@ AUPRC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 		return(PRC);
 	}
 	## compute PRC one-shoot
-	res <- evalmod(scores=pred, labels=target);
+	res <- evalmod(scores=scores, labels=labels);
 	aucs <- auc(res);
 	prc <- subset(aucs, curvetypes=="PRC");
 	PRC <- prc$aucs;
@@ -109,25 +109,25 @@ AUPRC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 
 #' @rdname AUPRC
 #' @export 
-AUPRC.single.over.classes <- function(labels, predicted, folds=NULL, seed=NULL){
-	if(!is.matrix(labels) || !is.matrix(predicted))
-		stop("AUPRC.single.over.classes: labels or predicted must be a matrix", call.=FALSE);
-	n.examples <- nrow(labels);
-	n.classes <- ncol(labels);
+AUPRC.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
+	if(!is.matrix(target) || !is.matrix(predicted))
+		stop("AUPRC.single.over.classes: target or predicted must be a matrix", call.=FALSE);
+	n.examples <- nrow(target);
+	n.classes <- ncol(target);
 	if((n.examples!=nrow(predicted)) || (n.classes!=ncol(predicted)))
-		stop ("AUPRC.single.over.classes: number of rows or columns do not match between labels and predicted classes", call.=FALSE);
-	if(any((labels!=0) & (labels!=1)))
-		stop("AUPRC.single.over.classes: labels variable must take values 0 or 1", call.=FALSE);
+		stop ("AUPRC.single.over.classes: number of rows or columns do not match between target and predicted classes", call.=FALSE);
+	if(any((target!=0) & (target!=1)))
+		stop("AUPRC.single.over.classes: target variable must take values 0 or 1", call.=FALSE);
 	if(is.null(folds) && !is.null(seed))
 		seed <- NULL;
-	if(any(colnames(labels)!=colnames(predicted)) || any(rownames(labels)!=rownames(predicted)))
-		stop("AUPRC.single.over.classes: rows or columns names of 'labels' and 'predicted' are not in the same order. They must be provided in the same order");
+	if(any(colnames(target)!=colnames(predicted)) || any(rownames(target)!=rownames(predicted)))
+		stop("AUPRC.single.over.classes: rows or columns names of 'target' and 'predicted' are not in the same order. They must be provided in the same order");
 	## AUPRC averaged across folds over classes
 	if(!is.null(folds)){
 		PRC.class <- rep(0,ncol(predicted));
 		names(PRC.class) <- colnames(predicted);
 		for(i in 1:ncol(predicted)){
-			PRC.class[i] <- AUPRC.single.class(labels[,i], predicted[,i], folds=folds, seed=seed)$average;
+			PRC.class[i] <- AUPRC.single.class(target[,i], predicted[,i], folds=folds, seed=seed)$average;
 		}
 		if(all(PRC.class==0)){
 			PRC.avg <- 0;
@@ -141,20 +141,20 @@ AUPRC.single.over.classes <- function(labels, predicted, folds=NULL, seed=NULL){
 	}
 	## AUPRC one-shot over classes
 	## if there are classes with zero annotations, we remove them..
-	labels.names <- colnames(labels);
-	class.ann <- apply(labels,2,sum);
+	target.names <- colnames(target);
+	class.ann <- apply(target,2,sum);
 	class.noann <- which(class.ann==0);
 	check <- length(class.noann)!=0;
-	check.degen <- length(class.noann)!=ncol(labels); ## degenerate case when all the classes have zero annotations
+	check.degen <- length(class.noann)!=ncol(target); ## degenerate case when all the classes have zero annotations
 	if(check & check.degen){
-		labels <- labels[,-class.noann];
+		target <- target[,-class.noann];
 		predicted <- predicted[,-class.noann];
 	}
-	## degenerate case when labels and predicted are vector: just one class has an annotation. Might happen in cross validation..
-	if(!is.matrix(labels)){
-		labels <- as.matrix(labels);
+	## degenerate case when target and predicted are vector: just one class has an annotation. Might happen in cross validation..
+	if(!is.matrix(target)){
+		target <- as.matrix(target);
 		selected <- which(class.ann==1);
-		colnames(labels) <- names(selected);
+		colnames(target) <- names(selected);
 	}
 	if(!is.matrix(predicted)){
 		predicted <- as.matrix(predicted);
@@ -165,13 +165,13 @@ AUPRC.single.over.classes <- function(labels, predicted, folds=NULL, seed=NULL){
 	PRC.class <- rep(0,ncol(predicted));
 	names(PRC.class) <- colnames(predicted);
 	for(i in 1:ncol(predicted)){
-		PRC.class[i] <- AUPRC.single.class(labels[,i], predicted[,i], folds=NULL, seed=NULL);
+		PRC.class[i] <- AUPRC.single.class(target[,i], predicted[,i], folds=NULL, seed=NULL);
 	}	
 	## if there are classes with zero annotations, set the prc of those classes to zero and restore the start classes order 
 	if(check & check.degen){
-		PRC.class <- PRC.class[labels.names];
+		PRC.class <- PRC.class[target.names];
 		PRC.class[is.na(PRC.class)] <- 0;
-		names(PRC.class) <- labels.names; 
+		names(PRC.class) <- target.names; 
 	}
 	if(all(PRC.class==0)){
 			PRC.avg <- 0;
@@ -196,14 +196,14 @@ AUPRC.single.over.classes <- function(labels, predicted, folds=NULL, seed=NULL){
 #' averaged across classes, both when the AUROC is computed one-shot or averaged across stratified folds.
 #' @details The AUROC is set to 0.5 to all those classes having zero annotations.
 #' Names of rows and columns of \code{labels} and \code{predicted} must be provided in the same order, otherwise a stop message is returned
-#' @param folds number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the one-shot AUROC is computed, 
+#' @param folds number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the AUROC is computed one-shot, 
 #' otherwise the AUROC is computed averaged across folds.
 #' @param seed initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
-#' If \code{seed}\eqn{\neq}\code{NULL} and \code{folds=NULL}, the AUROC averaged across folds is computed without seed initialization.
-#' @param target vector of the true labels (0 negative, 1 positive examples)
-#' @param labels matrix with the target multilabels: rows correspond to examples and columns to classes. 
+#' If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUROC averaged across folds is computed without seed initialization.
+#' @param labels vector of the true labels (0 negative, 1 positive examples)
+#' @param target matrix with the target multilabels: rows correspond to examples and columns to classes. 
 #' \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.
-#' @param pred a numeric vector of the values of the predicted labels (scores)
+#' @param scores a numeric vector of the values of the predicted labels (scores)
 #' @param predicted a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.
 #' @return \code{AUROC.single.class} returns a numeric value corresponding to the AUROC for the considered class;\cr
 #' \code{AUPR.single.over.classes} returns a list with two elements:
@@ -221,19 +221,19 @@ AUPRC.single.over.classes <- function(labels, predicted, folds=NULL, seed=NULL){
 #' S <- S[,-which(colnames(S)==root)];
 #' AUC.single.class <- AUROC.single.class(L[,3], S[,3], folds=5, seed=23);
 #' AUC.over.classes <- AUROC.single.over.classes(L, S, folds=5, seed=23);
-AUROC.single.class <- function(target, pred, folds=NULL, seed=NULL){
-	if(is.matrix(target) || is.matrix(pred))
-		stop("AUROC.single.class: target or pred must be a vector", call.=FALSE);
-	if(length(pred)!=length(target))
+AUROC.single.class <- function(labels, scores, folds=NULL, seed=NULL){
+	if(is.matrix(labels) || is.matrix(scores))
+		stop("AUROC.single.class: labels or scores must be a vector", call.=FALSE);
+	if(length(scores)!=length(labels))
 		stop("AUROC.single.class: length of true and predicted labels does not match.", call.=FALSE);
-	if(any((target!=0) & (target!=1)))
+	if(any((labels!=0) & (labels!=1)))
 		stop("AUROC.single.class: labels variable must take values 0 or 1", call.=FALSE);
 	if(is.null(folds) && !is.null(seed))
 		seed <- NULL;
 	if(!is.null(folds) && is.null(seed))
 		warning("AUROC.single.class: folds are generated without seed initialization", call.=FALSE);
 	## degenerate case when all labels are equals
-	if((all(target==0)) || (all(target==1))){
+	if((all(labels==0)) || (all(labels==1))){
 		if(!is.null(folds)){
 			AUC.avg <- 0.5;
 			AUC.fold <- rep(0.5,folds);
@@ -248,8 +248,8 @@ AUROC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 		seed <- NULL;
 	## compute AUC averaged across folds
 	if(!is.null(folds)){
-		indices <- 1:length(target);
-		positives <- which(target==1);
+		indices <- 1:length(labels);
+		positives <- which(labels==1);
 		foldIndex <- do.stratified.cv.data.single.class(indices, positives, kk=folds, seed=seed);
 		testIndex <- mapply(c, foldIndex$fold.positives, foldIndex$fold.negatives, SIMPLIFY=FALSE); ## index of examples used for test set..
 		fold.check <- unlist(lapply(testIndex,length));
@@ -257,13 +257,13 @@ AUROC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 			stop("AUROC.single.class: Number of folds selected too high: some folds have no examples. Please reduce the number of folds", call.=FALSE);
 		AUC.fold <- numeric(folds);
 		for(k in 1:folds){
-			target.test <- target[testIndex[[k]]];
-			pred.test <- pred[testIndex[[k]]];
-			if(sum(target.test) > 0){
-				if(all(target.test==0) || all(target.test==1)){ ## degenerate case when all labels in the k fold are equals 
+			labels.test <- labels[testIndex[[k]]];
+			scores.test <- scores[testIndex[[k]]];
+			if(sum(labels.test) > 0){
+				if(all(labels.test==0) || all(labels.test==1)){ ## degenerate case when all labels in the k fold are equals 
 					AUC.fold[k] <- 0.5;
 				}else{
-					res <- evalmod(scores=pred.test, labels=target.test);
+					res <- evalmod(scores=scores.test, labels=labels.test);
 					aucs <- auc(res);
 					auc <- subset(aucs, curvetypes=="ROC");
 					AUC.fold[k] <- auc$aucs;
@@ -277,7 +277,7 @@ AUROC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 		return(AUC);
 	}
 	## compute AUC one-shoot
-	res <- evalmod(scores=pred, labels=target);
+	res <- evalmod(scores=scores, labels=labels);
 	aucs <- auc(res);
 	prc <- subset(aucs, curvetypes=="ROC");
 	AUC <- prc$aucs;
@@ -287,45 +287,45 @@ AUROC.single.class <- function(target, pred, folds=NULL, seed=NULL){
 
 #' @rdname AUROC
 #' @export 
-AUROC.single.over.classes <- function(labels, predicted, folds=NULL, seed=NULL){
-	if(!is.matrix(labels) || !is.matrix(predicted))
-		stop("AUROC.single.over.classes: labels or predicted must be a matrix", call.=FALSE);
-	n.examples <- nrow(labels);
-	n.classes <- ncol(labels);
+AUROC.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
+	if(!is.matrix(target) || !is.matrix(predicted))
+		stop("AUROC.single.over.classes: target or predicted must be a matrix", call.=FALSE);
+	n.examples <- nrow(target);
+	n.classes <- ncol(target);
 	if((n.examples!=nrow(predicted)) || (n.classes!=ncol(predicted)))
-		stop ("AUROC.single.over.classes: number of rows or columns do not match between labels and predicted classes", call.=FALSE);
-	if(any((labels!=0) & (labels!=1)))
-		stop("AUROC.single.over.classes: labels variable must take values 0 or 1", call.=FALSE);
+		stop ("AUROC.single.over.classes: number of rows or columns do not match between target and predicted classes", call.=FALSE);
+	if(any((target!=0) & (target!=1)))
+		stop("AUROC.single.over.classes: target variable must take values 0 or 1", call.=FALSE);
 	if(is.null(folds) && !is.null(seed))
 		seed <- NULL;
-	if(any(colnames(labels)!=colnames(predicted)) || any(rownames(labels)!=rownames(predicted)))
-		stop("AUROC.single.over.classes: rows or columns names of 'labels' and 'predicted' are not in the same order. They must be provided in the same order");
+	if(any(colnames(target)!=colnames(predicted)) || any(rownames(target)!=rownames(predicted)))
+		stop("AUROC.single.over.classes: rows or columns names of 'target' and 'predicted' are not in the same order. They must be provided in the same order");
 	## AUROC averaged across folds over classes	
 	if(!is.null(folds)){
 		AUC.class <- rep(0,ncol(predicted));
 		names(AUC.class) <- colnames(predicted);
 		for(i in 1:ncol(predicted)){
-			AUC.class[i] <- AUROC.single.class(labels[,i], predicted[,i], folds=folds, seed=seed)$average; 
+			AUC.class[i] <- AUROC.single.class(target[,i], predicted[,i], folds=folds, seed=seed)$average; 
 		}
 		AUC.avg <- mean(AUC.class);
 		AUC.res <- list(average=AUC.avg, per.class=AUC.class); 
 		return(AUC.res);
 	}
 	## if there are classes with zero annotations, we remove them..
-	labels.names <- colnames(labels);
-	class.ann <- apply(labels,2,sum);
+	target.names <- colnames(target);
+	class.ann <- apply(target,2,sum);
 	class.noann <- which(class.ann==0);
 	check <- length(class.noann)!=0;
-	check.degen <- length(class.noann)!=ncol(labels); ## degenerate case when all the classes have zero annotation
+	check.degen <- length(class.noann)!=ncol(target); ## degenerate case when all the classes have zero annotation
 	if(check & check.degen){
-		labels <- labels[,-class.noann];
+		target <- target[,-class.noann];
 		predicted <- predicted[,-class.noann];
 	}
-	## degenerate case when labels and predicted are vector: just one class have an annotation. May happen in cross validation..
-	if(!is.matrix(labels)){
-		labels <- as.matrix(labels);
+	## degenerate case when target and predicted are vector: just one class have an annotation. May happen in cross validation..
+	if(!is.matrix(target)){
+		target <- as.matrix(target);
 		selected <- which(class.ann==1)
-		colnames(labels) <- names(selected);
+		colnames(target) <- names(selected);
 	}
 	if(!is.matrix(predicted)){
 		predicted <- as.matrix(predicted);
@@ -336,13 +336,13 @@ AUROC.single.over.classes <- function(labels, predicted, folds=NULL, seed=NULL){
 	AUC.class <- rep(0,ncol(predicted));
 	names(AUC.class) <- colnames(predicted);
 	for(i in 1:ncol(predicted)){
-		AUC.class[i] <- AUROC.single.class(labels[,i],predicted[,i], folds=NULL, seed=NULL); 
+		AUC.class[i] <- AUROC.single.class(target[,i],predicted[,i], folds=NULL, seed=NULL); 
 	}
 	## if there are classes with zero annotations, set the AUC of those classes to zero and restore the start classes order 
 	if(check & check.degen){
-		AUC.class <- AUC.class[labels.names];
+		AUC.class <- AUC.class[target.names];
 		AUC.class[is.na(AUC.class)] <- 0.5;
-		names(AUC.class) <- labels.names; 
+		names(AUC.class) <- target.names; 
 	}
 	## saving AUC result in the same format of package PerfMeas
 	AUC.avg <- mean(AUC.class);
@@ -474,15 +474,15 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
 
 #' @title Best hierarchical F-score 
 #' @description Function to select the best hierarchical F-score by choosing an appropriate threshold in the scores
-#' @details All the examples having no positive annotations are discarded. The predicted scores matrix (\code{pred}) is rounded 
-#' according to parameter \code{n.round} and all the values of \code{pred} are divided by \code{max(pred)}.
-#' Then all the thresholds corresponding to all the different values included in \code{pred} are attempted, and the threshold 
+#' @details All the examples having no positive annotations are discarded. The predicted scores matrix (\code{predicted}) is rounded 
+#' according to parameter \code{n.round} and all the values of \code{predicted} are divided by \code{max(predicted)}.
+#' Then all the thresholds corresponding to all the different values included in \code{predicted} are attempted, and the threshold 
 #' leading to the maximum F-measure is selected.
-#' @details Names of rows and columns of \code{target} and \code{pred} matrix must be provided in the same order, otherwise a stop message is returned
+#' @details Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned
 #' @param target matrix with the target multilabels: rows correspond to examples and columns to classes.
 #' \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise
-#' @param pred a numeric matrix with continuous predicted values (scores): rows correspond to examples and columns to classes
-#' @param n.round number of rounding digits to be applied to pred (\code{default=3})
+#' @param predicted a numeric matrix with continuous predicted values (scores): rows correspond to examples and columns to classes
+#' @param n.round number of rounding digits to be applied to predicted (\code{default=3})
 #' @param f.criterion character. Type of F-measure to be used to select the best F-score. There are two possibilities:
 #' \enumerate{
 #'	\item \code{F} (def.) corresponds to the harmonic mean between the average precision and recall;
@@ -518,17 +518,17 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
 #' L <- L[,-which(colnames(L)==root)];
 #' S <- S[,-which(colnames(S)==root)];
 #' FMM <- find.best.f(L, S, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=TRUE);
-find.best.f <- function(target, pred, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=FALSE){
-	if(!is.matrix(target) || !is.matrix(pred))
-		stop("find.best.f: target or pred must be a matrix", call.=FALSE);
+find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=FALSE){
+	if(!is.matrix(target) || !is.matrix(predicted))
+		stop("find.best.f: target or predicted must be a matrix", call.=FALSE);
 	n.examples <- nrow(target);
 	n.classes <- ncol(target);
-	if((n.examples!=nrow(pred)) || (n.classes!=ncol(pred)))
+	if((n.examples!=nrow(predicted)) || (n.classes!=ncol(predicted)))
 		stop("find.best.f: number of rows or columns do not match between target and predicted classes", call.=FALSE);
 	if(any((target!=0) & (target!=1)))
 		stop("find.best.f: labels variable must take values 0 or 1", call.=FALSE);
-	if(any(colnames(target)!=colnames(pred)) || any(rownames(target)!=rownames(pred)))
-		stop("find.best.f: rows or columns names of 'target' and 'pred' are not in the same order. They must be provided in the same order");
+	if(any(colnames(target)!=colnames(predicted)) || any(rownames(target)!=rownames(predicted)))
+		stop("find.best.f: rows or columns names of 'target' and 'predicted' are not in the same order. They must be provided in the same order");
 
 	x <- apply(target,1,sum);
 	selected <- which(x>0);
@@ -542,25 +542,25 @@ find.best.f <- function(target, pred, n.round=3, f.criterion="F", verbose=TRUE, 
 		target <- t(as.matrix(target));
 		rownames(target) <- names(selected);
 	}
-	pred <- pred[selected,];
-	## degenerate case when pred is a vector (just one annotated gene)
-	if(!is.matrix(pred)){
-		pred <- t(as.matrix(pred));
-		rownames(pred) <- names(selected);
+	predicted <- predicted[selected,];
+	## degenerate case when predicted is a vector (just one annotated gene)
+	if(!is.matrix(predicted)){
+		predicted <- t(as.matrix(predicted));
+		rownames(predicted) <- names(selected);
 	}
-	pred <- pred/max(pred);
-	pred <- round(pred,n.round);
-	n.examples <- nrow(pred);
-	n.classes <- ncol(pred);
+	predicted <- predicted/max(predicted);
+	predicted <- round(predicted,n.round);
+	n.examples <- nrow(predicted);
+	n.classes <- ncol(predicted);
 
-	thresh <- unique(as.numeric(pred));
+	thresh <- unique(as.numeric(predicted));
 	thresh <- sort(thresh);
 	best.res <- best <- best.thresh <- 0;
 	i <- 0;
 	for(t in thresh){
-		pred.labels <- matrix(numeric(n.examples*n.classes), nrow=n.examples);
-		pred.labels[pred>=t] <- 1;
-		res <- F.measure.multilabel(target, pred.labels, b.per.example);
+		predicted.labels <- matrix(numeric(n.examples*n.classes), nrow=n.examples);
+		predicted.labels[predicted>=t] <- 1;
+		res <- F.measure.multilabel(target, predicted.labels, b.per.example);
 		if(res$average[f.criterion] > best){
 			best <- res$average[f.criterion];
 			best.res <- res;  
@@ -589,11 +589,11 @@ find.best.f <- function(target, pred, n.round=3, f.criterion="F", verbose=TRUE, 
 #' @name FMM
 #' @title Compute Multilabel F-measure
 #' @description Function to compute the best hierarchical F-score either one-shot or averaged across folds
-#' @details Names of rows and columns of \code{target} and \code{pred} matrix must be provided in the same order, otherwise a stop message is returned
+#' @details Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned
 #' @param target matrix with the target multilabels: rows correspond to examples and columns to classes.
 #' \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise
-#' @param pred a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes
-#' @param n.round number of rounding digits to be applied to pred (\code{default=3})
+#' @param predicted a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes
+#' @param n.round number of rounding digits to be applied to predicted (\code{default=3})
 #' @param f.criterion character. Type of F-measure to be used to select the best F-score. There are two possibilities:
 #' \enumerate{
 #'	\item \code{F} (def.) corresponds to the harmonic mean between the average precision and recall;
@@ -605,10 +605,10 @@ find.best.f <- function(target, pred, n.round=3, f.criterion="F", verbose=TRUE, 
 #'	\item \code{TRUE}: results are returned for each example;
 #'	\item \code{FALSE}: only the average results are returned
 #' }
-#' @param folds number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the one-shot AUROC is computed, 
+#' @param folds number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the AUROC is computed one-shot, 
 #' otherwise the AUROC is computed averaged across folds.
 #' @param seed initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
-#' If \code{seed}\eqn{\neq}\code{NULL} and \code{folds=NULL}, the AUROC averaged across folds is computed without seed initialization.
+#' If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUROC averaged across folds is computed without seed initialization.
 #' @return Two different outputs respect to the input parameter \code{b.per.example}:
 #' \itemize{
 #'	\item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms 
@@ -634,12 +634,12 @@ find.best.f <- function(target, pred, n.round=3, f.criterion="F", verbose=TRUE, 
 #' S <- S[,-which(colnames(S)==root)];
 #' FMM <- compute.Fmeasure.multilabel(L, S, n.round=3, f.criterion="F", verbose=TRUE, 
 #' b.per.example=TRUE, folds=5, seed=23);
-compute.Fmeasure.multilabel <- function(target, pred, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=FALSE, folds=NULL, seed=NULL){
-	if(!is.matrix(target) || !is.matrix(pred))
-		stop("compute.Fmeasure.multilabel: target or pred must be a matrix", call.=FALSE);
+compute.Fmeasure.multilabel <- function(target, predicted, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=FALSE, folds=NULL, seed=NULL){
+	if(!is.matrix(target) || !is.matrix(predicted))
+		stop("compute.Fmeasure.multilabel: target or predicted must be a matrix", call.=FALSE);
 	n.examples <- nrow(target);
 	n.classes <- ncol(target);
-	if((n.examples!=nrow(pred)) || (n.classes!=ncol(pred)))
+	if((n.examples!=nrow(predicted)) || (n.classes!=ncol(predicted)))
 		stop("compute.Fmeasure.multilabel: number of rows or columns do not match between target and predicted classes", call.=FALSE);
 	if(any((target!=0) & (target!=1)))
 		stop("compute.Fmeasure.multilabel: labels variable must take values 0 or 1", call.=FALSE);
@@ -647,15 +647,15 @@ compute.Fmeasure.multilabel <- function(target, pred, n.round=3, f.criterion="F"
 		seed <- NULL;
 	if(!is.null(folds) && is.null(seed))
 		warning("compute.Fmeasure.multilabel: folds are generated without seed initialization", call.=FALSE);
-	if(any(colnames(target)!=colnames(pred)) || any(rownames(target)!=rownames(pred)))
-		stop("compute.Fmeasure.multilabel: rows or columns names of 'target' and 'pred' are not in the same order. They must be provided in the same order");
+	if(any(colnames(target)!=colnames(predicted)) || any(rownames(target)!=rownames(predicted)))
+		stop("compute.Fmeasure.multilabel: rows or columns names of 'target' and 'predicted' are not in the same order. They must be provided in the same order");
 	## FMM averaged across folds 
 	if(!is.null(folds)){
-		testIndex <- do.unstratified.cv.data(pred, kk=folds, seed=seed);
+		testIndex <- do.unstratified.cv.data(predicted, kk=folds, seed=seed);
 		avg.res.list <- list();
 		res.per.example <- c();
 		for(k in 1:folds){
-			fold.res <- find.best.f(target[testIndex[[k]],], pred[testIndex[[k]],], n.round=n.round, f.criterion=f.criterion, 
+			fold.res <- find.best.f(target[testIndex[[k]],], predicted[testIndex[[k]],], n.round=n.round, f.criterion=f.criterion, 
 				verbose=verbose, b.per.example=b.per.example);
 			avg.res.list[[k]] <- fold.res$average;
 			res.per.example <- rbind(res.per.example, fold.res$per.example);
@@ -681,29 +681,34 @@ compute.Fmeasure.multilabel <- function(target, pred, n.round=3, f.criterion="F"
 		}		
 	}
 	## FMM one-shot
-	res <- find.best.f(target=target, pred=pred, n.round=n.round, f.criterion=f.criterion, 
+	res <- find.best.f(target=target, predicted=predicted, n.round=n.round, f.criterion=f.criterion, 
 		verbose=verbose, b.per.example=b.per.example);
 	return(res);
 }
 
 #' @name PXR
-#' @title Precision at fixed Recall level
-#' @description Function to compute the Precision at fixed Recall levels (PXR) over classes through \pkg{PerfMeas} package
-#' @details The PXR across all classes is computed either one-shot or averaged across stratified folds.
-#' @details Function to compute the precision at fixed recall levels across all classes either one-shot or averaged across stratified folds
-#' @details Names of rows and columns of \code{target} and \code{pred} matrix must be provided in the same order, otherwise a stop message is returned
+#' @aliases precision.at.all.recall.levels.single.class
+#' @aliases precision.at.given.recall.levels.over.classes
+#' @title Precision-Recall Measure
+#' @description Functions to compute the Precision-Recall (PXR) values through \pkg{precrec} package
+#' @details \code{precision.at.all.recall.levels.single.class} computes the precision at all recall levels just for a single class.
+#' @details \code{precision.at.given.recall.levels.over.classes} computes the precision at fixed recall levels over classes
+#' @param labels vector of the true labels (0 negative, 1 positive examples)
 #' @param target matrix with the target multilabels: rows correspond to examples and columns to classes. 
 #' \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.
-#' @param pred a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.
-#' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1})
-#' @param folds number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the one-shot AUROC is computed, 
-#' otherwise the AUROC is computed averaged across folds.
+#' @param scores a numeric vector of the values of the predicted labels (scores)
+#' @param predicted a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes
+#' @param folds number of folds on which computing the PXR. If \code{folds=NULL} (\code{def.}), the PXR is computed one-shot, 
+#' otherwise the PXR is computed averaged across folds.
 #' @param seed initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
-#' If \code{seed}\eqn{\neq}\code{NULL} and \code{folds=NULL}, the AUROC averaged across folds is computed without seed initialization.
-#' @return a list with two elements:
+#' If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the PXR averaged across folds is computed without seed initialization.
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1})
+#' @return \code{precision.at.all.recall.levels.single.class} returns a two-columns matrix, representing a pair of precision and recall values. 
+#' The first column is the precision, the second the recall;\cr
+#' \code{precision.at.given.recall.levels.over.classes} returns a list with two elements:
 #' \enumerate{
-#' \item average: a vector with the the average precisions at different recall levels across classes
-#' \item per.class: a matrix with the precisions at different recall levels: rows are classes, columns precisions at different recall level
+#' \item avgPXR: a vector with the the average precisions at different recall levels across classes
+#' \item PXR: a matrix with the precisions at different recall levels: rows are classes, columns precisions at different recall levels
 #' }
 #' @export
 #' @examples
@@ -713,46 +718,123 @@ compute.Fmeasure.multilabel <- function(target, pred, n.round=3, f.criterion="F"
 #' root <- root.node(g);
 #' L <- L[,-which(colnames(L)==root)];
 #' S <- S[,-which(colnames(S)==root)];
-#' rec.levels <- seq(from=0.1, to=1, by=0.1);
-#' PXR <- PXR.at.multiple.recall.levels.over.classes(L, S, rec.levels=rec.levels, folds=5, seed=23);
-PXR.at.multiple.recall.levels.over.classes <- function(target, pred, rec.levels=seq(from=0.1, to=1, by=0.1), folds=NULL, seed=NULL){
-	if(!is.matrix(target) || !is.matrix(pred))
-		stop("PXR.at.multiple.recall.levels.over.classes: target or pred must be a matrix", call.=FALSE);	
+#' labels <- L[,1];
+#' scores <- S[,1];
+#' rec.levels <- seq(from=0.25, to=1, by=0.25);
+#' PXR.single <- precision.at.all.recall.levels.single.class(labels, scores);
+#' PXR <- precision.at.given.recall.levels.over.classes(L, S, folds=5, seed=23, 
+#' 		  recall.levels=rec.levels);
+precision.at.all.recall.levels.single.class <- function(labels, scores){
+	if(is.matrix(labels) || is.matrix(scores))
+		stop("labels or scores must be a vector", call.=FALSE);
+	if(length(scores)!=length(labels))
+		stop("precision.at.all.recall.levels.single.class: length of true and predicted labels does not match", call.=FALSE);
+	if(any((labels!=0) & (labels!=1)))
+		stop("precision.at.all.recall.levels.single.class: labels variable must take values 0 or 1", call.=FALSE);
+	res <- evalmod(mode="basic", labels=labels, scores=scores);
+	df <- data.frame(res);
+	precision <- subset(df, df$type=="precision")$y;
+	recall <- subset(df, df$type=="sensitivity")$y;
+	PXR <- cbind(precision=precision, recall=recall);
+	return(PXR); 
+}
+
+#' @rdname PXR
+#' @export 
+precision.at.given.recall.levels.over.classes <- function(target, predicted, folds=NULL, seed=NULL, recall.levels=seq(from=0.1, to=1, by=0.1)){
+	if(!is.matrix(target) || !is.matrix(predicted))
+		stop("precision.at.given.recall.levels.over.classes: target or predicted must be a matrix", call.=FALSE);
 	n.examples <- nrow(target);
 	n.classes <- ncol(target);
-	if((n.examples!=nrow(pred)) || (n.classes!=ncol(pred)))
-		stop("PXR.at.multiple.recall.levels.over.classes: number of rows or columns do not match between target and predicted classes", call.=FALSE);
+	if((n.examples!=nrow(predicted)) || (n.classes!=ncol(predicted)))
+		stop ("precision.at.given.recall.levels.over.classes: number of rows or columns do not match between target and predicted classes", call.=FALSE);
 	if(any((target!=0) & (target!=1)))
-		stop("PXR.at.multiple.recall.levels.over.classes: labels variable must take values 0 or 1", call.=FALSE);
+		stop("precision.at.given.recall.levels.over.classes: target variable must take values 0 or 1", call.=FALSE);
 	if(is.null(folds) && !is.null(seed))
 		seed <- NULL;
 	if(!is.null(folds) && is.null(seed))
-		warning("PXR.at.multiple.recall.levels.over.classes: folds are generated without seed initialization", call.=FALSE);
-	if(any(colnames(target)!=colnames(pred)) || any(rownames(target)!=rownames(pred)))
-		stop("PXR.at.multiple.recall.levels.over.classes: rows or columns names of 'target' and 'pred' are not in the same order. 
-			They must be provided in the same order");
-	## PXR averaged across folds
+		warning("precision.at.given.recall.levels.over.classes: folds are generated without seed initialization", call.=FALSE);
+	n.classes <- ncol(predicted);
+	classes.names <- colnames(predicted);
+	len.level <- length(recall.levels);	
+	PXR <- c();
+	## PXR cross-validated 
 	if(!is.null(folds)){
-		PXR <- c();
-		for(i in 1:ncol(target)){
-			y.target <- target[,i];
-			indices <- 1:length(y.target);
-			positives <- which(y.target==1);
-			foldIndex <- do.stratified.cv.data.single.class(indices, positives, kk=folds, seed=seed);
-			testIndex <- mapply(c, foldIndex$fold.positives, foldIndex$fold.negatives, SIMPLIFY=FALSE);
-			fold.pxr <- list();
-			for(k in 1:folds){
-				fold.pxr[[k]] <- precision.at.multiple.recall.level(pred[testIndex[[k]]], target[testIndex[[k]]], rec.levels=rec.levels)$precision;
+		for(i in 1:n.classes){
+			labels <- target[,i];
+			scores <- predicted[,i];
+			df <- create.stratified.fold.df(labels=labels, scores=scores, folds=folds, seed=seed);
+			nfold <- format_nfold(nfold_df=df,  score_cols="scores", lab_col="labels", fold_col="folds");
+			prec2rec <- c(); ## storing the higher precisions at fixed recall level in the k_th fold
+			pxr.fold <- c(); ## storing the higher precisions at fixed recall level average across the k_th folds
+			if(sum(labels)<folds){
+				for(k in 1:folds){
+					for(j in 1:len.level){
+						if(sum(nfold$labels[[k]]%in%2)==0){							
+							prec2rec[j] <- 0;							
+						}else{										
+							res <- evalmod(mode="basic", scores=nfold$scores[k], labels=nfold$labels[k], modnames="m1", dsids=k);				
+							df <- data.frame(res);
+							precision <- subset(df, df$type=="precision")$y;
+							recall <- subset(df, df$type=="sensitivity")$y;	
+							## we take the higher precision value at the given recall level. NB: recall is monotone...
+							prec2rec[j] <- precision[which(recall - recall.levels[j]>=0)[1]];							
+						}								
+					}
+					pxr.fold <- c(pxr.fold, prec2rec);	
+				}
+				if(all(pxr.fold==0)){
+					prec2rec <- rep(0,len.level);
+				}else{
+					for(j in 1:len.level){
+						tmp <- pxr.fold[seq(j,len.level*folds,len.level)];						
+						if(all(tmp==0)){
+							prec2rec[j] <- 0;
+						}else{
+							prec2rec[j] <- mean(tmp[which(tmp!=0)]);
+						}						
+					}
+				}
+			}else{
+				for(j in 1:len.level){
+					res <- evalmod(mode="basic", scores=nfold$scores, labels=nfold$labels, modnames="m1", dsids=1:folds);
+					df <- data.frame(res);
+					precision <- subset(df, df$type=="precision")$y;
+					recall <- subset(df, df$type=="sensitivity")$y;	
+					## we take the higher precision at the given recall level. NB: recall is monotone...
+					prec2rec[j] <- precision[which(recall - recall.levels[j]>=0)[1]];
+				}
 			}
-			PXR <- rbind(PXR, Reduce("+", fold.pxr)/folds);
-			rownames(PXR)[i] <- colnames(target)[i];
-		}
-		avgPXR <- apply(PXR,2,mean);
+			PXR <- rbind(PXR, prec2rec);
+		}		
+		dimnames(PXR) <- list(classes.names, recall.levels);
+		avgPXR <- apply(PXR, 2, mean);
+		names(avgPXR) <- recall.levels;
 		res <- list(avgPXR=avgPXR, PXR=PXR);
 		return(res);
 	}
-	## PXR one-shot
-	res <- precision.at.multiple.recall.level.over.classes(target=target, predicted=pred, rec.levels=rec.levels);
+	# PXR one-shot
+	for(i in 1:n.classes){
+		labels <- target[,i];
+		scores <- predicted[,i];
+		prec2rec <- c();
+		if(sum(labels)==0){
+			prec2rec <- rep(0,len.level);
+		}else{
+			for(j in 1:len.level){
+				res <- evalmod(mode="basic", labels=labels, scores=scores);
+				df <- data.frame(res);
+				precision <- subset(df, df$type=="precision")$y;
+				recall <- subset(df, df$type=="sensitivity")$y;	
+				## we take the higher precision value at the given recall level. NB: recall is monotone...
+				prec2rec[j] <- precision[which(recall - recall.levels[j]>=0)[1]];
+			}
+		}
+		PXR <- rbind(PXR, prec2rec);	
+	}
+	dimnames(PXR) <- list(classes.names, recall.levels);
+	avgPXR <- apply(PXR, 2, mean);
+	names(avgPXR) <- recall.levels;
+	res <- list(avgPXR=avgPXR, PXR=PXR);
 	return(res);
 }
-

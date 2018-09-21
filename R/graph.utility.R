@@ -430,32 +430,29 @@ constraints.matrix <- function(g){
 #' @description Construct a Weighted Adjacency Matrix (wadj matrix) of a graph
 #' @param file name of the plain text file to be read (\code{def. edges}). The format of the file is a sequence of rows. 
 #' Each row corresponds to an edge represented through a pair of vertices separated by blanks and the weight of the edges.\cr
-#' For instance: \code{nodeX nodeY score}
-#' @param compressed boolean value:
-#' \itemize{
-#'	\item TRUE (def.): the input file must be in a .gz compressed format;
-#'	\item FALSE: the input file must be in a plain text format;
-#' }
+#' For instance: \code{nodeX nodeY score}.
+#' The file extension can be or plain format (".txt") or compressed (".gz").
 #' @param nodename boolean value:
 #' \itemize{
 #' 	\item TRUE (def.): the names of nodes are gene symbol (i.e. characters);
 #' 	\item FALSE: the names of the nodes are entrez gene ID (i.e. integer numbers);
 #' }
-#' @details The input paramenter nodename sorts the row names of the wadj matrix in increasing order if they are integer number or 
+#' @details The input parameter nodename sorts the row names of the wadj matrix in increasing order if they are integer number or 
 #' in alphabetic order if they are characters.
 #' @return a named symmetric weighted adjacency matrix of the graph
 #' @export
 #' @examples
-#' edges <- system.file("extdata/edges.txt", package="HEMDAG");
-#' W <- weighted.adjacency.matrix(file=edges, compressed=FALSE, nodename=TRUE);
-weighted.adjacency.matrix <- function(file="edges.txt", compressed=TRUE, nodename=TRUE){
-	if(compressed){
+#' edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");
+#' W <- weighted.adjacency.matrix(file=edges, nodename=TRUE);
+weighted.adjacency.matrix <- function(file="edges.txt", nodename=TRUE){
+	tmp <- strsplit(file, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
 		m <- read.table(gzfile(file), colClasses="character", stringsAsFactors=FALSE);
 	}else{
 		m <- as.matrix(read.table(file, colClasses="character", stringsAsFactors=FALSE));
 	}
 	if(nodename){
-		nodes <- sort(unique(as.vector(as.matrix(m[,1:2])))); ##NB:df must be converted as matrix to make as.vector workig..
+		nodes <- sort(unique(as.vector(as.matrix(m[,1:2])))); ##NB:df must be converted as matrix to make as.vector working..
 	}else{
 		nodes <- as.character(sort(as.numeric(unique(as.vector(m[,1:2]))))); 
 	}
@@ -472,30 +469,26 @@ weighted.adjacency.matrix <- function(file="edges.txt", compressed=TRUE, nodenam
 #' @description Trasform a Weighted Adjacency Matrix (wadj matrix) of a graph in a tupla, i.e. as a sequences of rows separated by 
 #' blank and the weight of the edges, e.g \code{nodeX nodeY score}
 #' @param m a weighetd adjacency matrix of the graph. Rows and columns are examples. It must be a square named matrix.
-#' @param compressed boolean value:
-#' \itemize{
-#'	\item TRUE (def.): the output file will be a \code{gz} compressed format;
-#'	\item FALSE: the output file will be a plain \code{text} format;
-#' }
-#' @param output.file name of the file of the  to be written
+#' @param output.file name of the file of the  to be written.
+#' The extension of the file can be or plain format (".txt") or compressed (".gz").
 #' @details Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded. 
 #' In other words in the \code{output.file} are reported only those nodes having a weight different from zero 
-#' @return if \code{compressed=TRUE} the weighted adjacency matrix as tupla is stored in a compressed \code{gz}, 
-#' otherwise (\code{compressed=FALSE}) it is stored in a plain \code{text} file. 
+#' @return the weighted adjacency matrix as tupla is stored in the output.file 
 #' @export
 #' @examples
 #' \dontrun{
 #' data(wadj);
-#' tupla.matrix(W,compressed=TRUE, output.file="tupla.wadj.gz");
-#' tupla.matrix(W,compressed=FALSE, output.file="tupla.wadj.txt");}
-tupla.matrix <- function(m, compressed=TRUE, output.file="net.file.gz"){
+#' tupla.matrix(W, output.file="tupla.wadj.gz");
+#' tupla.matrix(W, output.file="tupla.wadj.txt");}
+tupla.matrix <- function(m, output.file="net.file.gz"){
 	im <- which(m!=0, arr.ind=TRUE);
 	rows <- rownames(im);
 	colrep.names <- intersect(colnames(m), rownames(im));
 	colrep.times <- table(im[,2])
 	cols <- rep(colrep.names, times=colrep.times);
 	df <- data.frame(row=rows, col=cols, score=m[im]);
-	if(compressed){
+	tmp <- strsplit(output.file, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
 		write.table(df, file=gzfile(output.file), quote=FALSE, row.names=FALSE, col.names=FALSE);
 	}else{
 		write.table(df, file=output.file, quote=FALSE, row.names=FALSE, col.names=FALSE);
@@ -505,7 +498,7 @@ tupla.matrix <- function(m, compressed=TRUE, output.file="net.file.gz"){
 #' @title HPO specific annotations matrix
 #' @description Construct the labels matrix of the most specific HPO terms
 #' @details The input plain text file representing the most specific associations gene-HPO term can be obtained by forking the GitHub repositoty
-#' \href{https://github.com/gecko515/HPOparser}{HPOparser}, a collection of \code{Perl} subroutines to parse the HPO OBO file 
+#' \href{https://github.com/marconotaro/HPOparser}{HPOparser}, a collection of \code{Perl} subroutines to parse the HPO OBO file 
 #' and the HPO annotations file.
 #' @param file text file representing the most specific associations gene-HPO term \cr (\code{def: "gene2pheno.txt"}). 
 #' The file must be written as sequence of rows. Each row represents a gene and all its
@@ -520,10 +513,16 @@ tupla.matrix <- function(m, compressed=TRUE, output.file="net.file.gz"){
 #' Let's denote \eqn{M} the labels matrix. If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
 #' @export
 #' @examples
-#' gene2pheno <- system.file("extdata/gene2pheno.txt", package="HEMDAG");
-#' spec.ann <- specific.annotation.matrix(gene2pheno, genename=TRUE);
-specific.annotation.matrix <- function(file="gene2pheno.txt", genename="TRUE"){
-	line <- readLines(file);
+#' gene2pheno <- system.file("extdata/gene2pheno.txt.gz", package="HEMDAG");
+#' spec.ann <- specific.annotation.matrix(file=gene2pheno, genename=TRUE);
+specific.annotation.matrix <- function(file="gene2pheno.txt.gz", genename="TRUE"){
+	tmp <- strsplit(file, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
+		con <- gzfile(file);
+		line <- readLines(con);
+	}else{
+		line <- readLines(file);
+	}
 	tmp <- strsplit(line, split="[ +\t]");
 
 	gene.names <- c();
@@ -552,7 +551,6 @@ specific.annotation.matrix <- function(file="gene2pheno.txt", genename="TRUE"){
 		rname <- as.character(sort(as.numeric(gene.names)));
 		m <- m[rname, sort(colnames(m))];
 	}
-
 	return(m);
 }
 
@@ -947,9 +945,9 @@ check.hierarchy <- function(S.hier,g, root="00"){
 	return(l);
 }
 
-#' @title Unstratified cross-validation
-#' @description This function splits a dataset in k-fold in an unstratified way (that is a fold may not have an equal amount of positive and 
-#' negative examples). This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where 
+#' @title Unstratified Cross Validation
+#' @description This function splits a dataset in k-fold in an unstratified way, i.e. a fold does not contain an equal amount of positive and 
+#' negative examples. This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where 
 #' splitting dataset in a stratified way is not needed. 
 #' @param S matrix of the flat scores. It must be a named matrix, where rows are example (e.g. genes) and columns are classes/terms (e.g. HPO terms)
 #' @param kk number of folds in which to split the dataset (\code{def. k=5})
@@ -981,14 +979,15 @@ do.unstratified.cv.data <- function(S, kk=5, seed=NULL){
 #' @name stratified.cross.validation
 #' @aliases do.stratified.cv.data.single.class
 #' @aliases do.stratified.cv.data.over.classes
-#' @title Stratified cross validation
+#' @title Stratified Cross Validation
 #' @description Generate data for the stratified cross-validation 
+#' @details the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples 
 #' @param labels labels matrix. Rows are genes and columns are classes. Let's denote \eqn{M} the labels matrix. 
 #' If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
 #' @param examples indices or names of the examples. Can be either a vector of integers or a vector of names. 
 #' @param positives vector of integers or vector of names. The indices (or names) refer to the indices (or names) of 'positive' examples	
-#' @param kk number of folds (\code{def=5})
-#' @param seed seed of the random generator (\code{def=NULL}). If is set to \code{NULL} no initialization is performed
+#' @param kk number of folds (\code{def. kk=5})
+#' @param seed seed of the random generator (\code{def. seed=NULL}). If is set to \code{NULL} no initialization is performed
 #' @examples
 #' data(labels);
 #' examples.index <- 1:nrow(L);
@@ -1051,7 +1050,7 @@ do.stratified.cv.data.single.class <- function(examples, positives, kk=5, seed=N
 #' @rdname stratified.cross.validation
 #' @return \code{do.stratified.cv.data.over.classes} returns a list with \eqn{n} components, where \eqn{n} is the number of classes of the labels matrix. 
 #' Each component \eqn{n} is in turn a list with \eqn{k} elements, where \eqn{k} is the number of folds. 
-#' Each fold contains an equal amount of examples positives and negatives.
+#' Each fold contains an equal amount of positives and negatives examples.
 #' @export
 do.stratified.cv.data.over.classes <- function(labels, examples, kk=5, seed=NULL){
 	set.seed(seed);
@@ -1067,4 +1066,55 @@ do.stratified.cv.data.over.classes <- function(labels, examples, kk=5, seed=NULL
 		}
 	}
 	return(folds);
+}
+
+#' @title DataFrame for Stratified Cross Validation
+#' @description Create a data frame for stratified cross-validation
+#' @details the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples 
+#' @param labels vector of the true labels (0 negative, 1 positive)
+#' @param scores a numeric vector of the values of the predicted labels
+#' @param seed initialization seed for the random generator to create folds (\code{def. seed=23}).
+#' If \code{seed=NULL}, the stratified folds are generated without seed initialization
+#' @param folds number of folds of the cross validation (\code{def. folds=5})
+#' @return a data frame with three columns: 
+#' \itemize{
+#'  \item \code{scores}: contains the predicted scores;
+#'	\item \code{labels}: contains the labels as \code{pos} or \code{neg};
+#'  \item \code{folds}: contains the index of the fold in which the example falls.
+#'	The index can range from 1 to the the number of folds
+#' }
+#' @export
+#' @examples
+#' data(labels);
+#' data(scores);
+#' df <- create.stratified.fold.df(L[,3], S[,3], folds=5, seed=23);
+create.stratified.fold.df <- function(labels, scores, folds=5, seed=23){
+	if(is.matrix(labels) || is.matrix(scores))
+		stop("create.stratified.fold.df: labels or scores must be a vector", call.=FALSE);
+	if(length(scores)!=length(labels))
+		stop("create.stratified.fold.df: length of true and predicted labels does not match", call.=FALSE);
+	if(any((labels!=0) & (labels!=1)))
+		stop("create.stratified.fold.df: labels variable must take values 0 or 1", call.=FALSE);
+	if(is.null(folds))
+		stop("create.stratified.fold.df: folds must be an integer number", call.=FALSE);
+	if(is.null(seed))
+		warning("create.stratified.fold.df: folds are generated without seed initialization", call.=FALSE);
+	indices <- 1:length(labels);
+	positives <- which(labels==1);
+	foldIndex <- do.stratified.cv.data.single.class(indices, positives, kk=folds, seed=seed);
+	testIndex <- mapply(c, foldIndex$fold.positives, foldIndex$fold.negatives, SIMPLIFY=FALSE);
+	fold.check <- unlist(lapply(testIndex,length));
+	if(any(fold.check==0))
+		stop("create.stratified.fold.df: number of folds selected too high: some folds have no examples. Please reduce the number of folds", call.=FALSE);
+	fold.len <- sapply(testIndex,length);
+	tmp.list <- vector(mode="list", length=folds);
+	for(k in 1:folds)
+		tmp.list[[k]] <- rep(k, length(testIndex[[k]]));
+	foldcol <- numeric(length(scores));
+	labelschar <- ifelse(labels==1, "pos", "neg");
+	df <- data.frame(scores, labelschar, foldcol);
+	for(i in 1:length(tmp.list))
+		df$foldcol[testIndex[[i]]] <- tmp.list[[i]];
+	names(df) <- c("scores","labels","folds");
+	return(df);
 }

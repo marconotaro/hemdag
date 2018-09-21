@@ -49,15 +49,15 @@ adj.upper.tri <- function(g){
 }
 
 #' @title Generalized Pool-Adjacent Violators
-#' @description Implementation of GPAV (Generalized Pool-Adjacent Violators) algorithm
-#' (\cite{Burdavok et al., Journal of Computational Mathematics,  2006 -- \href{http://www.jstor.org/stable/43693336}{link}})
+#' @description Implementation of \code{GPAV} (Generalized Pool-Adjacent Violators) algorithm
+#' (\cite{Burdavok et al., Journal of Computational Mathematics,  2006 -- \href{https://www.jstor.org/stable/43693336}{link}})
 #' to correct the scores of the hierarchy according to the constraints that the score of a node cannot be greater than a score of its parents.
-#' GPAV algorithm treats nodes sequentially (in accordance with the topological order of \code{adj}) and merges some adjacent nodes into sets
+#' \code{GPAV} algorithm treats nodes sequentially (in accordance with the topological order of \code{adj}) and merges some adjacent nodes into sets
 #' which are called blocks. The fitted values for the nodes of the same block are equal to the weighted average value of their response values.
 #' @details Given the constraints adjacency matrix of the graph, a vector of scores \eqn{\hat{y} \in R^n} and a vector of strictly positive
-#' weights \eqn{w \in R^n}, the GPAV algorithm returns a vector \eqn{\bar{y}} which is as close as possible, in the least-squares sense,
+#' weights \eqn{w \in R^n}, the \code{GPAV} algorithm returns a vector \eqn{\bar{y}} which is as close as possible, in the least-squares sense,
 #' to the response vector \eqn{\hat{y}} and whose components are partially ordered in accordance with the constraints matrix \code{adj}.
-#' In other words, GPAV solves the following problem:
+#' In other words, \code{GPAV} solves the following problem:
 #' \deqn{
 #'	\bar{y} = \left\{
 #'	\begin{array}{l}
@@ -75,7 +75,7 @@ adj.upper.tri <- function(g){
 #' @seealso \code{\link{adj.upper.tri}}
 #' @return a list of 3 elements:
 #' \itemize{
-#'	\item \code{YFit}: a named vector with the scores of the classes corrected according to the GPAV algorithm.
+#'	\item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
 #'	\code{NOTE}: the classes of \code{YFit} are topologically sorted, that is are in the same order of those of \code{adj}.
 #'	\item \code{blocks}: list of vectors, containing the partitioning of nodes (represented with an integer number) into blocks;
 #'	\item \code{W}: vector of weights.
@@ -114,12 +114,12 @@ GPAV <- function(Y, W=NULL, adj){
 }
 
 #' @title GPAV Over Examples
-#' @description Function to compute GPAV across all the examples
+#' @description Function to compute \code{GPAV} across all the examples
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included)
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes
 #' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (\code{def. W=NULL}), it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included)
-#' @return a named matrix with the scores of the classes corrected according to the GPAV algorithm
+#' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm
 #' @seealso \code{\link{GPAV.parallel}}
 #' @export
 #' @examples
@@ -142,13 +142,13 @@ GPAV.over.examples <- function(S, g, W=NULL){
 }
 
 #' @title GPAV Over Examples -- Parallel Implementation
-#' @description Function to compute GPAV across all the examples (parallel implementation)
+#' @description Function to compute \code{GPAV} across all the examples (parallel implementation)
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included)
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes
 #' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (\code{def. W=NULL}), it is assumed that
 #' \code{W} is is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included)
 #' @param ncores number of cores to use for parallel execution (\code{def. 8})
-#' @return a named matrix with the scores of the classes corrected according to the GPAV algorithm
+#' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm
 #' @export
 #' @examples
 #' data(graph);
@@ -187,7 +187,7 @@ GPAV.parallel <- function(S, g, W=NULL, ncores=8){
 ## DO GPAV ##
 ##*********##
 #' @title GPAV -- High Level Function
-#' @description High level function to correct the computed scores in a hierarchy according to the GPAV algorithm
+#' @description High level function to correct the computed scores in a hierarchy according to the \code{GPAV} algorithm
 #' @details The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
 #' If so, the number of terms of the annotations matrix is shrunk to the number of terms of the flat scores matrix and
 #' the corresponding subgraph is computed as well. N.B.: it is supposed that all the nodes of the subgraph are accessible from the root.
@@ -206,8 +206,8 @@ GPAV.parallel <- function(S, g, W=NULL, ncores=8){
 #' vector of the same length of the columns' number of the flat scores matrix (root node included)
 #' @param parallel boolean value:
 #' \itemize{
-#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}});
+#'	\item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{GPAV.parallel}});
+#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{GPAV.over.examples}});
 #' }
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set the parameter \code{ncores} to \code{1} if the
 #' parameter \code{parallel} is set to \code{FALSE}, otherwise set the desired number of cores
@@ -222,7 +222,7 @@ GPAV.parallel <- function(S, g, W=NULL, ncores=8){
 #' \item \code{F} (\code{def.}): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
 #' }
-#' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)
 #' @param ann.file name of the file containing the the label matrix of the examples (without rda extension)
@@ -240,7 +240,7 @@ GPAV.parallel <- function(S, g, W=NULL, ncores=8){
 #' 	\enumerate{
 #' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 #'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 #' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
@@ -256,16 +256,16 @@ GPAV.parallel <- function(S, g, W=NULL, ncores=8){
 #' save(S, file=paste0(tmpdir,"scores.rda"));
 #' dag.dir <- flat.dir <- ann.dir <- tmpdir;
 #' hierScore.dir <- perf.dir <- tmpdir;
-#' rec.levels <- seq(from=0.1, to=1, by=0.1);
+#' recall.levels <- seq(from=0.25, to=1, by=0.25);
 #' dag.file <- "graph";
 #' flat.file <- "scores";
 #' ann.file <- "labels";
-#' Do.GPAV(norm=FALSE, norm.type= "MaxNorm", W=NULL, parallel=FALSE, ncores=1, folds=5, 
-#' seed=23, n.round=3, f.criterion ="F", rec.levels=rec.levels, flat.file=flat.file, 
+#' Do.GPAV(norm=FALSE, norm.type= "MaxNorm", W=NULL, parallel=FALSE, ncores=1, folds=NULL, 
+#' seed=23, n.round=3, f.criterion ="F", recall.levels=recall.levels, flat.file=flat.file, 
 #' ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, 
 #' dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, folds=5, seed=23, n.round=3, 
-	f.criterion ="F", rec.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, 
+	f.criterion ="F", recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, 
 	dag.file=dag.file, flat.dir=flat.dir,ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 	
 	## Setting Check
@@ -322,7 +322,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("FLAT PERFORMANCE: DONE", "\n");
@@ -352,7 +352,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 	## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
@@ -372,7 +372,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 }
 
 #' @title GPAV holdout
-#' @description High level function to correct the computed scores in a hierarchy according to the GPAV algorithm applying a
+#' @description High level function to correct the computed scores in a hierarchy according to the \code{GPAV} algorithm applying a
 #' classical holdout procedure
 #' @details The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
 #' If so, the number of terms of the annotations matrix is shrunk to the number of terms of the flat scores matrix and
@@ -392,8 +392,8 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 #' vector of the same length of the columns' number of the flat scores matrix (root node included)
 #' @param parallel boolean value:
 #' \itemize{
-#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}});
+#'	\item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{GPAV.parallel}});
+#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{GPAV.over.examples}});
 #' }
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set the parameter \code{ncores} to \code{1} if the
 #' parameter \code{parallel} is set to \code{FALSE}, otherwise set the desired number of cores
@@ -408,7 +408,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 #' \item \code{F} (\code{def.}): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
 #' }
-#' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)
 #' @param ann.file name of the file containing the the label matrix of the examples (without rda extension)
@@ -429,7 +429,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 #' 	\enumerate{
 #' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 #'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 #' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
@@ -448,17 +448,17 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 #' ind.dir <- dag.dir <- flat.dir <- ann.dir <- tmpdir;
 #' hierScore.dir <- perf.dir <- tmpdir;
 #' ind.test.set <- "test.index";
-#' rec.levels <- seq(from=0.1, to=1, by=0.1);
+#' recall.levels <- seq(from=0.25, to=1, by=0.25);
 #' dag.file <- "graph";
 #' flat.file <- "scores";
 #' ann.file <- "labels";
 #' Do.GPAV.holdout(norm=FALSE, norm.type="MaxNorm", W=NULL, parallel=FALSE, ncores=1, 
-#' n.round=3, f.criterion ="F", folds=NULL, seed=23, rec.levels=rec.levels, 
+#' n.round=3, f.criterion ="F", folds=NULL, seed=23, recall.levels=recall.levels, 
 #' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 
 #' ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
 #' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.GPAV.holdout <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, folds=5, seed=23, 
-	n.round=3, f.criterion ="F", rec.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, 
+	n.round=3, f.criterion ="F", recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, 
 	dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, 
 	dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 	
@@ -525,7 +525,7 @@ Do.GPAV.holdout <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, n
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE,
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("FLAT PERFORMANCE: DONE", "\n");
@@ -555,7 +555,7 @@ Do.GPAV.holdout <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, n
 	## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("HIERARCHICAL PERFORMANCE: DONE", "\n");

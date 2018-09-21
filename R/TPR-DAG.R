@@ -5,7 +5,7 @@
 #' @seealso \code{\link{GPAV}}, \code{\link{HTD-DAG}}
 #' @title TPR-DAG Ensemble Variants
 #' @description Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
-#' In their more general form the \code{TPR-DAG} algorithms adopt a two step learnig strategy:
+#' In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 #' \enumerate{
 #'	\item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
 #'  across the hierarchy;
@@ -287,14 +287,14 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' @param threshold range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, 
 #' \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Set the parameter \code{threshold} only for the variants that requiring a threshold for the positive nodes selection, 
-#' otherwise set the parameter \code{threshold} to zero
+#' Use this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variant the functions automatically 
+#' sets \code{threshold} to zero
 #' @param weight range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Set the parameter \code{weight} only for the \emph{weighted} variants, otherwise set the parameter \code{weight} to zero
+#' Use this parameter only for the \emph{weighted} variants; for the other variants the function automatically sets \code{weight} to zero
 #' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
-#' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parmeteric variants
-#' (i.e. if \code{bottomup = threshol.free}) set \code{k=NULL}
+#' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parametric variants
+#' (i.e. if \code{bottomup = threshold.free}) the function automatically sets \code{kk=NULL} if the input \code{kk}\eqn{\ne}\code{NULL} 
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
@@ -341,7 +341,7 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
 #' otherwise set \code{ncores} to the desired number of cores. Use \code{ncores} only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
-#' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
 #' the best threshold on the basis of the best F-measure
@@ -370,11 +370,11 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' \enumerate{
 #' 	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
 #' 	for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
-#' 	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
+#' 	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performance results:
 #' 	\enumerate{
 #' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 #'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 #' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
@@ -397,15 +397,15 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' positive <- "children";
 #' bottomup <- "threshold.free";
 #' topdown <- "HTD";
-#' rec.levels <- seq(from=0.1, to=1, by=0.1);
+#' recall.levels <- seq(from=0.25, to=1, by=0.25);
 #' Do.TPR.DAG(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 #' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
-#' parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, rec.levels=rec.levels, 
+#' parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, recall.levels=recall.levels, 
 #' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
 #' ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), 
 	kk=5, folds=5, seed=23, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", 
-	topdown="HTD", W=NULL, parallel=FALSE, ncores=1, rec.levels=seq(from=0.1, to=1, by=0.1), n.round=3, 
+	topdown="HTD", W=NULL, parallel=FALSE, ncores=1, recall.levels=seq(from=0.1, to=1, by=0.1), n.round=3, 
 	f.criterion="F", metric=NULL, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
 	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 	
@@ -428,10 +428,10 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 	if(norm==TRUE && !is.null(norm.type))
 		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", 
 			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-	if(is.null(kk) && bottomup!="threshold.free")
+	if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
 		stop("TPR-DAG: Smallest number of folds to define test and training set is 2. Set kk larger or equal to 2", call.=FALSE);
 	if(!is.null(kk) && bottomup=="threshold.free")
-		kk <- NULL;			
+		kk <- NULL;	
 	if(f.criterion!="F" && f.criterion!="avF")
 		stop("TPR-DAG: value of parameter 'f.criterion' misspelled");	
 	if(metric!="FMAX" && metric!="PRC" && !is.null(metric))
@@ -483,7 +483,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("FLAT PERFORMANCE: DONE", "\n");
@@ -496,7 +496,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
 		PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 		AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-		PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+		PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 		FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 			b.per.example=TRUE, folds=folds, seed=seed);
 		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
@@ -557,7 +557,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
 		PRC.hier <- AUPRC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
 		AUC.hier <- AUROC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
-		PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann, S.hier, rec.levels=rec.levels, folds=folds, seed=seed);
+		PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 		FMM.hier <- compute.Fmeasure.multilabel(ann, S.hier, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 			b.per.example=TRUE, folds=folds, seed=seed);
 		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
@@ -624,16 +624,17 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' @details The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
 #' If so, the number of terms of the annotations matrix is shrunk to the number of terms of the flat scores matrix and
 #' the corresponding subgraph is computed as well. N.B.: it is supposed that all the nodes of the subgraph are accessible from the root.
-#' @param threshold range of threshold values to be tested in order to find the best threshold (def: \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
+#' @param threshold range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, 
+#' \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Set the parameter \code{threshold} only for the variants that requiring a threshold for the positive nodes selection, 
-#' otherwise set the parameter \code{threshold} to zero
-#' @param weight range of weight values to be tested in order to find the best weight (def: \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
+#' Use this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variant the functions automatically 
+#' sets \code{threshold} to zero
+#' @param weight range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Set the parameter \code{weight} only for the \emph{weighted} variants, otherwise set the parameter \code{weight} to zero
+#' Use this parameter only for the \emph{weighted} variants; for the other variants the function automatically sets \code{weight} to zero
 #' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
-#' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parmeteric variants 
-#' (i.e. if \code{bottomup = threshol.free}) set \code{k=NULL}
+#' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parametric variants
+#' (i.e. if \code{bottomup = threshold.free}) the function automatically sets \code{kk=NULL} if the input \code{kk}\eqn{\ne}\code{NULL} 
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
@@ -681,7 +682,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
 #' otherwise set \code{ncores} to the desired number of cores.
 #' Use \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
-#' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
 #' the best threshold on the basis of the best F-measure
@@ -717,7 +718,7 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' 	\enumerate{
 #' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 #'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 #' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
@@ -743,16 +744,16 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' positive <- "children";
 #' bottomup <- "threshold.free";
 #' topdown <- "HTD";
-#' rec.levels <- seq(from=0.1, to=1, by=0.1);
+#' recall.levels <- seq(from=0.25, to=1, by=0.25);
 #' Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 #' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
-#' parallel=FALSE, ncores=1, rec.levels=rec.levels, n.round=3, f.criterion="F", metric=NULL,
+#' parallel=FALSE, ncores=1, recall.levels=recall.levels, n.round=3, f.criterion="F", metric=NULL,
 #' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 
 #' ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
 #' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=1, by=0.1), kk=5, 
 	folds=5, seed=23, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="HTD",
-	W=NULL, parallel=FALSE, ncores=1, rec.levels=seq(from=0.1, to=1, by=0.1), n.round=3, f.criterion="F", metric=NULL,
+	W=NULL, parallel=FALSE, ncores=1, recall.levels=seq(from=0.1, to=1, by=0.1), n.round=3, f.criterion="F", metric=NULL,
 	flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, 
 	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 
@@ -778,7 +779,7 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 	if(norm==TRUE && !is.null(norm.type))
 		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", 
 			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-	if(is.null(kk) && bottomup!="threshold.free")
+	if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
 		stop("TPR-DAG: Smallest number of folds to define test and training set is 2. Set kk larger or equal to 2", call.=FALSE);
 	if(!is.null(kk) && bottomup=="threshold.free")
 		kk <- NULL;			
@@ -842,7 +843,7 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.flat <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
 	AUC.flat <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-	PXR.flat <- PXR.at.multiple.recall.levels.over.classes(ann.test, S.test, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.flat <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.flat <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE,
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("FLAT PERFORMANCE: DONE", "\n");
@@ -855,7 +856,7 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 		PRC.hier <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
 		AUC.hier <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-		PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann.test, S.test, rec.levels=rec.levels, folds=folds, seed=seed);
+		PXR.hier <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
 		FMM.hier <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 			b.per.example=TRUE, folds=folds, seed=seed);
 		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
@@ -908,7 +909,7 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 		PRC.hier <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
 		AUC.hier <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-		PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann.test, S.test, rec.levels=rec.levels, folds=folds, seed=seed);
+		PXR.hier <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
 		FMM.hier <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 			b.per.example=TRUE, folds=folds, seed=seed);
 		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");

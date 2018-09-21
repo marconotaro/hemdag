@@ -1,7 +1,6 @@
 #' @import graph
 #' @import RBGL
 #' @import  precrec				   
-#' @import  PerfMeas			   
 #' @import  preprocessCore
 #' @import methods
 #' @import iterators

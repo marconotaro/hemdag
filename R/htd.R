@@ -93,7 +93,7 @@ htd <- function(S, g, root="00"){
 #' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
 #' }
-#' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)
 #' @param ann.file name of the file containing the the label matrix of the examples (without rda extension)
@@ -111,7 +111,7 @@ htd <- function(S, g, root="00"){
 #' 	\enumerate{
 #' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 #'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 #' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
@@ -127,16 +127,16 @@ htd <- function(S, g, root="00"){
 #' save(S, file=paste0(tmpdir,"scores.rda"));
 #' dag.dir <- flat.dir <- ann.dir <- tmpdir;
 #' hierScore.dir <- perf.dir <- tmpdir;
-#' rec.levels <- seq(from=0.1, to=1, by=0.1);
+#' recall.levels <- seq(from=0.2, to=1, by=0.4);
 #' dag.file <- "graph";
 #' flat.file <- "scores";
 #' ann.file <- "labels";
-#' Do.HTD(norm=FALSE, norm.type="MaxNorm", folds=5, seed=23, n.round=3, 
-#' f.criterion="F", rec.levels=rec.levels, flat.file=flat.file, ann.file=ann.file, 
+#' Do.HTD(norm=FALSE, norm.type="MaxNorm", folds=NULL, seed=23, n.round=3, 
+#' f.criterion="F", recall.levels=recall.levels, flat.file=flat.file, ann.file=ann.file, 
 #' dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
 #' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.criterion ="F", 
-	rec.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
+	recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
 	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 	
 	## Setting Check
@@ -183,7 +183,7 @@ Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.cri
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("FLAT PERFORMANCE: DONE", "\n");
@@ -195,7 +195,7 @@ Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.cri
 	## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
@@ -242,7 +242,7 @@ Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.cri
 #' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
 #' }
-#' @param rec.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
 #' the Precision at fixed Recall level (PXR)
 #' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)
 #' @param ann.file name of the file containing the the label matrix of the examples (without rda extension)
@@ -263,7 +263,7 @@ Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.cri
 #' 	\enumerate{
 #' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
 #'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{PXR.at.multiple.recall.levels.over.classes} (\code{\link{PXR}});
+#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 #' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
@@ -281,17 +281,17 @@ Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.cri
 #' save(test.index, file=paste0(tmpdir,"test.index.rda"));
 #' ind.dir <- dag.dir <- flat.dir <- ann.dir <- tmpdir;
 #' hierScore.dir <- perf.dir <- tmpdir;
-#' rec.levels <- seq(from=0.1, to=1, by=0.1);
+#' recall.levels <- seq(from=0.2, to=1, by=0.4);
 #' ind.test.set <- "test.index";
 #' dag.file <- "graph";
 #' flat.file <- "scores";
 #' ann.file <- "labels";
-#' Do.HTD.holdout(norm=FALSE, norm.type="MaxNorm", n.round=3, f.criterion ="F", folds=NULL, seed=23,
-#' rec.levels=rec.levels, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
+#' Do.HTD.holdout(norm=FALSE, norm.type="MaxNorm", n.round=3, f.criterion ="F", folds=5, seed=23,
+#' recall.levels=recall.levels, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
 #' ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
 #' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.HTD.holdout <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.criterion ="F", 
-	rec.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
+	recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
 	ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
 	hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 	
@@ -349,7 +349,7 @@ Do.HTD.holdout <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE,
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("FLAT PERFORMANCE: DONE", "\n");
@@ -361,7 +361,7 @@ Do.HTD.holdout <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=
 	## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
 	PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
 	AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.hier <- PXR.at.multiple.recall.levels.over.classes(ann, S, rec.levels=rec.levels, folds=folds, seed=seed);
+	PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
 	FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
 		b.per.example=TRUE, folds=folds, seed=seed);
 	cat("HIERARCHICAL PERFORMANCE: DONE", "\n");

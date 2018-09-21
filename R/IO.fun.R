@@ -4,23 +4,30 @@
 
 #' @title Parse an HPO OBO file
 #' @description Read an HPO OBO file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write 
-#' the edges of the DAG on a plain text file.The format of the file is a sequence of
+#' the edges of the DAG on a plain text file. The format of the file is a sequence of
 #' rows and each row corresponds to an edge represented through a pair of vertices separated by blanks
-#' @param file an HPO OBO file
-#' @param output.file name of the file of the edges to be written
+#' @param obofile an HPO OBO file. The extension of the obofile can be or plain format (".txt") or compressed (".gz").
+#' @param file name of the file of the edges to be written.
+#' The extension of the file can be or plain format (".txt") or compressed (".gz").
 #' @return a text file representing the edges in the format: source  destination (i.e. one row for each edge) 
 #' @export
 #' @examples
 #' \dontrun{
 #' hpobo <- "http://purl.obolibrary.org/obo/hp.obo";
-#' do.edges.from.HPO.obo(file=hpobo, output.file="hp.edge");}
-do.edges.from.HPO.obo <- function(file="hp.obo", output.file="edge.file"){
-	line <- readLines(file);
+#' do.edges.from.HPO.obo(obofile=hpobo, file="hp.edge");}
+do.edges.from.HPO.obo <- function(obofile="hp.obo", file="edge.file"){
+	tmp <- strsplit(obofile, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
+		con <- gzfile(obofile);
+		line <- readLines(con);			
+	}else{
+		line <- readLines(obofile);
+	}
 	n.lines <- length(line);
 	m <- matrix(character(1000000*2), ncol=2);
-	colnames(m)=c("source", "destination");
-	i=1;
-	j=0; # number of edges;
+	colnames(m) <- c("source", "destination");
+	i <- 1;
+	j <- 0; # number of edges;
 	#browser();
 	while(i<=n.lines){
 		while((i<=n.lines) && (line[i]!="[Term]")){
@@ -45,20 +52,27 @@ do.edges.from.HPO.obo <- function(file="hp.obo", output.file="edge.file"){
 		}
 	}
 	m <- m[1:j,];
-	write.table(m, file=output.file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+	tmp <- strsplit(file, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
+		write.table(m, file=gzfile(file), quote=FALSE, row.names=FALSE, col.names=FALSE);
+		on.exit();
+	}else{
+		write.table(m, file=file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+	}
 }
 
 #' @title Write a directed graph on file
 #' @description An object of class \code{graphNEL} is read and the graph is written on a plain text file as sequence of rows 
 #' @param g a graph of class \code{graphNEL}
-#' @param file name of the file to be written
+#' @param file name of the file to be written. The extension of the file can be or plain format (".txt") or compressed (".gz").
 #' @return a plain text file representing the graph. Each row corresponds to an edge represented through a pair of vertices separated by blanks
 #' @export
 #' @examples
-#' \dontrun{
 #' data(graph);
-#' write.graph(g, file="graph.edges.txt");}
-write.graph <- function(g, file="graph.txt"){  
+#' tmpdir <- paste0(tempdir(),"/");
+#' file <- paste0(tmpdir,"graph.edges.txt.gz");
+#' write.graph(g, file=file);
+write.graph <- function(g, file="graph.txt.gz"){  
 	num.edges <- length(unlist(edges(g)));
 	num.v <- numNodes(g);
 	m <- matrix(character(num.edges*2), ncol=2);
@@ -71,23 +85,34 @@ write.graph <- function(g, file="graph.txt"){
 	if (len.x!=0)
 		for (j in 1:len.x) {
 			count <- count + 1;
-		m[count,] <- c(node1[i],x[j]);
+			m[count,] <- c(node1[i],x[j]);
 		}
 	}
-	write.table(m, file=file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+	tmp <- strsplit(file, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
+		write.table(m, file=gzfile(file), quote=FALSE, row.names=FALSE, col.names=FALSE);
+	}else{
+		write.table(m, file=file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+	}
 }
 
 #' @title Read a directed graph from a file
 #' @description A directed graph is read from a file and a \code{graphNEL} object is built
 #' @param file name of the file to be read. The format of the file is a sequence of rows and each row corresponds 
-#' to an edge represented through a pair of vertices separated by blanks
+#' to an edge represented through a pair of vertices separated by blanks. 
+#' The extension of the file can be or plain format (".txt") or compressed (".gz").
 #' @return an object of class \code{graphNEL}
 #' @export
 #' @examples
-#' ed <- system.file("extdata/graph.edges.txt", package= "HEMDAG");
+#' ed <- system.file("extdata/graph.edges.txt.gz", package= "HEMDAG");
 #' g <- read.graph(file=ed);
-read.graph <- function(file="graph.txt"){  
-	m <- as.matrix(read.table(file, colClasses="character"));
+read.graph <- function(file="graph.txt.gz"){ 
+	tmp <- strsplit(file, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
+		m <- as.matrix(read.table(gzfile(file), colClasses="character"));
+	}else{
+		m <- as.matrix(read.table(file, colClasses="character"));
+	}
 	thenodes<-sort(unique(as.vector(m))); # nodes
 	n.nodes <- length(thenodes);
 	n.edges <- nrow(m);
@@ -104,14 +129,19 @@ read.graph <- function(file="graph.txt"){
 #' @title Read an undirected graph from a file
 #' @description The graph is read from a file and a \code{graphNEL} object is built. The format of the input file is a sequence of rows. 
 #' Each row corresponds to an edge represented through a pair of vertices separated by blanks, and the weight of the edge.
-#' @param file name of the file to be read
+#' @param file name of the file to be read. The extension of the file can be or plain format (".txt") or compressed (".gz").
 #' @return a graph of class \code{graphNEL}
 #' @export
 #' @examples
-#' edges <- system.file("extdata/edges.txt" ,package="HEMDAG");
+#' edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");
 #' g <- read.undirected.graph(file=edges);
-read.undirected.graph <- function(file="graph.txt") {  
-	m <- as.matrix(read.table(file, colClasses="character"));
+read.undirected.graph <- function(file="graph.txt.gz") {  
+	tmp <- strsplit(file, "[.,/,_]")[[1]];
+	if(any(tmp %in% "gz")){
+		m <- as.matrix(read.table(gzfile(file), colClasses="character"));
+	}else{
+		m <- as.matrix(read.table(file, colClasses="character"));
+	}
 	thenodes<-sort(unique(as.vector(m[,1:2]))); # nodes
 	n.nodes <- length(thenodes);
 	n.edges <- nrow(m);

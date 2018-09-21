@@ -19,8 +19,7 @@ int GPAV_cpp (
 	std::vector<uint32_t>	items;
 	std::vector<uint32_t>	jMinus;
 	std::vector<uint32_t>	lookingIn;
-	std::set<uint32_t>		jMinusSet;
-	//std::list<uint32_t>		jMinusSet;
+	std::set<uint32_t>		jMinusSet;	
 
 	std::vector<std::list<uint32_t>> blocks(N);
 	std::for_each( blocks.begin(), blocks.end(), [idx](std::list<uint32_t> &blk) mutable { blk.push_back(idx++); } );
@@ -43,8 +42,7 @@ int GPAV_cpp (
 			}
 
 			std::for_each( jMinus.begin(), jMinus.end(), [corr, &jMinusSet]( uint32_t nn ) { jMinusSet.emplace( corr[nn] - 1 ); } );
-			//std::for_each( jMinus.begin(), jMinus.end(), [corr, &jMinusSet]( uint32_t nn ) { jMinusSet.push_back( corr[nn] - 1 ); } );
-
+			
 			items.clear();
 			idx = 0;
 			for (auto it = jMinusSet.begin(); it != jMinusSet.end(); ++it){
