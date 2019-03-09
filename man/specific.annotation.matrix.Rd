@@ -4,7 +4,8 @@
 \alias{specific.annotation.matrix}
 \title{HPO specific annotations matrix}
 \usage{
-specific.annotation.matrix(file = "gene2pheno.txt.gz", genename = "TRUE")
+specific.annotation.matrix(file = "gene2pheno.txt.gz",
+  genename = "TRUE")
 }
 \arguments{
 \item{file}{text file representing the most specific associations gene-HPO term \cr (\code{def: "gene2pheno.txt"}). 

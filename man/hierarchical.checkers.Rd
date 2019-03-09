@@ -4,7 +4,6 @@
 \alias{hierarchical.checkers}
 \alias{check.hierarchy.single.sample}
 \alias{check.hierarchy}
-\alias{check.hierarchy}
 \title{Hierarchical constraints cheker}
 \usage{
 check.hierarchy.single.sample(y.hier, g, root = "00")

@@ -4,9 +4,10 @@
 \alias{Do.full.annotation.matrix}
 \title{Do full annotations matrix}
 \usage{
-Do.full.annotation.matrix(anc.file.name = anc.file.name, anc.dir = anc.dir,
-  net.file = net.file, net.dir = net.dir, ann.file.name = ann.file.name,
-  ann.dir = ann.dir, output.name = output.name, output.dir = output.dir)
+Do.full.annotation.matrix(anc.file.name = anc.file.name,
+  anc.dir = anc.dir, net.file = net.file, net.dir = net.dir,
+  ann.file.name = ann.file.name, ann.dir = ann.dir,
+  output.name = output.name, output.dir = output.dir)
 }
 \arguments{
 \item{anc.file.name}{name of the file containg the list for each node the list of all its ancestor (without \code{rda} extension)}
@@ -38,19 +39,13 @@ respect to a given weighted adiacency matrix
 data(graph);
 data(labels);
 data(wadj);
-if (!dir.exists("data")){
-	dir.create("data");
-}
-if (!dir.exists("results")){
-	dir.create("results");
-}
 anc <- build.ancestors(g);
-save(anc,file="data/ancestors.rda");
-save(g,file="data/graph.rda");
-save(L,file="data/labels.rda");
-save(W,file="data/wadj.rda");
-anc.dir <- net.dir <- ann.dir <- "data/";
-output.dir <- "results/";
+tmpdir <- paste0(tempdir(),"/");
+save(g, file=paste0(tmpdir,"graph.rda"));
+save(L, file=paste0(tmpdir,"labels.rda"));
+save(W, file=paste0(tmpdir,"wadj.rda"));
+save(anc, file=paste0(tmpdir,"ancestors.rda"));
+anc.dir <- net.dir <- ann.dir <- output.dir <- tmpdir;
 anc.file.name <- "ancestors";
 net.file <- "wadj";
 ann.file.name <- "labels";

@@ -4,12 +4,12 @@
 \alias{Do.heuristic.methods}
 \title{Do Heuristic Methods}
 \usage{
-Do.heuristic.methods(heuristic.fun = "AND", norm = TRUE, norm.type = NULL,
-  folds = 5, seed = 23, n.round = 3, f.criterion = "F",
-  recall.levels = seq(from = 0.1, to = 1, by = 0.1), flat.file = flat.file,
-  ann.file = ann.file, dag.file = dag.file, flat.dir = flat.dir,
-  ann.dir = ann.dir, dag.dir = dag.dir, hierScore.dir = hierScore.dir,
-  perf.dir = perf.dir)
+Do.heuristic.methods(heuristic.fun = "AND", norm = TRUE,
+  norm.type = NULL, folds = 5, seed = 23, n.round = 3,
+  f.criterion = "F", recall.levels = seq(from = 0.1, to = 1, by = 0.1),
+  flat.file = flat.file, ann.file = ann.file, dag.file = dag.file,
+  flat.dir = flat.dir, ann.dir = ann.dir, dag.dir = dag.dir,
+  hierScore.dir = hierScore.dir, perf.dir = perf.dir)
 }
 \arguments{
 \item{heuristic.fun}{can be one of the following three values:

@@ -13,7 +13,7 @@ correspond to classes' names, i.e. nodes of the graph \code{g} (root node includ
 \item{W}{vector of weight relative to a single example. If the vector \code{W} is not specified (\code{def. W=NULL}), it is assumed that
 \code{W} is a unitary vector of the same length of the vector \code{Y}}
 
-\item{adj}{adjacency matrix of the graph which is sparse, logical and upper triangular. Number of columns of \code{adj} must be
+\item{adj}{adjacency matrix of the graph which must be sparse, logical and upper triangular. Number of columns of \code{adj} must be
 equal to the length of \code{Y} and \code{W}}
 }
 \value{

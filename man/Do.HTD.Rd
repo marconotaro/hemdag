@@ -5,10 +5,11 @@
 \title{HTD-DAG vanilla}
 \usage{
 Do.HTD(norm = TRUE, norm.type = NULL, folds = 5, seed = 23,
-  n.round = 3, f.criterion = "F", recall.levels = seq(from = 0.1, to = 1,
-  by = 0.1), flat.file = flat.file, ann.file = ann.file,
+  n.round = 3, f.criterion = "F", recall.levels = seq(from = 0.1, to
+  = 1, by = 0.1), flat.file = flat.file, ann.file = ann.file,
   dag.file = dag.file, flat.dir = flat.dir, ann.dir = ann.dir,
-  dag.dir = dag.dir, hierScore.dir = hierScore.dir, perf.dir = perf.dir)
+  dag.dir = dag.dir, hierScore.dir = hierScore.dir,
+  perf.dir = perf.dir)
 }
 \arguments{
 \item{norm}{boolean value: 

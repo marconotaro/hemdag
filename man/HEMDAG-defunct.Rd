@@ -3,21 +3,13 @@
 \name{HEMDAG-defunct}
 \alias{HEMDAG-defunct}
 \alias{descens.threshold}
-\alias{HEMDAG-defunct}
 \alias{descens.threshold.free}
-\alias{HEMDAG-defunct}
 \alias{descens.weighted.threshold.free}
-\alias{HEMDAG-defunct}
 \alias{descens.weighted.threshold}
-\alias{HEMDAG-defunct}
 \alias{descens.tau}
-\alias{HEMDAG-defunct}
 \alias{tpr.threshold}
-\alias{HEMDAG-defunct}
 \alias{tpr.threshold.free}
-\alias{HEMDAG-defunct}
 \alias{tpr.weighted.threshold.free}
-\alias{HEMDAG-defunct}
 \alias{tpr.weighted.threshold}
 \title{Defunct functions in package \pkg{HEMDAG}.}
 \usage{

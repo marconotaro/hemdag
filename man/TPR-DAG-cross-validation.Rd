@@ -9,8 +9,8 @@ Do.TPR.DAG(threshold = seq(from = 0.1, to = 0.9, by = 0.1),
   weight = seq(from = 0.1, to = 0.9, by = 0.1), kk = 5, folds = 5,
   seed = 23, norm = TRUE, norm.type = NULL, positive = "children",
   bottomup = "threshold.free", topdown = "HTD", W = NULL,
-  parallel = FALSE, ncores = 1, recall.levels = seq(from = 0.1, to = 1, by
-  = 0.1), n.round = 3, f.criterion = "F", metric = NULL,
+  parallel = FALSE, ncores = 1, recall.levels = seq(from = 0.1, to =
+  1, by = 0.1), n.round = 3, f.criterion = "F", metric = NULL,
   flat.file = flat.file, ann.file = ann.file, dag.file = dag.file,
   flat.dir = flat.dir, ann.dir = ann.dir, dag.dir = dag.dir,
   hierScore.dir = hierScore.dir, perf.dir = perf.dir)

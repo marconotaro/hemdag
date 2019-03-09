@@ -6,9 +6,11 @@
 \alias{do.stratified.cv.data.over.classes}
 \title{Stratified Cross Validation}
 \usage{
-do.stratified.cv.data.single.class(examples, positives, kk = 5, seed = NULL)
+do.stratified.cv.data.single.class(examples, positives, kk = 5,
+  seed = NULL)
 
-do.stratified.cv.data.over.classes(labels, examples, kk = 5, seed = NULL)
+do.stratified.cv.data.over.classes(labels, examples, kk = 5,
+  seed = NULL)
 }
 \arguments{
 \item{examples}{indices or names of the examples. Can be either a vector of integers or a vector of names.}
