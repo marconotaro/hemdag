@@ -3,7 +3,8 @@
 ##******##
 #' @title Binary Upper Triangular Adjacency Matrix
 #' @description This function returns a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
-#' @details The nodes of the matrix are topologically sorted. Let's denote with \code{adj} our adjacency matrix. Then \code{adj} represents a partial
+#' @details The nodes of the matrix are topologically sorted (by using the \code{tsort} function of the \pkg{RBGL} package). 
+#' Let's denote with \code{adj} our adjacency matrix. Then \code{adj} represents a partial
 #' order data set in which the class \code{j} dominates the class \code{i}. In other words, \code{adj[i,j]=1} means that \code{j} dominates \code{i};
 #' \code{adj[i,j]=0} means that there is no edge between the class \code{i} and the class \code{j}. Moreover the nodes of \code{adj} are enumerated
 #' so that \code{adj[i,j]=1} implies \eqn{i < j}, i.e. \code{adj} is upper triangular.
@@ -70,7 +71,7 @@ adj.upper.tri <- function(g){
 #' correspond to classes' names, i.e. nodes of the graph \code{g} (root node included)
 #' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (\code{def. W=NULL}), it is assumed that
 #' \code{W} is a unitary vector of the same length of the vector \code{Y}
-#' @param adj adjacency matrix of the graph which is sparse, logical and upper triangular. Number of columns of \code{adj} must be
+#' @param adj adjacency matrix of the graph which must be sparse, logical and upper triangular. Number of columns of \code{adj} must be
 #' equal to the length of \code{Y} and \code{W}
 #' @seealso \code{\link{adj.upper.tri}}
 #' @return a list of 3 elements:
@@ -564,12 +565,12 @@ Do.GPAV.holdout <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, n
 	S.hier <- S;
 	rm(S);	
 	if(norm){
-		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.GPAV.holdout.rda"), compress=TRUE);
+		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.GPAV.rda"), compress=TRUE);
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.GPAV.holdout.rda"), compress=TRUE);
+			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.GPAV.rda"), compress=TRUE);
 	}else{
-		save(S.hier, file=paste0(hierScore.dir, norm.type, ".", flat.file, ".hierScores.GPAV.holdout.rda"), compress=TRUE);
+		save(S.hier, file=paste0(hierScore.dir, norm.type, ".", flat.file, ".hierScores.GPAV.rda"), compress=TRUE);
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, 
-			file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.GPAV.holdout.rda"), compress=TRUE);
+			file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.GPAV.rda"), compress=TRUE);
 	}
 }

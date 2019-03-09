@@ -763,7 +763,8 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		stop("TPR-DAG: positive or bottomup or topdown value misspelled", call.=FALSE);
 	if(positive=="children" && bottomup=="tau")
 		stop("TPR-DAG: tau is a descendants variants. Please set positive to descendants", call.=FALSE);
-	if(bottomup=="threshold" || bottomup=="tau")weight<-0;
+	if(bottomup=="threshold" || bottomup=="tau")
+		weight<-0;
 	if(bottomup=="threshold.free"){
 		threshold <- 0; 
 		weight <- 0;
@@ -960,12 +961,12 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		meth.name <- "ISOdescensTAU";
 
 	if(norm){
-		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.",meth.name,".holdout.rda"), compress=TRUE);
+		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",meth.name,".holdout.rda"), compress=TRUE);
+			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
 	}else{
-		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.",meth.name,".holdout.rda"), compress=TRUE);
+		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",meth.name,".holdout.rda"), compress=TRUE);
+			file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
 	}
 }

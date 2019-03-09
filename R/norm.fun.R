@@ -75,20 +75,13 @@ scores.normalization <- function(norm.type="MaxNorm", S){
 #' @export
 #' @examples
 #' data(scores);
-#' if(!dir.exists("data")){
-#' 	dir.create("data");
-#' }
-#' if(!dir.exists("results")){
-#' 	dir.create("results");
-#' }
-#' save(S,file="data/scores.rda");
-#' flat.dir <- "data/";
-#' flat.norm.dir <- "results/";
-#' flat.file <- "scores";
+#' tmpdir <- paste0(tempdir(),"/");
+#' save(S, file=paste0(tmpdir,"scores.rda"));
+#' flat.dir <- flat.norm.dir <- tmpdir;
 #' norm.types <- c("MaxNorm","Qnorm");
 #' for(norm.type in norm.types){
-#' 	Do.flat.scores.normalization(norm.type=norm.type, flat.file=flat.file, 
-#'	flat.dir=flat.dir, flat.norm.dir=flat.norm.dir);
+#' 	Do.flat.scores.normalization(norm.type=norm.type, flat.file="scores", 
+#' 	flat.dir=flat.dir, flat.norm.dir=flat.norm.dir);
 #' }
 Do.flat.scores.normalization <- function(norm.type="MaxNorm", flat.file=flat.file, 
 	flat.dir=flat.dir, flat.norm.dir=flat.norm.dir){

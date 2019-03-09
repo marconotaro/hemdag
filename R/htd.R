@@ -370,12 +370,12 @@ Do.HTD.holdout <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=
 	S.hier <- S;
 	rm(S);
 	if(norm){
-		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.htd.holdout.rda"), compress=TRUE);
+		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.htd.rda"), compress=TRUE);
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.htd.holdout.rda"), compress=TRUE);
+			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.htd.rda"), compress=TRUE);
 	}else{
-		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.htd.holdout.rda"), compress=TRUE);	
+		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.htd.rda"), compress=TRUE);	
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-		 file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.htd.holdout.rda"), compress=TRUE);
+		 file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.htd.rda"), compress=TRUE);
 	}
 }

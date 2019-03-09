@@ -456,12 +456,12 @@ Do.heuristic.methods.holdout <- function(heuristic.fun="AND", norm=TRUE, norm.ty
 		heuristic.name <- "OR";
 
 	if(norm){
-		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores",heuristic.name,".holdout.rda"), compress=TRUE);
+		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores",heuristic.name,".rda"), compress=TRUE);
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",heuristic.name,".holdout.rda"), compress=TRUE);
+			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);
 	}else{
-		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.",heuristic.name,".holdout.rda"), compress=TRUE);	
+		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
 		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.",heuristic.name,".holdout.rda"), compress=TRUE);	
+			file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
 	}
 }

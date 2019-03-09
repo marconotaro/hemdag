@@ -399,7 +399,7 @@ distances.from.leaves <- function(g){
 	leaves <- find.leaves(g);
 	n.leaves <- length(leaves);
 	og <- compute.flipped.graph(g);
-	og <- addNode("root", og)
+	og <- addNode("root", og);
 	#   for (x in leaves)
 	#    og = addEdge("root", x, og, 1);
 	og <- addEdge(rep("root",n.leaves), leaves, og, rep(1,n.leaves));
@@ -691,19 +691,13 @@ full.annotation.matrix <- function(W, anc, ann.spec){
 #' data(graph);
 #' data(labels);
 #' data(wadj);
-#' if (!dir.exists("data")){
-#' 	dir.create("data");
-#' }
-#' if (!dir.exists("results")){
-#' 	dir.create("results");
-#' }
 #' anc <- build.ancestors(g);
-#' save(anc,file="data/ancestors.rda");
-#' save(g,file="data/graph.rda");
-#' save(L,file="data/labels.rda");
-#' save(W,file="data/wadj.rda");
-#' anc.dir <- net.dir <- ann.dir <- "data/";
-#' output.dir <- "results/";
+#' tmpdir <- paste0(tempdir(),"/");
+#' save(g, file=paste0(tmpdir,"graph.rda"));
+#' save(L, file=paste0(tmpdir,"labels.rda"));
+#' save(W, file=paste0(tmpdir,"wadj.rda"));
+#' save(anc, file=paste0(tmpdir,"ancestors.rda"));
+#' anc.dir <- net.dir <- ann.dir <- output.dir <- tmpdir;
 #' anc.file.name <- "ancestors";
 #' net.file <- "wadj";
 #' ann.file.name <- "labels";
@@ -1118,3 +1112,38 @@ create.stratified.fold.df <- function(labels, scores, folds=5, seed=23){
 	names(df) <- c("scores","labels","folds");
 	return(df);
 }
+
+#' @title Lexicographical Topological Sorting
+#' @description Nodes of a graph are sorted according to a lexicographical topological ordering.
+#' @details A topological sorting is a linear ordering of the nodes such that given an edge from 
+#' \code{u} to \code{v}, the node \code{u} comes before node \code{v} in the ordering. 
+#' Topological sorting is not possible if the graph \code{g} is not a DAG.
+#' To implement the topological sorting algorithm we applied the Kahn’s algorithm.
+#' @param g an object of class \code{graphNEL} 
+#' @return a vector in which the nodes of the graph \code{g} are sorted according to a lexicographical topological order.
+#' @export
+#' @examples
+#' data(graph);
+#' T <- lexicographical.topological.sort(g);
+lexicographical.topological.sort <- function(g){
+	## check self-loop: graph with self-loop cannot be processed
+	indegree <- degree(g)$inDegree;
+	if(!(any(indegree==0))){
+		stop("input graph g is not a DAG"); ## self-loop detect
+	}
+	T <- c();
+	indegree <- degree(g)$inDegree;
+	while(length(indegree)!=0){
+		queue <- names(which(indegree==0));
+		if(length(queue)==0)
+			stop("input graph g is not a DAG"); ## check self-loop 
+		queue <- queue[order(queue, decreasing=FALSE)];
+		T <- append(T, queue[1]);
+		indegree <- indegree[-which(names(indegree)==queue[1])];
+		processed <- adj(g, queue)[[1]];
+		s <- indegree[processed] - 1;
+		indegree[processed] <- s;
+	}
+	return(T);
+}
+
