@@ -1,3 +1,12 @@
+#### HEMDAG 2.3.6
+
+###### NEW FEATURES
+- added ``lexicographical.topological.sort``;
+
+###### CHANGES
+- fixed minor bugs;
+- improved manual;
+
 #### HEMDAG 2.2.5
 
 ###### NEW FEATURES
@@ -8,7 +17,7 @@
 
 ###### CHANGES
 - fixed minor bugs;
-- manual improved;
+- improved manual;
 
 #### HEMDAG 2.2.4
 
@@ -23,7 +32,7 @@
 - Some functions have been defunct. To know the defunct functions just typing in the R environment: ``help("HEMDAG-defunct")``;
 
 ###### CHANGES
-- manual improved;
+- improved manual;
 
 ###### AUTHOR
 - Added **Alessandro Petrini** as author for his contribution in writing the ``C++`` code of ``GPAV`` algorithm;
@@ -47,7 +56,7 @@
 	- added some checkers (warning/stop messages) to make the library more user-friendly;
 
 ###### CHANGES
-- manual improved;
+- improved manual;
 
 #### HEMDAG 2.0.1
 
@@ -84,7 +93,7 @@
 > NOTE: all the removed functions can be run opportunely setting the input parameters of the new high-level function ``Do.TPR.DAG`` (for **cross-validated** experiments) and ``Do.TPR.DAG.holdout`` (for **hold-out** experiments);
 
 ###### CHANGES
-- manual improved;
+- improved manual;
 	
 #### HEMDAG 1.1.1
 
@@ -94,7 +103,7 @@
 - Added ``tupla.matrix`` function;
 
 ###### CHANGES
-- manual improved;
+- improved manual;
 - Added link to the GitHub repository **HPOparser** ([link](https://github.com/marconotaro/HPOparser));
 - Added ``CITATION`` file;
 
