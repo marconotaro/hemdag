@@ -18,25 +18,25 @@ TPR.DAG(S, g, root = "00", positive = "children",
 
 \item{positive}{choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 \itemize{
-    \item \code{children} (\code{def.}): for each node are considered its positive children;
-    \item \code{descendants}: for each node are considered its positive descendants;
+ \item \code{children} (\code{def.}): for each node are considered its positive children;
+ \item \code{descendants}: for each node are considered its positive descendants;
 }}
 
 \item{bottomup}{strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
 It can be one of the following values:
 \itemize{
-    \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
-    \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
-    \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
-    \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
-    \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
-NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+ \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+ \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
+ \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
+ \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
+ \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+ NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 }}
 
 \item{topdown}{strategy to make the scores hierarchy-consistent. It can be one of the following values:
 \itemize{
-    \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-    \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+ \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+ \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
 }}
 
 \item{t}{threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants that requiring 
@@ -50,8 +50,8 @@ vector of the same length of the columns' number of the flat scores matrix (root
 
 \item{parallel}{boolean value:
 \itemize{
-\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-\item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+ \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+ \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
 }
 Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.}
 
@@ -66,46 +66,46 @@ a named matrix with the scores of the classes corrected according to the chosen 
 Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
 In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 \enumerate{
-\item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
+ \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
  across the hierarchy;
-\item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the hierarchical 
-	consistency of the predictions
+ \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the hierarchical 
+ consistency of the predictions
 }
 }
 \details{
 The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions \eqn{\hat{y}_i}:
 \deqn{
-	\bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
+ \bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
 }
 where \eqn{\phi_i} are the positive children of \eqn{i}.
 Different strategies to select the positive children \eqn{\phi_i} can be applied:
 \enumerate{
-	\item \strong{Threshold-Free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes 
-	that achieve a score higher than that of their parents:
-	\deqn{
-		\phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
-	}
-	\item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can ben selected in two different ways:
-	\enumerate{
-		\item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
-	\deqn{
-		\phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
-	}
-		For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
-		\item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
-		the F-score or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions 
-		\eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}. 
-		The corresponding set of positives \eqn{\forall i \in V} is:
-		\deqn{
-			\phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
-		}
-		For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
-}
+ \item \strong{Threshold-Free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes 
+ that achieve a score higher than that of their parents:
+ \deqn{
+     \phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
+ }
+ \item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can ben selected in two different ways:
+ \enumerate{
+     \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
+     \deqn{
+         \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
+     }
+     For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
+     \item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
+     the F-score or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions 
+     \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}. 
+     The corresponding set of positives \eqn{\forall i \in V} is:
+     \deqn{
+         \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
+     }
+     For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
+ }
 }
 The weighted \code{TPR-DAG} version can be designed by adding a weight \eqn{w \in [0,1]} to balance between the 
 contribution of the node \eqn{i} and that of its positive children \eqn{\phi}, through their convex combination:
 \deqn{
-	\bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
+ \bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
 }
 If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
 way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors 

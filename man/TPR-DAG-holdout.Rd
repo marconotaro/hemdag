@@ -11,7 +11,8 @@ Do.TPR.DAG.holdout(threshold = seq(from = 0.1, to = 0.9, by = 0.1),
   bottomup = "threshold.free", topdown = "HTD", W = NULL,
   parallel = FALSE, ncores = 1, recall.levels = seq(from = 0.1, to =
   1, by = 0.1), n.round = 3, f.criterion = "F", metric = NULL,
-  flat.file = flat.file, ann.file = ann.file, dag.file = dag.file,
+  compute.performance = FALSE, flat.file = flat.file,
+  ann.file = ann.file, dag.file = dag.file,
   ind.test.set = ind.test.set, ind.dir = ind.dir,
   flat.dir = flat.dir, ann.dir = ann.dir, dag.dir = dag.dir,
   hierScore.dir = hierScore.dir, perf.dir = perf.dir)
@@ -20,28 +21,32 @@ Do.TPR.DAG.holdout(threshold = seq(from = 0.1, to = 0.9, by = 0.1),
 \item{threshold}{range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, 
 \code{to:0.9}, \code{by:0.1}).
 The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-Use this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variant the functions automatically 
-sets \code{threshold} to zero}
+Set this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variants, 
+the parameter \code{threshold} is automatically set to zero}
 
 \item{weight}{range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-Use this parameter only for the \emph{weighted} variants; for the other variants the function automatically sets \code{weight} to zero}
+Set this parameter only for the \emph{weighted} variants; for the \emph{weight-free} variants,
+the parameter \code{weight} is automatically set to zero}
 
 \item{kk}{number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
 \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parametric variants
-(i.e. if \code{bottomup = threshold.free}) the function automatically sets \code{kk=NULL} if the input \code{kk}\eqn{\ne}\code{NULL}}
+(i.e. if \code{bottomup = threshold.free}), the parameter \code{kk} is automatically set to zero}
 
 \item{folds}{number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
-If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.}
+If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
+If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}}
 
 \item{seed}{initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
-initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.}
+initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
+If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+\code{seed} is automatically set to \code{NULL}}
 
 \item{norm}{boolean value: should the flat scores matrix be normalized?
 \itemize{
-\item \code{TRUE} (\code{def.}): the flat scores matrix has been already normalized in according to a normalization method;    
+\item \code{TRUE} (\code{def.}): the flat scores matrix has been already normalized in according to a normalization method;  
 \item \code{FALSE}: the flat scores matrix has not been normalized yet. See the parameter \code{norm.type} to set the on the fly 
-normalization method to apply among those possible.
+ normalization method to apply among those possible.
 }}
 
 \item{norm.type}{can be one of the following three values: 
@@ -53,25 +58,25 @@ normalization method to apply among those possible.
 
 \item{positive}{choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 \itemize{
-    \item \code{children} (\code{def.}): for each node are considered its positive children;
-    \item \code{descendants}: for each node are considered its positive descendants;
+ \item \code{children} (\code{def.}): for each node are considered its positive children;
+ \item \code{descendants}: for each node are considered its positive descendants;
 }}
 
 \item{bottomup}{strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
 It can be one of the following values:
 \itemize{
-    \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
-    \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
-    \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
-    \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
-    \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
-NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+ \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+ \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
+ \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
+ \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
+ \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+ NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 }}
 
 \item{topdown}{strategy to make the scores hierarchy-consistent. It can be one of the following values:
 \itemize{
-    \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-    \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+ \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+ \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
 }}
 
 \item{W}{vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def.} \code{W=NULL}), \code{W} is a unitary 
@@ -79,8 +84,8 @@ vector of the same length of the columns' number of the flat scores matrix (root
 
 \item{parallel}{boolean value:
 \itemize{
-\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+ \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+ \item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
 }
 Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.}
 
@@ -89,16 +94,20 @@ otherwise set \code{ncores} to the desired number of cores.
 Use \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.}
 
 \item{recall.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
-the Precision at fixed Recall level (PXR)}
+the Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} then \code{recall.levels} is automatically set to \code{NULL}}
 
 \item{n.round}{number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
-the best threshold on the basis of the best F-measure}
+the best threshold on the basis of the best F-measure.
+If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+\code{n.round} is automatically set to \code{NULL}}
 
 \item{f.criterion}{character. Type of F-measure to be used to select the best F-measure. Two possibilities:
 \enumerate{
 \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
 \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
-}}
+}
+If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+\code{f.criterion} is automatically set to \code{NULL}}
 
 \item{metric}{a string character specifying the performance metric on which to maximize the parametric ensemble variant. 
 It can be one of the following values:
@@ -109,6 +118,13 @@ It can be one of the following values:
 So, if \code{bottomup=threshold.free} set \code{metric=NULL} (\code{def.}).
 }}
 
+\item{compute.performance}{boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
+\code{multilabel F-score}) be returned?  
+\itemize{
+\item \code{FALSE}: performance are not computed and just the hierarchical scores matrix is returned;
+\item \code{TRUE} (\code{def.}): both performance and hierarchical scores matrix are returned;
+}}
+
 \item{flat.file}{name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)}
 
 \item{ann.file}{name of the file containing the the label matrix of the examples (without rda extension)}
@@ -116,7 +132,7 @@ So, if \code{bottomup=threshold.free} set \code{metric=NULL} (\code{def.}).
 \item{dag.file}{name of the file containing the graph that represents the hierarchy of the classes (without rda extension)}
 
 \item{ind.test.set}{name of the file containing a vector of integer numbers corresponding to the indices of the elements (rows) of scores 
-matrix to be used in the    test set}
+matrix to be used in the test set}
 
 \item{ind.dir}{relative path to folder where \code{ind.test.set} is stored}
 
@@ -128,19 +144,20 @@ matrix to be used in the    test set}
 
 \item{hierScore.dir}{relative path where the hierarchical scores matrix must be stored}
 
-\item{perf.dir}{relative path where the performance measures must be stored}
+\item{perf.dir}{relative path where the performance measures must be stored. If \code{compute.performance=FALSE}, 
+the parameter \code{perf.dir} is automatically set to \code{NULL}.}
 }
 \value{
 Two \code{rda} files stored in the respective output directories:
 \enumerate{
-	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
-	for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
-	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
-	\enumerate{
-		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
-	\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
-		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
+ \item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
+ for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
+ \item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
+ \enumerate{
+     \item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
+     \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
+     \item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
+     \item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 }}
 It is stored in the \code{perf.dir} directory.
 }
@@ -179,9 +196,9 @@ topdown <- "HTD";
 recall.levels <- seq(from=0.25, to=1, by=0.25);
 Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
-parallel=FALSE, ncores=1, recall.levels=recall.levels, n.round=3, f.criterion="F", metric=NULL,
-flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 
-ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+compute.performance=TRUE, parallel=FALSE, ncores=1, recall.levels=recall.levels, n.round=3, 
+f.criterion="F", metric=NULL, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
+ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
 hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 }
 \seealso{
