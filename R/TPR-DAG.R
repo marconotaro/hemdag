@@ -7,44 +7,44 @@
 #' @description Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
 #' In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 #' \enumerate{
-#'	\item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
+#'  \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
 #'  across the hierarchy;
-#'	\item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the hierarchical 
-#' 	consistency of the predictions
+#'  \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the hierarchical 
+#'  consistency of the predictions
 #' }
 #' @details The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions \eqn{\hat{y}_i}:
 #' \deqn{
-#' 	\bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
+#'  \bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
 #' }
 #' where \eqn{\phi_i} are the positive children of \eqn{i}.
 #' Different strategies to select the positive children \eqn{\phi_i} can be applied:
 #' \enumerate{
-#' 	\item \strong{Threshold-Free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes 
-#' 	that achieve a score higher than that of their parents:
-#' 	\deqn{
-#' 		\phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
-#' 	}
-#' 	\item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can ben selected in two different ways:
-#' 	\enumerate{
-#' 		\item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
-#'		\deqn{
-#'			\phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
-#'		}
-#' 		For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
-#' 		\item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
-#' 		the F-score or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions 
-#' 		\eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}. 
-#' 		The corresponding set of positives \eqn{\forall i \in V} is:
-#' 		\deqn{
-#' 			\phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
-#' 		}
-#' 		For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
-#'	}
+#'  \item \strong{Threshold-Free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes 
+#'  that achieve a score higher than that of their parents:
+#'  \deqn{
+#'      \phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
+#'  }
+#'  \item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can ben selected in two different ways:
+#'  \enumerate{
+#'      \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
+#'      \deqn{
+#'          \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
+#'      }
+#'      For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
+#'      \item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
+#'      the F-score or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions 
+#'      \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}. 
+#'      The corresponding set of positives \eqn{\forall i \in V} is:
+#'      \deqn{
+#'          \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
+#'      }
+#'      For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
+#'  }
 #' }
 #' The weighted \code{TPR-DAG} version can be designed by adding a weight \eqn{w \in [0,1]} to balance between the 
 #' contribution of the node \eqn{i} and that of its positive children \eqn{\phi}, through their convex combination:
 #' \deqn{
-#' 	\bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
+#'  \bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
 #' }
 #' If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
 #' way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors 
@@ -77,23 +77,23 @@
 #' @param root name of the class that it is on the top-level of the hierarchy (\code{def. root="00"})
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
-#' 	\item \code{children} (\code{def.}): for each node are considered its positive children;
-#' 	\item \code{descendants}: for each node are considered its positive descendants;
+#'  \item \code{children} (\code{def.}): for each node are considered its positive children;
+#'  \item \code{descendants}: for each node are considered its positive descendants;
 #' }
 #' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
 #' It can be one of the following values:
 #' \itemize{
-#' 	\item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
-#' 	\item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
-#' 	\item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
-#' 	\item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
-#' 	\item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
-#'	NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+#'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+#'  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
+#'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
+#'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
+#'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 #' }
 #' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
-#' 	\item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-#' 	\item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+#'  \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+#'  \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
 #' }
 #' @param t threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants that requiring 
 #' a threshold for the selection of the positive nodes, otherwise set \code{t} to zero
@@ -103,8 +103,8 @@
 #' vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.
 #' @param parallel boolean value:
 #' \itemize{
-#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-#'	\item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+#'  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+#'  \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
 #' }
 #' Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
@@ -137,15 +137,13 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 	if(bottomup=="weighted.threshold.free")
 		t <-0;
 	if(t==1 || w==1)
-		warning("TPR-DAG: when t or w is equal to 1, TPR-DAG is reduced to HTD-DAG", call.=FALSE);	
+		warning("TPR-DAG: when t or w is equal to 1, TPR-DAG is reduced to HTD-DAG", call.=FALSE);  
 	if(topdown=="GPAV" && parallel==TRUE && ncores<2)
 		warning("GPAV: set ncores greater than 2 to exploit the GPAV parallel version", call.=FALSE);
 	if(topdown=="GPAV" && parallel==FALSE && ncores>=2)
-		warning("TPR-DAG: no GPAV parallel version is running, but ncores is higher or equal to 2.", 
-			" Set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version", call.=FALSE);
+		warning("TPR-DAG: no GPAV parallel version is running, but ncores is higher or equal to 2.", " Set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version", call.=FALSE);
 	if(topdown=="HTD" && (parallel==TRUE || ncores>=2))
-		warning("TPR-DAG: does not exist a parallel version of HTD. The parameters 'parallel' and 'ncores' do not effect on 'HTD'", 
-			". Set 'parallel' to FALSE and/or 'ncores' to 1 to avoid this warning message", call.=FALSE);	
+		warning("TPR-DAG: does not exist a parallel version of HTD. The parameters 'parallel' and 'ncores' do not effect on 'HTD'", ". Set 'parallel' to FALSE and/or 'ncores' to 1 to avoid this warning message", call.=FALSE);   
 
 	## add root node to S if it does not exist
 	if(!(root %in% colnames(S))){
@@ -192,7 +190,7 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 							parent[j] <- w*parent[j] + (1-w)*sum(child.pos)/length(child.pos);  # flat score prediction
 						}
 					}
-				}	
+				}   
 				S[,names(chd.bup[i])] <- parent;
 			}
 		}
@@ -209,8 +207,8 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 				tmp <- setdiff(desc.bup[[i]],node.curr);
 				if(bottomup=="tau"){
 					delta <- setdiff(tmp, chd.bup[[i]]);  # descendants without children 
-					children <- as.matrix(S[,chd.bup[[i]]]);	# genes considering children node 
-					desc <-  as.matrix(S[,delta]);		# genes considering descendants nodes without children
+					children <- as.matrix(S[,chd.bup[[i]]]);    # genes considering children node 
+					desc <-  as.matrix(S[,delta]);      # genes considering descendants nodes without children
 				}else{
 					desc <- as.matrix(S[,tmp]);
 				}
@@ -220,7 +218,7 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 						desc.pos <- desc[j,][desc.set];
 						parent[j] <- (parent[j] + sum(desc.pos))/(1+length(desc.pos));   # flat scores correction
 					}else if(bottomup=="threshold.free"){
-						desc.set <- desc[j,] > parent[j];	# positive descendants selection
+						desc.set <- desc[j,] > parent[j];   # positive descendants selection
 						desc.pos <- desc[j,][desc.set];
 						parent[j] <- (parent[j] + sum(desc.pos))/(1+length(desc.pos));   # flat scores correction
 					}else if(bottomup=="weighted.threshold.free"){
@@ -236,9 +234,9 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 							parent[j] <- w*parent[j] + (1-w)*sum(desc.pos)/length(desc.pos);  # flat scores correction
 						}
 					}else if(bottomup=="tau"){
-						desc.set <- desc[j,] > parent[j];			# positive descendants (without children) selection
+						desc.set <- desc[j,] > parent[j];           # positive descendants (without children) selection
 						desc.pos <- desc[j,][desc.set];
-						child.set <- children[j,] > parent[j];  	# positive children selection
+						child.set <- children[j,] > parent[j];      # positive children selection
 						child.pos <- children[j,][child.set];
 						parent[j] <- t * ((parent[j] + sum(child.pos))/(1+length(child.pos))) + (1-t) * ((parent[j] + sum(desc.pos))/(1+length(desc.pos)));
 					}
@@ -269,7 +267,7 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 		}else{
 			S <- GPAV.over.examples(S, W=W, g);
 		}
-	}	
+	}   
 	S <- S[,-which(colnames(S)==root)];
 	return(S);
 }
@@ -287,23 +285,27 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' @param threshold range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, 
 #' \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Use this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variant the functions automatically 
-#' sets \code{threshold} to zero
+#' Set this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variants, 
+#' the parameter \code{threshold} is automatically set to zero
 #' @param weight range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Use this parameter only for the \emph{weighted} variants; for the other variants the function automatically sets \code{weight} to zero
+#' Set this parameter only for the \emph{weighted} variants; for the \emph{weight-free} variants,
+#' the parameter \code{weight} is automatically set to zero
 #' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
 #' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parametric variants
-#' (i.e. if \code{bottomup = threshold.free}) the function automatically sets \code{kk=NULL} if the input \code{kk}\eqn{\ne}\code{NULL} 
+#' (i.e. if \code{bottomup = threshold.free}), the parameter \code{kk} is automatically set to zero 
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
+#' If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
 #' initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{seed} is automatically set to \code{NULL}
 #' @param norm boolean value: should the flat scores matrix be normalized?
 #' \itemize{
-#' \item \code{TRUE} (\code{def.}): the flat scores matrix has been already normalized in according to a normalization method;	
+#' \item \code{TRUE} (\code{def.}): the flat scores matrix has been already normalized in according to a normalization method;  
 #' \item \code{FALSE}: the flat scores matrix has not been normalized yet. See the parameter \code{norm.type} to set the on the fly 
-#'	normalization method to apply among those possible.
+#'  normalization method to apply among those possible.
 #' }
 #' @param norm.type can be one of the following three values: 
 #'  \enumerate{
@@ -313,42 +315,52 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #'  }
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
-#' 	\item \code{children} (\code{def.}): for each node are considered its positive children;
-#' 	\item \code{descendants}: for each node are considered its positive descendants;
+#'  \item \code{children} (\code{def.}): for each node are considered its positive children;
+#'  \item \code{descendants}: for each node are considered its positive descendants;
 #' }
 #' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
 #' It can be one of the following values:
 #' \itemize{
-#' 	\item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
-#' 	\item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
-#' 	\item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
-#' 	\item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
-#' 	\item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
-#'	NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+#'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+#'  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
+#'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
+#'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
+#'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 #' }
 #' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
-#' 	\item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-#' 	\item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+#'  \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+#'  \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
 #' }
 #' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def. W=NULL}), \code{W} is a unitary 
 #' vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.
 #' @param parallel boolean value:
 #' \itemize{
-#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+#'  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+#'  \item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
 #' }
 #' Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
 #' otherwise set \code{ncores} to the desired number of cores. Use \code{ncores} only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
-#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
-#' the Precision at fixed Recall level (PXR)
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
-#' the best threshold on the basis of the best F-measure
+#' the best threshold on the basis of the best F-measure.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{n.round} is automatically set to \code{NULL}
 #' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
 #' \enumerate{
-#' \item \code{F} (\code{def.}): corresponds to the harmonic mean between the average precision and recall
+#' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
+#' }
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{f.criterion} is automatically set to \code{NULL}
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' the Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} the parameter \code{recall.levels} is automatically set to \code{NULL}
+#' @param compute.performance boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
+#' \code{multilabel F-score}) be returned?  
+#' \itemize{
+#' \item \code{FALSE} (\code{def.}): performance are not computed and just the hierarchical scores matrix is returned;
+#' \item \code{TRUE}: both performance and hierarchical scores matrix are returned;
 #' }
 #' @param metric a string character specifying the performance metric on which to maximize the parametric ensemble variant. 
 #' It can be one of the following values:
@@ -365,17 +377,18 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' @param ann.dir relative path where annotation matrix is stored
 #' @param dag.dir relative path where graph is stored
 #' @param hierScore.dir relative path where the hierarchical scores matrix must be stored
-#' @param perf.dir relative path where the performance measures must be stored
+#' @param perf.dir relative path where the performance measures must be stored. If \code{compute.performance=FALSE}, 
+#' the parameter \code{perf.dir} is automatically set to \code{NULL}.
 #' @return Two \code{rda} files stored in the respective output directories:
 #' \enumerate{
-#' 	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
-#' 	for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
-#' 	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performance results:
-#' 	\enumerate{
-#' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
-#'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
-#' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
+#'  \item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
+#'  for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
+#'  \item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performance results:
+#'  \enumerate{
+#'      \item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
+#'      \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
+#'      \item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
+#'      \item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
 #' @export
@@ -398,20 +411,21 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' bottomup <- "threshold.free";
 #' topdown <- "HTD";
 #' recall.levels <- seq(from=0.25, to=1, by=0.25);
-#' Do.TPR.DAG(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
-#' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
-#' parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, recall.levels=recall.levels, 
-#' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
-#' ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
+#' Do.TPR.DAG(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, 
+#' norm=FALSE, norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, 
+#' W=NULL, compute.performance=TRUE, parallel=FALSE, ncores=1, n.round=3, f.criterion="F", 
+#' metric=NULL, recall.levels=recall.levels, flat.file=flat.file, ann.file=ann.file, 
+#' dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+#' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), 
 	kk=5, folds=5, seed=23, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", 
-	topdown="HTD", W=NULL, parallel=FALSE, ncores=1, recall.levels=seq(from=0.1, to=1, by=0.1), n.round=3, 
-	f.criterion="F", metric=NULL, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
-	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
+	topdown="HTD", W=NULL, parallel=FALSE, ncores=1, n.round=3, f.criterion="F", metric=NULL, 
+	recall.levels=seq(from=0.1, to=1, by=0.1), compute.performance=FALSE, flat.file=flat.file, 
+	ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+	hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 	
 	## Setting Check
-	if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && 
-		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
+	if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
 		stop("TPR-DAG: positive or bottomup or topdown value misspelled", call.=FALSE);
 	if(positive=="children" && bottomup=="tau")
 		stop("TPR-DAG: tau is a descendants variants. Please set positive to descendants", call.=FALSE);
@@ -426,25 +440,31 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 	if(norm==FALSE && is.null(norm.type))
 		stop("TPR-DAG: If norm is set to FALSE, you need to specify a normalization method among those available", call.=FALSE);
 	if(norm==TRUE && !is.null(norm.type))
-		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", 
-			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
 	if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
 		stop("TPR-DAG: Smallest number of folds to define test and training set is 2. Set kk larger or equal to 2", call.=FALSE);
 	if(!is.null(kk) && bottomup=="threshold.free")
-		kk <- NULL;	
-	if(f.criterion!="F" && f.criterion!="avF")
-		stop("TPR-DAG: value of parameter 'f.criterion' misspelled");	
+		kk <- NULL; 
+	if(f.criterion!="F" && f.criterion!="avF" && compute.performance==TRUE)
+		stop("TPR-DAG: value of parameter 'f.criterion' misspelled");   
 	if(metric!="FMAX" && metric!="PRC" && !is.null(metric))
 		stop("TPR-DAG: value of parameter 'metric' misspelled", call.=FALSE);
 	if(is.null(metric) && bottomup!="threshold.free")
-		stop(paste0("TPR-DAG: metric cannot be NULL. The bottom-up approach '", bottomup, "' is parametric"), 
-			". Please select the metric on which maximize according to those available", call.=FALSE); 
+		stop(paste0("TPR-DAG: metric cannot be NULL. The bottom-up approach '", bottomup, "' is parametric"), ". Please select the metric on which maximize according to those available", call.=FALSE); 
 	if(!is.null(metric) && bottomup=="threshold.free") 
-		warning("TPR-DAG: the bottom-up approach 'threshold.free' is non-parametric.", 
-			paste0(" The chosen parameter metric '", metric, "' does not effect on 'threshold.free' bottom-up approach"), 
-			". Set metric to NULL to avoid this warning message", call.=FALSE);
+		warning("TPR-DAG: the bottom-up approach 'threshold.free' is non-parametric.", paste0(" The chosen parameter metric '", metric, "' does not effect on 'threshold.free' bottom-up approach"), ". Set metric to NULL to avoid this warning message", call.=FALSE);
 	if(is.null(seed) && bottomup!="threshold.free")
 		warning("TPR-DAG: folds are generate without seed initialization", call.=FALSE);
+	if(compute.performance==FALSE && (!is.null(recall.levels) || !is.null(perf.dir) || !is.null(folds))){
+		perf.dir <- NULL;
+		recall.levels <- NULL;
+		folds <- NULL;
+	}
+	if(compute.performance==FALSE && bottomup=="threshold.free" && (!is.null(seed) || !is.null(n.round) || !is.null(f.criterion))){
+		seed <- NULL;
+		n.round <- NULL;
+		f.criterion <- NULL;
+	}
 
 	## loading dag
 	dag.path <- paste0(dag.dir, dag.file,".rda");
@@ -481,25 +501,25 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 	}
 
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
-	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
-	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
-	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-		b.per.example=TRUE, folds=folds, seed=seed);
-	cat("FLAT PERFORMANCE: DONE", "\n");
-
+	if(compute.performance){
+		PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+		AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+		PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+		FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+		cat("FLAT PERFORMANCE: DONE", "\n");
+	}
 	## Hierarchical Correction 
 	if(bottomup=="threshold.free"){
-		S <- TPR.DAG(S, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, 
-			parallel=parallel, ncores=ncores);
+		S <- TPR.DAG(S, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
 		cat("HIERARCHICAL CORRECTION: DONE", "\n");
-		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
-		PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
-		AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-		PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
-		FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-			b.per.example=TRUE, folds=folds, seed=seed);
-		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+		if(compute.performance){
+			## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
+			PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+			AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+			PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+			FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+			cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+		}
 		S.hier <- S;
 		rm(S);
 	}else{
@@ -510,21 +530,19 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 		for(k in 1:kk){
 			## training test
 			training <- S[-testIndex[[k]],];
-			target.training <- ann[-testIndex[[k]],];			
+			target.training <- ann[-testIndex[[k]],];           
 			## test set
-			test <- S[testIndex[[k]],];	
+			test <- S[testIndex[[k]],]; 
 			target.test <- ann[testIndex[[k]],];
-			## metric initialization		
+			## metric initialization        
 			top.metric <- 0;
 			bestT <- 0;
 			bestW <- 0;
 			for(t in threshold){
 				for(w in weight){
-					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, 
-						w=w, t=t, W=W, parallel=parallel, ncores=ncores);
+					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
 					if(metric=="FMAX"){
-						training.metric <- find.best.f(target.training, pred.training, n.round=n.round, f.criterion=f.criterion, 
-							verbose=FALSE, b.per.example=FALSE)[["F"]];
+						training.metric <- find.best.f(target.training, pred.training, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=FALSE)[["F"]];
 					}else{
 						training.metric <- AUPRC.single.over.classes(target.training, pred.training, folds=NULL, seed=NULL)$average;
 					}
@@ -539,28 +557,27 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 							cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
 						}
 						else{
-							cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:",bestT, 
-								"best weight:", bestW, sep="\t", "\n");
+							cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:",bestT, "best weight:", bestW, sep="\t", "\n");
 						}
 					}
 				}
 			}
 			## test set 
-			pred.test <- TPR.DAG(test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, 
-				W=W, parallel=parallel, ncores=ncores);
+			pred.test <- TPR.DAG(test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
 			## assembling the hierarchical scores of each k sub-matrix
 			S.hier <- rbind(S.hier, pred.test); 
 		}
 		## put the rows (i.e. genes) of assembled k sub-matrix in the same order of the beginning matrix
 		S.hier <- S.hier[rownames(S),];
 		cat("HIERARCHICAL CORRECTION: DONE", "\n");
-		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
-		PRC.hier <- AUPRC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
-		AUC.hier <- AUROC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
-		PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
-		FMM.hier <- compute.Fmeasure.multilabel(ann, S.hier, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-			b.per.example=TRUE, folds=folds, seed=seed);
-		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+		if(compute.performance){
+			## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated
+			PRC.hier <- AUPRC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
+			AUC.hier <- AUROC.single.over.classes(ann, S.hier, folds=folds, seed=seed);
+			PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+			FMM.hier <- compute.Fmeasure.multilabel(ann, S.hier, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+			cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+		}
 		## remove no longer useful variables..
 		rm(S, testIndex, pred.test, test, training, target.test, target.training); gc();
 	}
@@ -606,12 +623,14 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 
 	if(norm){
 		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, 
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		}
 	}else{
 		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		}
 	}
 }
 
@@ -627,23 +646,27 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' @param threshold range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, 
 #' \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Use this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variant the functions automatically 
-#' sets \code{threshold} to zero
+#' Set this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variants, 
+#' the parameter \code{threshold} is automatically set to zero
 #' @param weight range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
 #' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Use this parameter only for the \emph{weighted} variants; for the other variants the function automatically sets \code{weight} to zero
+#' Set this parameter only for the \emph{weighted} variants; for the \emph{weight-free} variants,
+#' the parameter \code{weight} is automatically set to zero
 #' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
 #' \code{tau} of the parametric variants of the hierarchical ensemble algorithms. For the non-parametric variants
-#' (i.e. if \code{bottomup = threshold.free}) the function automatically sets \code{kk=NULL} if the input \code{kk}\eqn{\ne}\code{NULL} 
+#' (i.e. if \code{bottomup = threshold.free}), the parameter \code{kk} is automatically set to zero 
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
+#' If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
 #' initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{seed} is automatically set to \code{NULL}
 #' @param norm boolean value: should the flat scores matrix be normalized?
 #' \itemize{
-#' \item \code{TRUE} (\code{def.}): the flat scores matrix has been already normalized in according to a normalization method;	
+#' \item \code{TRUE} (\code{def.}): the flat scores matrix has been already normalized in according to a normalization method;  
 #' \item \code{FALSE}: the flat scores matrix has not been normalized yet. See the parameter \code{norm.type} to set the on the fly 
-#'	normalization method to apply among those possible.
+#'  normalization method to apply among those possible.
 #' }
 #' @param norm.type can be one of the following three values: 
 #'  \enumerate{
@@ -653,43 +676,53 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #'  }
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
-#' 	\item \code{children} (\code{def.}): for each node are considered its positive children;
-#' 	\item \code{descendants}: for each node are considered its positive descendants;
+#'  \item \code{children} (\code{def.}): for each node are considered its positive children;
+#'  \item \code{descendants}: for each node are considered its positive descendants;
 #' }
 #' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
 #' It can be one of the following values:
 #' \itemize{
-#' 	\item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
-#' 	\item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
-#' 	\item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
-#' 	\item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
-#' 	\item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
-#'	NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+#'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+#'  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
+#'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
+#'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
+#'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
 #' }
 #' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
-#' 	\item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-#' 	\item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+#'  \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
+#'  \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
 #' }
 #' @param W vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def.} \code{W=NULL}), \code{W} is a unitary 
 #' vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.
 #' @param parallel boolean value:
 #' \itemize{
-#'	\item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-#'	\item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+#'  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
+#'  \item \code{FALSE} (\code{def.}): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
 #' }
 #' Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
 #' otherwise set \code{ncores} to the desired number of cores.
 #' Use \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
 #' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
-#' the Precision at fixed Recall level (PXR)
+#' the Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} then \code{recall.levels} is automatically set to \code{NULL}
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
-#' the best threshold on the basis of the best F-measure
+#' the best threshold on the basis of the best F-measure.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{n.round} is automatically set to \code{NULL}
 #' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
 #' \enumerate{
 #' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
+#' }
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{f.criterion} is automatically set to \code{NULL}
+#' @param compute.performance boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
+#' \code{multilabel F-score}) be returned?  
+#' \itemize{
+#' \item \code{FALSE}: performance are not computed and just the hierarchical scores matrix is returned;
+#' \item \code{TRUE} (\code{def.}): both performance and hierarchical scores matrix are returned;
 #' }
 #' @param metric a string character specifying the performance metric on which to maximize the parametric ensemble variant. 
 #' It can be one of the following values:
@@ -703,23 +736,24 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' @param ann.file name of the file containing the the label matrix of the examples (without rda extension)
 #' @param dag.file name of the file containing the graph that represents the hierarchy of the classes (without rda extension)
 #' @param ind.test.set name of the file containing a vector of integer numbers corresponding to the indices of the elements (rows) of scores 
-#' matrix to be used in the	test set 
+#' matrix to be used in the test set 
 #' @param ind.dir relative path to folder where \code{ind.test.set} is stored
 #' @param flat.dir relative path where flat scores matrix is stored
 #' @param ann.dir relative path where annotation matrix is stored
 #' @param dag.dir relative path where graph is stored
 #' @param hierScore.dir relative path where the hierarchical scores matrix must be stored
-#' @param perf.dir relative path where the performance measures must be stored
+#' @param perf.dir relative path where the performance measures must be stored. If \code{compute.performance=FALSE}, 
+#' the parameter \code{perf.dir} is automatically set to \code{NULL}.
 #' @return Two \code{rda} files stored in the respective output directories:
 #' \enumerate{
-#' 	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
-#' 	for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
-#' 	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
-#' 	\enumerate{
-#' 		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
-#'		\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-#' 		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
-#' 		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
+#'  \item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
+#'  for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
+#'  \item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
+#'  \enumerate{
+#'      \item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
+#'      \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
+#'      \item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
+#'      \item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
 #' It is stored in the \code{perf.dir} directory.
 #' @export
@@ -747,19 +781,18 @@ Do.TPR.DAG <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=
 #' recall.levels <- seq(from=0.25, to=1, by=0.25);
 #' Do.TPR.DAG.holdout(threshold=threshold, weight=weight, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
 #' norm.type=norm.type, positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, 
-#' parallel=FALSE, ncores=1, recall.levels=recall.levels, n.round=3, f.criterion="F", metric=NULL,
-#' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 
-#' ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+#' compute.performance=TRUE, parallel=FALSE, ncores=1, recall.levels=recall.levels, n.round=3, 
+#' f.criterion="F", metric=NULL, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
+#' ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
 #' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=1, by=0.1), kk=5, 
 	folds=5, seed=23, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="HTD",
 	W=NULL, parallel=FALSE, ncores=1, recall.levels=seq(from=0.1, to=1, by=0.1), n.round=3, f.criterion="F", metric=NULL,
-	flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, 
-	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
+	compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, 
+	ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 
 	## Setting Check
-	if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && 
-		bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
+	if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
 		stop("TPR-DAG: positive or bottomup or topdown value misspelled", call.=FALSE);
 	if(positive=="children" && bottomup=="tau")
 		stop("TPR-DAG: tau is a descendants variants. Please set positive to descendants", call.=FALSE);
@@ -773,27 +806,33 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 		threshold<-0;
 	if(norm==FALSE && is.null(norm.type))
 		stop("TPR-DAG: If norm is set to FALSE, you need to specify a normalization method among those available", call.=FALSE);
-	if(f.criterion!="F" && f.criterion!="avF")
-		stop("TPR-DAG: value of parameter 'f.criterion' misspelled", call.=FALSE);	
+	if(f.criterion!="F" && f.criterion!="avF" && compute.performance==TRUE)
+		stop("TPR-DAG: value of parameter 'f.criterion' misspelled", call.=FALSE);  
 	if(metric!="FMAX" && metric!="PRC" && !is.null(metric))
 		stop("TPR-DAG: value of parameter 'metric' misspelled", call.=FALSE);
 	if(norm==TRUE && !is.null(norm.type))
-		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", 
-			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+		warning("TPR-DAG: If norm is set to TRUE, the input flat matrix is already normalized.", paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
 	if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
 		stop("TPR-DAG: Smallest number of folds to define test and training set is 2. Set kk larger or equal to 2", call.=FALSE);
 	if(!is.null(kk) && bottomup=="threshold.free")
-		kk <- NULL;			
+		kk <- NULL;         
 	if(is.null(metric) && bottomup!="threshold.free")
-		stop(paste0("TPR-DAG: metric cannot be NULL. The bottom-up approach '", bottomup, "' is parametric"), 
-			". Please select the metric on which maximize according to those available", call.=FALSE); 
+		stop(paste0("TPR-DAG: metric cannot be NULL. The bottom-up approach '", bottomup, "' is parametric"), ". Please select the metric on which maximize according to those available", call.=FALSE); 
 	if(!is.null(metric) && bottomup=="threshold.free") 
-		warning("TPR-DAG: the bottom-up approach 'threshold.free' is non-parametric.", 
-			paste0(" The chosen parameter metric '", metric, "' does not effect on 'threshold.free' bottom-up approach"), 
-			". Set metric to NULL to avoid this warning message", call.=FALSE);
+		warning("TPR-DAG: the bottom-up approach 'threshold.free' is non-parametric.", paste0(" The chosen parameter metric '", metric, "' does not effect on 'threshold.free' bottom-up approach"), ". Set metric to NULL to avoid this warning message", call.=FALSE);
 	if(is.null(seed) && bottomup!="threshold.free")
 		warning("TPR-DAG: folds are generate without seed initialization", call.=FALSE);
-
+	if(compute.performance==FALSE && (!is.null(recall.levels) || !is.null(perf.dir) || !is.null(folds))){
+		perf.dir <- NULL;
+		recall.levels <- NULL;
+		folds <- NULL;
+	}
+	if(compute.performance==FALSE && bottomup=="threshold.free" && (!is.null(seed) || !is.null(n.round) || !is.null(f.criterion))){
+		seed <- NULL;
+		n.round <- NULL;
+		f.criterion <- NULL;
+	}
+			
 	## Loading Data
 	## loading examples indices of the test set
 	ind.set <- paste0(ind.dir, ind.test.set, ".rda");
@@ -842,25 +881,25 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 	ann.training <- ann[-ind.test,];
 
 	## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
-	PRC.flat <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-	AUC.flat <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-	PXR.flat <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
-	FMM.flat <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE,
-		b.per.example=TRUE, folds=folds, seed=seed);
-	cat("FLAT PERFORMANCE: DONE", "\n");
-
+	if(compute.performance){
+		PRC.flat <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
+		AUC.flat <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
+		PXR.flat <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
+		FMM.flat <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+		cat("FLAT PERFORMANCE: DONE", "\n");
+	}
 	## Hierarchical Correction 
 	if(bottomup=="threshold.free"){
-		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, 
-			t=0, w=0, W=W, parallel=parallel, ncores=ncores);
+		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
 		cat("HIERARCHICAL CORRECTION: DONE", "\n");
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
-		PRC.hier <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-		AUC.hier <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-		PXR.hier <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
-		FMM.hier <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-			b.per.example=TRUE, folds=folds, seed=seed);
-		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+		if(compute.performance){
+			PRC.hier <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
+			AUC.hier <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
+			PXR.hier <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
+			FMM.hier <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+			cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+		}
 		S.hier <- S.test;
 		rm(S, S.test);
 	}else{
@@ -871,19 +910,17 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 			## training and test set
 			training <- S.training[foldIndex[[k]],];
 			target.training <- ann.training[foldIndex[[k]],];
-			## metric initialization		
+			## metric initialization        
 			top.metric <- 0;
 			bestT <- 0;
 			bestW <- 0;
 			for(t in threshold){
 				for(w in weight){
-					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, 
-						w=w, t=t, W=W, parallel=parallel, ncores=ncores);
+					pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
 					if(metric=="FMAX"){
-						training.metric <- find.best.f(target.training, pred.training, n.round=n.round, f.criterion=f.criterion, 
-							verbose=FALSE, b.per.example=FALSE)[["F"]];
+						training.metric <- find.best.f(target.training, pred.training, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=FALSE)[["F"]];
 					}else{
-						training.metric <- AUPRC.single.over.classes(target.training, pred.training, folds=NULL, seed=NULL)$average;	 
+						training.metric <- AUPRC.single.over.classes(target.training, pred.training, folds=NULL, seed=NULL)$average;     
 					}
 					if(training.metric > top.metric){
 						top.metric <- training.metric;
@@ -896,25 +933,23 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 							cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
 						}
 						else{
-							cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:",bestT, 
-								"best weight:", bestW, sep="\t", "\n");
+							cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:",bestT, "best weight:", bestW, sep="\t", "\n");
 						}
 					}
 				}
 			}
 		}
-		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, 
-			W=W, parallel=parallel, ncores=ncores);
+		S.test <- TPR.DAG(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
 		cat("HIERARCHICAL CORRECTION: DONE", "\n");
 
 		## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
-		PRC.hier <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-		AUC.hier <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
-		PXR.hier <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
-		FMM.hier <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-			b.per.example=TRUE, folds=folds, seed=seed);
-		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
-		
+		if(compute.performance){
+			PRC.hier <- AUPRC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
+			AUC.hier <- AUROC.single.over.classes(ann.test, S.test, folds=folds, seed=seed);
+			PXR.hier <- precision.at.given.recall.levels.over.classes(ann.test, S.test, folds=folds, seed=seed, recall.levels=recall.levels);
+			FMM.hier <- compute.Fmeasure.multilabel(ann.test, S.test, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+			cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+		}
 		## storing the hierarchical matrix
 		S.hier <- S.test;
 		rm(S, S.test, S.training, training);
@@ -962,11 +997,13 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
 
 	if(norm){
 		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		}
 	}else{
 		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
+		}
 	}
 }

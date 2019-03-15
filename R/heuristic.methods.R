@@ -136,17 +136,30 @@ heuristicOR <- function(S, g, root="00"){
 #'  }
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
+#' If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
-#' initialization. 
+#' initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{seed} is automatically set to \code{NULL}
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
-#' the best threshold on the basis of the best F-measure
+#' the best threshold on the basis of the best F-measure.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{n.round} is automatically set to \code{NULL}
 #' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
 #' \enumerate{
 #' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
 #' }
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{f.criterion} is automatically set to \code{NULL}
 #' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
-#' the Precision at fixed Recall level (PXR)
+#' the Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} the parameter \code{recall.levels} is automatically set to \code{NULL}
+#' @param compute.performance boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
+#' \code{multilabel F-score}) be returned?	
+#' \itemize{
+#' \item \code{FALSE} (\code{def.}): performance are not computed and just the hierarchical scores matrix is returned;
+#' \item \code{TRUE}: both performance and hierarchical scores matrix are returned;
+#' }
 #' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)
 #' @param ann.file name of the file containing the the label matrix of the examples (without rda extension)
 #' @param dag.file name of the file containing the graph that represents the hierarchy of the classes (without rda extension)
@@ -154,7 +167,8 @@ heuristicOR <- function(S, g, root="00"){
 #' @param ann.dir relative path where annotation matrix is stored
 #' @param dag.dir relative path where graph is stored
 #' @param hierScore.dir relative path where the hierarchical scores matrix must be stored
-#' @param perf.dir relative path where all the performance measures must be stored
+#' @param perf.dir relative path where the performance measures must be stored. If \code{compute.performance=FALSE} the functions 
+#' automatically sets \code{perf.dir} to \code{NULL}.
 #' @return Two \code{rda} files stored in the respective output directories:
 #' \enumerate{
 #' 	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
@@ -184,11 +198,13 @@ heuristicOR <- function(S, g, root="00"){
 #' ann.file <- "labels";
 #' Do.heuristic.methods(heuristic.fun="AND", norm=FALSE, norm.type="MaxNorm",
 #' folds=NULL, seed=23, n.round=3, f.criterion ="F", recall.levels=recall.levels, 
-#' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
-#' ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
+#' compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, 
+#' dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+#' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL, folds=5, seed=23, 
-	n.round=3, f.criterion ="F", recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file,
-	dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
+	n.round=3, f.criterion ="F", recall.levels=seq(from=0.1, to=1, by=0.1), compute.performance=FALSE, 
+	flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, 
+	dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 
 	## Setting Check
 	if(heuristic.fun!="MAX" && heuristic.fun!="AND" && heuristic.fun!="OR")
@@ -196,8 +212,16 @@ Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL,
 	if(norm==FALSE && is.null(norm.type))
 		stop("HEURISTIC: If norm is set to FALSE, you need also to specify a normalization method among those available", call.=FALSE);
 	if(norm==TRUE && !is.null(norm.type))
-		warning("HEURISTIC: If norm is set to TRUE, the input flat matrix is already normalized.", 
-			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+		warning("HEURISTIC: If norm is set to TRUE, the input flat matrix is already normalized.", paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+	if(f.criterion!="F" && f.criterion!="avF" && compute.performance==TRUE)
+		stop("HEURISTIC: value of parameter 'f.criterion' misspelled", call.=FALSE);  
+	if(compute.performance==FALSE && (!is.null(recall.levels) || !is.null(perf.dir) || !is.null(seed) || !is.null(n.round) || !is.null(f.criterion))){
+		perf.dir <- NULL;
+		recall.levels <- NULL;
+		seed <- NULL;
+		n.round <- NULL;
+		f.criterion <- NULL;
+	}
 
 	## loading dag
 	dag.path <- paste0(dag.dir, dag.file,".rda");
@@ -234,12 +258,13 @@ Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL,
 	}
 
 	## Compute FLAT PRC, AUC, PXR (average and per class) FMM (average and per-example) one-shoot or cross-validated 
-	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
-	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
-	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-		b.per.example=TRUE, folds=folds, seed=seed);
-	cat("FLAT PERFORMANCE: DONE", "\n");
+	if(compute.performance){
+		PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+		AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+		PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+		FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+		cat("FLAT PERFORMANCE: DONE", "\n");
+	}
 
 	## Obozinski's Hierarchical Heuristic Methods 
 	if(heuristic.fun=="AND")
@@ -251,13 +276,13 @@ Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL,
 	cat("HIERARCHICAL CORRECTION: DONE", "\n");
 
 	## Compute HIER PRC, AUC, PXR (average and per class) FMM (average and per-example) one-shoot or cross-validated 
-	PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
-	AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
-	FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-		b.per.example=TRUE, folds=folds, seed=seed);
-	cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
-
+	if(compute.performance){
+		PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+		AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+		PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+		FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+	}
 	## storing the hierarchical matrix
 	S.hier <- S;
 	rm(S); 
@@ -272,12 +297,14 @@ Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL,
 	
 	if(norm){
 		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores",heuristic.name,".rda"), compress=TRUE);
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, 
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);
+		}
 	}else{
 		save(S.hier, file=paste0(hierScore.dir, norm.type, ".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
+		}
 	}
 }
 
@@ -306,17 +333,30 @@ Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL,
 #'  }
 #' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 #' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
+#' If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}
 #' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
-#' initialization. 
+#' initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{seed} is automatically set to \code{NULL}
 #' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
-#' the best threshold on the basis of the best F-measure
+#' the best threshold on the basis of the best F-measure.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{n.round} is automatically set to \code{NULL}
 #' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
 #' \enumerate{
 #' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
 #' }
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{f.criterion} is automatically set to \code{NULL}
 #' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
-#' the Precision at fixed Recall level (PXR)
+#' the Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} the parameter \code{recall.levels} is automatically set to \code{NULL}
+#' @param compute.performance boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
+#' \code{multilabel F-score}) be returned?	
+#' \itemize{
+#' \item \code{FALSE} (\code{def.}): performance are not computed and just the hierarchical scores matrix is returned;
+#' \item \code{TRUE}: both performance and hierarchical scores matrix are returned;
+#' }
 #' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)
 #' @param ann.file name of the file containing the the label matrix of the examples (without rda extension)
 #' @param dag.file name of the file containing the graph that represents the hierarchy of the classes (without rda extension)
@@ -327,7 +367,8 @@ Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL,
 #' @param ann.dir relative path where annotation matrix is stored
 #' @param dag.dir relative path where graph is stored
 #' @param hierScore.dir relative path where the hierarchical scores matrix must be stored
-#' @param perf.dir relative path where the term-centric and protein-centric measures must be stored
+#' @param perf.dir relative path where the performance measures must be stored. If \code{compute.performance=FALSE}, 
+#' the parameter \code{perf.dir} is automatically set to \code{NULL}.
 #' @return Two \code{rda} files stored in the respective output directories:
 #' \enumerate{
 #' 	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
@@ -360,13 +401,13 @@ Do.heuristic.methods <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL,
 #' ann.file <- "labels";
 #' Do.heuristic.methods.holdout(heuristic.fun="MAX", norm=FALSE, norm.type="MaxNorm", 
 #' folds=NULL, seed=23, n.round=3, f.criterion ="F", recall.levels=recall.levels,
-#' flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
+#' compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
 #' ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, 
 #' dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
 Do.heuristic.methods.holdout <- function(heuristic.fun="AND", norm=TRUE, norm.type=NULL, folds=5, seed=23, 
-	n.round=3, f.criterion ="F", recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, 
-	dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, 
-	dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
+	n.round=3, f.criterion ="F", recall.levels=seq(from=0.1, to=1, by=0.1), compute.performance=FALSE, 
+	flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, 
+	flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
 
 	## Setting Check
 	if(heuristic.fun!="MAX" && heuristic.fun!="AND" && heuristic.fun!="OR")
@@ -374,9 +415,17 @@ Do.heuristic.methods.holdout <- function(heuristic.fun="AND", norm=TRUE, norm.ty
 	if(norm==FALSE && is.null(norm.type))
 		stop("HEURISTIC: If norm is set to FALSE, you need also to specify a normalization method among those available", call.=FALSE);
 	if(norm==TRUE && !is.null(norm.type))
-		warning("HEURISTIC: If norm is set to TRUE, the input flat matrix is already normalized.", 
-			paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-		
+		warning("HEURISTIC: If norm is set to TRUE, the input flat matrix is already normalized.", paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+	if(f.criterion!="F" && f.criterion!="avF" && compute.performance==TRUE)
+		stop("HEURISTIC: value of parameter 'f.criterion' misspelled", call.=FALSE);  
+	if(compute.performance==FALSE && (!is.null(recall.levels) || !is.null(perf.dir) || !is.null(seed) || !is.null(n.round) || !is.null(f.criterion))){
+		perf.dir <- NULL;
+		recall.levels <- NULL;
+		seed <- NULL;
+		n.round <- NULL;
+		f.criterion <- NULL;
+	}
+
 	## Loading Data
 	## loading examples indices of the test set
 	ind.set <- paste0(ind.dir, ind.test.set, ".rda");
@@ -421,13 +470,13 @@ Do.heuristic.methods.holdout <- function(heuristic.fun="AND", norm=TRUE, norm.ty
 	ann <- ann[ind.test,];
 
 	## Compute FLAT PRC, AUC, PXR (average and per class) FMM (average and per-example) one-shoot or cross-validated 
-	PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
-	AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
-	FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE,
-		b.per.example=TRUE, folds=folds, seed=seed);
-	cat("FLAT PERFORMANCE: DONE", "\n");
-
+	if(compute.performance){
+		PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+		AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+		PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+		FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+		cat("FLAT PERFORMANCE: DONE", "\n");
+	}
 	## Obozinski's Hierarchical Heuristic Methods 
 	if(heuristic.fun=="AND")
 		S <- heuristicAND(S, g, root);
@@ -438,12 +487,13 @@ Do.heuristic.methods.holdout <- function(heuristic.fun="AND", norm=TRUE, norm.ty
 	cat("HIERARCHICAL CORRECTION: DONE", "\n");
 
 	## Compute HIER PRC, AUC, PXR (average and per class) FMM (average and per-example) one-shoot or cross-validated 
-	PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
-	AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
-	PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
-	FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, 
-		b.per.example=TRUE, folds=folds, seed=seed);
-	cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+	if(compute.performance){
+		PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+		AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+		PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+		FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+		cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+	}
 	
 	## Storing Results 
 	S.hier <- S;
@@ -457,11 +507,13 @@ Do.heuristic.methods.holdout <- function(heuristic.fun="AND", norm=TRUE, norm.ty
 
 	if(norm){
 		save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores",heuristic.name,".rda"), compress=TRUE);
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);
+		}
 	}else{
 		save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
-		save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier,
-			file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
+		if(compute.performance){
+			save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.",heuristic.name,".rda"), compress=TRUE);	
+		}
 	}
 }

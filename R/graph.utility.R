@@ -1007,13 +1007,19 @@ do.stratified.cv.data.single.class <- function(examples, positives, kk=5, seed=N
 		positives <- unname(positives);
 	if(is.character(examples) && length(names(positives))!=0)
 		positives <- names(positives);
+	## degenerate case when labels have only one positive 
 	if(length(positives)==1){
 		positives <- positives;
 	}else{
 		positives <- sample(positives);
 	}
+	## degenerate case when labels have only one negative 
 	negatives <- setdiff(examples,positives);
-	negatives <- sample(negatives);
+	if(length(negatives)==1){
+		negatives <- negatives;
+	}else{
+		negatives <- sample(negatives);
+	}
 	n <- length(positives);		
 	m <- length(negatives);		
 	set.pos <- list();

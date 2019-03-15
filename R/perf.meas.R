@@ -350,9 +350,9 @@ AUROC.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
 	return(AUC.res);
 }
 
-##************************************************************##
-## Functions to compute Kiritchenko-like multilabel F-scores ##
-##************************************************************##
+##**********************************************************##
+## Functions to compute Kiritchenko-like multilabel F-score ##
+##**********************************************************##
 #' @name Multilabel.F.measure
 #' @aliases F.measure.multilabel
 #' @title Multilabel F-measure 
@@ -731,12 +731,19 @@ precision.at.all.recall.levels.single.class <- function(labels, scores){
 		stop("precision.at.all.recall.levels.single.class: length of true and predicted labels does not match", call.=FALSE);
 	if(any((labels!=0) & (labels!=1)))
 		stop("precision.at.all.recall.levels.single.class: labels variable must take values 0 or 1", call.=FALSE);
-	res <- evalmod(mode="basic", labels=labels, scores=scores);
-	df <- data.frame(res);
-	precision <- subset(df, df$type=="precision")$y;
-	recall <- subset(df, df$type=="sensitivity")$y;
-	PXR <- cbind(precision=precision, recall=recall);
-	return(PXR); 
+	if(all(labels==0) || all(labels==1)){
+		recall <- seq(from=0.0, to=1, by=0.25);
+		precision <- rep(0, length(recall));
+		PXR <- cbind(precision=precision, recall=recall);
+		return(PXR);
+	}else{
+		res <- evalmod(mode="basic", labels=labels, scores=scores);
+		df <- data.frame(res);
+		precision <- subset(df, df$type=="precision")$y;
+		recall <- subset(df, df$type=="sensitivity")$y;
+		PXR <- cbind(precision=precision, recall=recall);
+		return(PXR); 
+	}
 }
 
 #' @rdname PXR
@@ -767,42 +774,32 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
 			nfold <- format_nfold(nfold_df=df,  score_cols="scores", lab_col="labels", fold_col="folds");
 			prec2rec <- c(); ## storing the higher precisions at fixed recall level in the k_th fold
 			pxr.fold <- c(); ## storing the higher precisions at fixed recall level average across the k_th folds
-			if(sum(labels)<folds){
-				for(k in 1:folds){
-					for(j in 1:len.level){
-						if(sum(nfold$labels[[k]]%in%2)==0){							
-							prec2rec[j] <- 0;							
-						}else{										
-							res <- evalmod(mode="basic", scores=nfold$scores[k], labels=nfold$labels[k], modnames="m1", dsids=k);				
-							df <- data.frame(res);
-							precision <- subset(df, df$type=="precision")$y;
-							recall <- subset(df, df$type=="sensitivity")$y;	
-							## we take the higher precision value at the given recall level. NB: recall is monotone...
-							prec2rec[j] <- precision[which(recall - recall.levels[j]>=0)[1]];							
-						}								
-					}
-					pxr.fold <- c(pxr.fold, prec2rec);	
+			for(k in 1:folds){
+				for(j in 1:len.level){
+					## degenerate case in which labels in the fold are all positive or all negative
+					if(all(nfold$labels[[k]]==1) || all(nfold$labels[[k]]==2)){							
+						prec2rec[j] <- 0;							
+					}else{										
+						res <- evalmod(mode="basic", scores=nfold$scores[k], labels=nfold$labels[k], modnames="m1", dsids=k);				
+						df <- data.frame(res);
+						precision <- subset(df, df$type=="precision")$y;
+						recall <- subset(df, df$type=="sensitivity")$y;	
+						## we take the higher precision value at the given recall level. NB: recall is monotone...
+						prec2rec[j] <- precision[which(recall - recall.levels[j]>=0)[1]];							
+					}								
 				}
-				if(all(pxr.fold==0)){
-					prec2rec <- rep(0,len.level);
-				}else{
-					for(j in 1:len.level){
-						tmp <- pxr.fold[seq(j,len.level*folds,len.level)];						
-						if(all(tmp==0)){
-							prec2rec[j] <- 0;
-						}else{
-							prec2rec[j] <- mean(tmp[which(tmp!=0)]);
-						}						
-					}
-				}
+				pxr.fold <- c(pxr.fold, prec2rec);	
+			}
+			if(all(pxr.fold==0)){
+				prec2rec <- rep(0,len.level);
 			}else{
 				for(j in 1:len.level){
-					res <- evalmod(mode="basic", scores=nfold$scores, labels=nfold$labels, modnames="m1", dsids=1:folds);
-					df <- data.frame(res);
-					precision <- subset(df, df$type=="precision")$y;
-					recall <- subset(df, df$type=="sensitivity")$y;	
-					## we take the higher precision at the given recall level. NB: recall is monotone...
-					prec2rec[j] <- precision[which(recall - recall.levels[j]>=0)[1]];
+					tmp <- pxr.fold[seq(j,len.level*folds,len.level)];						
+					if(all(tmp==0)){
+						prec2rec[j] <- 0;
+					}else{
+						prec2rec[j] <- mean(tmp[which(tmp!=0)]);
+					}						
 				}
 			}
 			PXR <- rbind(PXR, prec2rec);
@@ -818,7 +815,7 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
 		labels <- target[,i];
 		scores <- predicted[,i];
 		prec2rec <- c();
-		if(sum(labels)==0){
+		if(all(labels==0) || all(labels==1)){
 			prec2rec <- rep(0,len.level);
 		}else{
 			for(j in 1:len.level){
