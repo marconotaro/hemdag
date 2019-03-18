@@ -1,3 +1,18 @@
+#### HEMDAG 2.4.7
+
+###### CHANGES
+- fixed degenerate case in ``precision.at.all.recall.levels.single.class`` (labels are all negatives/positives);
+- fixed degenerate case in ``precision.at.given.recall.levels.over.classes`` (labels in a fold are all negatives/positives); 
+- fixed degenerate case in ``do.stratified.cv.data.single.class`` (sampling of the labels with just one positive/negative);
+- added input variable ``compute.performance`` to the following high level functions: 
+	- ``Do.TPR.DAG`` and ``Do.TPR.DAG.holdout``; 
+	- ``Do.HTD`` and ``Do.HTD.holdout``; 
+	- ``Do.GPAV`` and ``Do.GPAV.holdout``; 
+	- ``Do.heuristic.methods`` and ``Do.heuristic.methods.holdout``;
+
+###### CHANGES
+- improved manual;
+
 #### HEMDAG 2.3.6
 
 ###### NEW FEATURES
@@ -61,7 +76,7 @@
 #### HEMDAG 2.0.1
 
 ###### CHANGES
-- corrected bug in ``do.stratified.cv.data.single.class``;
+- fixed bug in ``do.stratified.cv.data.single.class``;
 
 #### HEMDAG 2.0.0
 
