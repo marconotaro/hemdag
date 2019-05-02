@@ -1,7 +1,7 @@
-ff3bd2f76411fc4fb9cba9031180295f *DESCRIPTION
+a5ec56b61fa41d775f70e68b2d7237fd *DESCRIPTION
 e9f684d51c7af2c2099f64726655b44f *NAMESPACE
-c2c8635ceaa0b7a5d2201cde0fb4469e *NEWS.md
-a7e25e33e316d90d7dc9a56d4b5d5fef *R/GPAV.R
+3e1ef82ad63073b6b2d5639274b07388 *NEWS.md
+9e483173ac765a5ad19f4f9d18c5aac0 *R/GPAV.R
 7fd99ac4bf9870facc7dc98ffc175f49 *R/HEMDAG-defunct.R
 9235bd89d3b4d37fb111da2be30cd422 *R/IO.fun.R
 82f6e1c0cb7b60fb1b980298e2e87f57 *R/TPR-DAG.R
@@ -18,7 +18,7 @@ b38c67e9118b338a34a4f67284fed863 *data/scores.rda
 8a1a6c2671b3af583bf39bc32c10698d *data/test.index.rda
 a6784be6fba1850db1a693ecd6b44e17 *data/wadj.rda
 231deecd6cdc3aaf9c031bcf8e8ee443 *inst/CITATION
-038410272a0e752f87886711a181eeca *inst/HEMDAG_2.4.7.pdf
+108db90d157da7eb8860ba0a3a6cb75f *inst/HEMDAG_2.4.8.pdf
 c37989d9385b1fff8267bd23b6606437 *inst/extdata/edges.txt.gz
 55a435228950407cb06aed1a96defd28 *inst/extdata/gene2pheno.txt.gz
 5d5105e3f14e98178c3586e12283d442 *inst/extdata/graph.edges.txt.gz

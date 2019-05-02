@@ -1,6 +1,12 @@
-#### HEMDAG 2.4.7
+#### HEMDAG 2.4.8
 
 ###### CHANGES
+- fixed a minor bug in ``Do.GPAV.holdout``;
+- improved pacakge description; 
+
+#### HEMDAG 2.4.7
+
+###### NEW FEATURES
 - fixed degenerate case in ``precision.at.all.recall.levels.single.class`` (labels are all negatives/positives);
 - fixed degenerate case in ``precision.at.given.recall.levels.over.classes`` (labels in a fold are all negatives/positives); 
 - fixed degenerate case in ``do.stratified.cv.data.single.class`` (sampling of the labels with just one positive/negative);
