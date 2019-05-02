@@ -579,7 +579,7 @@ Do.GPAV.holdout <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, n
 	## before running GPAV we need to re-add the root node
 	if(!(root %in% colnames(S))){
 		if(exists("root.scores")){
-			S <- cbind(root.scores, S);
+			S <- cbind(root.scores[ind.test], S);
 			colnames(S)[1] <- root;
 		}else{
 			max.score <- max(S);
