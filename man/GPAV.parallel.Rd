@@ -7,25 +7,25 @@
 GPAV.parallel(S, g, W = NULL, ncores = 8)
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns (root node included)}
+\item{S}{a named flat scores matrix with examples on rows and classes on columns (root node included).}
 
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
 \item{W}{vector of weight relative to a single example. If the vector \code{W} is not specified (\code{def. W=NULL}), it is assumed that
-\code{W} is is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included)}
+\code{W} is is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).}
 
-\item{ncores}{number of cores to use for parallel execution (\code{def. 8})}
+\item{ncores}{number of cores to use for parallel execution (\code{def. 8}).}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm
+a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 }
 \description{
-Function to compute \code{GPAV} across all the examples (parallel implementation)
+Function to compute \code{GPAV} across all the examples (parallel implementation).
 }
 \examples{
 data(graph);
 data(scores);
 if (Sys.info()['sysname']!="Windows"){
-S.GPAV <- GPAV.parallel(S,W=NULL,g,ncores=2);
+   S.GPAV <- GPAV.parallel(S,W=NULL,g,ncores=2);
 }
 }

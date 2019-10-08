@@ -10,10 +10,10 @@ compute.flipped.graph(g)
 \item{g}{a \code{graphNEL} directed graph}
 }
 \value{
-a graph (as an object of class \code{graphNEL}) with edges in the opposite direction w.r.t. g
+a graph (as an object of class \code{graphNEL}) with edges in the opposite direction w.r.t. g.
 }
 \description{
-Compute a directed graph with edges in the opposite direction
+Compute a directed graph with edges in the opposite direction.
 }
 \examples{
 data(graph);

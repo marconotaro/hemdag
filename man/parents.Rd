@@ -17,30 +17,30 @@ get.parents.bottom.up(g, levels, root = "00")
 get.parents.topological.sorting(g, root = "00")
 }
 \arguments{
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{root}{name of the root node (\code{def. root="00"})}
+\item{root}{name of the root node (\code{def. root="00"}).}
 
-\item{levels}{a list of character vectors. Each component represents a graph level and the elements of any 
+\item{levels}{a list of character vectors. Each component represents a graph level and the elements of any.
 component correspond to nodes. The level 0 coincides with the root node.}
 }
 \value{
 \code{get.parents} returns a named list of character vectors. Each component corresponds to a node \eqn{x} of the graph (i.e. child node) 
-and its vector is the set of its parents (the root node is not included)
+and its vector is the set of its parents (the root node is not included).
 
 \code{get.parents.top.down} returns a named list of character vectors. Each component corresponds to a node 
 \eqn{x} of the graph (i.e. child node) and its vector is the set of its parents. 
 The nodes order follows the levels of the graph from root (excluded) to leaves.
 
 \code{get.parents.bottom.up} returns a named list of character vectors. Each component corresponds to a node \eqn{x} of the 
-graph (i.e. child node) and its vector isthe set of its parents. The nodes are ordered from leaves to root (excluded).
+graph (i.e. child node) and its vector is the set of its parents. The nodes are ordered from leaves to root (excluded).
 
 \code{get.parents.topological.sorting} a named list of character vectors. Each component corresponds to a 
 node \eqn{x} of the graph (i.e. child node) and its vector is the set of its parents. The nodes are ordered according to a 
 topological sorting, i.e. parents node come before children node.
 }
 \description{
-Compute the parents for each node of a graph
+Compute the parents for each node of a graph.
 }
 \examples{
 data(graph);

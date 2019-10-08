@@ -7,14 +7,14 @@
 distances.from.leaves(g)
 }
 \arguments{
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 }
 \value{
 a named vector. The names are the names of the nodes of the graph \code{g}, and their values represent the distance from the leaves.
-A value equal to 0 is assigned to the leaves, 1 to nodes with distance 1 from a leaf and so on
+A value equal to 0 is assigned to the leaves, 1 to nodes with distance 1 from a leaf and so on.
 }
 \description{
-This function returns the minimum distance of each node from one of the leaves of the graph
+This function returns the minimum distance of each node from one of the leaves of the graph.
 }
 \examples{
 data(graph);

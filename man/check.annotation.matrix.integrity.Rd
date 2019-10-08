@@ -11,14 +11,14 @@ check.annotation.matrix.integrity(anc, ann.spec, ann)
 
 \item{ann.spec}{the annotation matrix of the most specific annotations (0/1): rows are genes and columns are terms.}
 
-\item{ann}{the full annotations matrix (0/1), that is the matrix in which the transitive closure of the annotation was performed.
+\item{ann}{the full annotation matrix (0/1), that is the matrix in which the transitive closure of the annotation was performed.
 Rows are examples and columns are classes.}
 }
 \value{
-If the transitive closure of the annotations is well performed "OK" is returned, otherwise a message error is printed on the stdout
+If the transitive closure of the annotations is well performed "OK" is returned, otherwise a message error is printed on the stdout.
 }
 \description{
-This function assess the integrity of an annotation table in which a transitive closure of annotations was performed
+This function assess the integrity of an annotation table in which a transitive closure of annotations was performed.
 }
 \examples{
 data(graph);

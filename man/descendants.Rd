@@ -14,7 +14,7 @@ build.descendants.per.level(g, levels)
 build.descendants.bottom.up(g, levels)
 }
 \arguments{
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
 \item{levels}{a list of character vectors. Each component represents a graph level and the elements of any 
 component correspond to nodes. The level 0 coincides with the root node.}
@@ -32,7 +32,7 @@ Each component corresponds to a node \eqn{x} of the graph and its vector is the 
 The nodes are ordered from leaves to root (included).
 }
 \description{
-Compute the descendants for each node of a graph
+Compute the descendants for each node of a graph.
 }
 \examples{
 data(graph);

@@ -2,12 +2,12 @@
 % Please edit documentation in R/graph.utility.R
 \name{full.annotation.matrix}
 \alias{full.annotation.matrix}
-\title{Full annotations matrix}
+\title{Full annotation matrix}
 \usage{
 full.annotation.matrix(W, anc, ann.spec)
 }
 \arguments{
-\item{W}{symmetric adjacency weighted matrix of the graph}
+\item{W}{symmetric adjacency weighted matrix of the graph.}
 
 \item{anc}{list of the ancestors of the ontology.}
 
@@ -15,12 +15,12 @@ full.annotation.matrix(W, anc, ann.spec)
 }
 \value{
 a full annotation table T, that is a matrix in which the transitive closure of annotations was performed. 
-Rows correspond to genes of the weighted adjiacency matrix and columns to terms. 
+Rows correspond to genes of the weighted adjacency matrix and columns to terms. 
 \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j}, \eqn{T[i,j]=0} means that gene \eqn{i} is not annotated for the term \eqn{j}.
 }
 \description{
 Construct a full annotations table using ancestors and the most specific annotations table w.r.t. a given weighted adjacency matrix (wadj). 
-The rows of the full annotations matrix correspond to all the examples of the given weighted adjacency matrix and the columns to the class/terms.
+The rows of the full annotation matrix correspond to all the examples of the given weighted adjacency matrix and the columns to the class/terms.
 The transitive closure of the annotations is performed.
 }
 \details{

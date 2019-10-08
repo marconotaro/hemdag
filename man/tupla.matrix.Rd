@@ -7,25 +7,25 @@
 tupla.matrix(m, output.file = "net.file.gz")
 }
 \arguments{
-\item{m}{a weighetd adjacency matrix of the graph. Rows and columns are examples. It must be a square named matrix.}
+\item{m}{a weighted adjacency matrix of the graph. Rows and columns are examples. It must be a square named matrix.}
 
 \item{output.file}{name of the file of the  to be written.
 The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
-the weighted adjacency matrix as tupla is stored in the output.file
+the weighted adjacency matrix as tupla is stored in the output.file.
 }
 \description{
-Trasform a Weighted Adjacency Matrix (wadj matrix) of a graph in a tupla, i.e. as a sequences of rows separated by 
-blank and the weight of the edges, e.g \code{nodeX nodeY score}
+Transform a Weighted Adjacency Matrix (wadj matrix) of a graph in a tupla, i.e. as a sequences of rows separated by 
+blank and the weight of the edges, e.g \code{nodeX nodeY score}.
 }
 \details{
 Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded. 
-In other words in the \code{output.file} are reported only those nodes having a weight different from zero
+In other words in the \code{output.file} are reported only those nodes having a weight different from zero.
 }
 \examples{
-\dontrun{
 data(wadj);
-tupla.matrix(W, output.file="tupla.wadj.gz");
-tupla.matrix(W, output.file="tupla.wadj.txt");}
+tmpdir <- paste0(tempdir(),"/");
+tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"));
+tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt"));
 }

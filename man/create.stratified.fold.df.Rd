@@ -7,29 +7,29 @@
 create.stratified.fold.df(labels, scores, folds = 5, seed = 23)
 }
 \arguments{
-\item{labels}{vector of the true labels (0 negative, 1 positive)}
+\item{labels}{vector of the true labels (0 negative, 1 positive).}
 
-\item{scores}{a numeric vector of the values of the predicted labels}
+\item{scores}{a numeric vector of the values of the predicted labels.}
 
-\item{folds}{number of folds of the cross validation (\code{def. folds=5})}
+\item{folds}{number of folds of the cross validation (\code{def. folds=5}).}
 
 \item{seed}{initialization seed for the random generator to create folds (\code{def. seed=23}).
-If \code{seed=NULL}, the stratified folds are generated without seed initialization}
+If \code{seed=NULL}, the stratified folds are generated without seed initialization.}
 }
 \value{
 a data frame with three columns: 
 \itemize{
  \item \code{scores}: contains the predicted scores;
-\item \code{labels}: contains the labels as \code{pos} or \code{neg};
+   \item \code{labels}: contains the labels as \code{pos} or \code{neg};
  \item \code{folds}: contains the index of the fold in which the example falls.
-The index can range from 1 to the the number of folds
+   The index can range from 1 to the number of folds.
 }
 }
 \description{
-Create a data frame for stratified cross-validation
+Create a data frame for stratified cross-validation.
 }
 \details{
-the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples
+the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples.
 }
 \examples{
 data(labels);

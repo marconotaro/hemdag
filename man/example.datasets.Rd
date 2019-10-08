@@ -19,7 +19,7 @@ data(test.index)
 The DAG \code{g} contained in \code{graph} data is an object of class \code{graphNEL}. The graph \code{g} has 23 nodes and 30 edges and 
 represents the "ancestors view" of the HPO term \emph{Camptodactyly of finger} (\code{"HP:0100490"}). 
 
-The matrix \code{L} contained in the \code{labels} data is a 100 X 23 matrix, whose rows correspondes to genes 
+The matrix \code{L} contained in the \code{labels} data is a 100 X 23 matrix, whose rows correspond to genes 
 (\emph{Entrez GeneID}) and columns to HPO classes.
 \eqn{L[i,j]=1} means that the gene \eqn{i} belong to class \eqn{j}, \eqn{L[i,j]=0} means that the gene \eqn{i} does not belong to class \eqn{j}.
 The classes of the matrix \code{L} correspond to the nodes of the graph \code{g}.

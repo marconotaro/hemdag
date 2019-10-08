@@ -10,7 +10,7 @@ read.undirected.graph(file = "graph.txt.gz")
 \item{file}{name of the file to be read. The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
-a graph of class \code{graphNEL}
+a graph of class \code{graphNEL}.
 }
 \description{
 The graph is read from a file and a \code{graphNEL} object is built. The format of the input file is a sequence of rows. 

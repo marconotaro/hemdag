@@ -3,32 +3,32 @@
 \name{FMM}
 \alias{FMM}
 \alias{compute.Fmeasure.multilabel}
-\title{Compute Multilabel F-measure}
+\title{Compute F-measure Multilabel}
 \usage{
 compute.Fmeasure.multilabel(target, predicted, n.round = 3,
   f.criterion = "F", verbose = TRUE, b.per.example = FALSE,
   folds = NULL, seed = NULL)
 }
 \arguments{
-\item{target}{matrix with the target multilabels: rows correspond to examples and columns to classes.
-\eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise}
+\item{target}{matrix with the target multilabel: rows correspond to examples and columns to classes.
+\eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.}
 
-\item{predicted}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes}
+\item{predicted}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.}
 
-\item{n.round}{number of rounding digits to be applied to predicted (\code{default=3})}
+\item{n.round}{number of rounding digits to be applied to predicted (\code{default=3}).}
 
 \item{f.criterion}{character. Type of F-measure to be used to select the best F-score. There are two possibilities:
 \enumerate{
-\item \code{F} (def.) corresponds to the harmonic mean between the average precision and recall;
-\item \code{avF} corresponds to the per-example F-score averaged across all the examples.
+   \item \code{F} (def.) corresponds to the harmonic mean between the average precision and recall;
+   \item \code{avF} corresponds to the per-example F-score averaged across all the examples;
 }}
 
-\item{verbose}{boolean. If \code{TRUE} (def.) the number of iterations are printed on stdout}
+\item{verbose}{boolean. If \code{TRUE} (def.) the number of iterations are printed on stdout.}
 
 \item{b.per.example}{boolean. 
 \itemize{
-\item \code{TRUE}: results are returned for each example;
-\item \code{FALSE}: only the average results are returned
+   \item \code{TRUE}: results are returned for each example;
+   \item \code{FALSE}: only the average results are returned;
 }}
 
 \item{folds}{number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the AUROC is computed one-shot, 
@@ -40,25 +40,25 @@ If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUROC averaged ac
 \value{
 Two different outputs respect to the input parameter \code{b.per.example}:
 \itemize{
-\item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms 
-	of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T). 
-	F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across 
+   \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms 
+    of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T). 
+    F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across 
 examples and T is the best selected threshold;
-	\item \code{b.per.example==FALSE}: a list with two elements:
-		\enumerate{
-			\item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R), 
-		Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T). 
-			\item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F),	av.F-measure (av.F)
-			and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively 
-		to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T).
-		}
+    \item \code{b.per.example==FALSE}: a list with two elements:
+        \enumerate{
+            \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R), 
+           Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
+            \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F),    av.F-measure (av.F)
+            and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively 
+           to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
+        }
 }
 }
 \description{
 Function to compute the best hierarchical F-score either one-shot or averaged across folds
 }
 \details{
-Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned
+Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned.
 }
 \examples{
 data(graph);

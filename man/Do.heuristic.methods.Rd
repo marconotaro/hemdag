@@ -15,69 +15,69 @@ Do.heuristic.methods(heuristic.fun = "AND", norm = TRUE,
 \arguments{
 \item{heuristic.fun}{can be one of the following three values:
 \enumerate{
-    \item "MAX": run the heuristic method MAX;
-    \item "AND": run the heuristic method AND;
-    \item "OR": run the heuristic method OR;
+ \item "MAX": run the heuristic method MAX;
+ \item "AND": run the heuristic method AND;
+ \item "OR": run the heuristic method OR;
 }}
 
 \item{norm}{boolean value: 
 \itemize{
-\item \code{TRUE} (def.): the flat scores matrix has been already normalized in according to a normalization method;    
-\item \code{FALSE}: the flat scores matrix has not been normalized yet. See the parameter \code{norm.type} for which normalization can be applied.
+\item \code{TRUE} (def.): the flat scores matrix has been already normalized in according to a normalization method; 
+\item \code{FALSE}: the flat scores matrix has not been normalized yet. See the parameter \code{norm.type} for which normalization can be applied;
 }}
 
 \item{norm.type}{can be one of the following three values: 
 \enumerate{
 \item \code{NULL} (def.): set \code{norm.type} to \code{NULL} if and only if the parameter \code{norm} is set to \code{TRUE};
 \item \code{MaxNorm}: each score is divided for the maximum of each class;
-\item \code{Qnorm}: quantile normalization. \pkg{preprocessCore} package is used. 
+\item \code{Qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
 }}
 
 \item{folds}{number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
 If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
-If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}}
+If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}.}
 
 \item{seed}{initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
 initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
 If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
-\code{seed} is automatically set to \code{NULL}}
+\code{seed} is automatically set to \code{NULL}.}
 
 \item{n.round}{number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
 the best threshold on the basis of the best F-measure.
 If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
-\code{n.round} is automatically set to \code{NULL}}
+\code{n.round} is automatically set to \code{NULL}.}
 
 \item{f.criterion}{character. Type of F-measure to be used to select the best F-measure. Two possibilities:
 \enumerate{
-\item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall
-\item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples
+\item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
+\item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
 }
 If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
-\code{f.criterion} is automatically set to \code{NULL}}
+\code{f.criterion} is automatically set to \code{NULL}.}
 
 \item{recall.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
-the Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} the parameter \code{recall.levels} is automatically set to \code{NULL}}
+Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} the parameter \code{recall.levels} is automatically set to \code{NULL}.}
 
 \item{compute.performance}{boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
-\code{multilabel F-score}) be returned?    
+\code{multilabel F-score}) be returned?  
 \itemize{
 \item \code{FALSE} (\code{def.}): performance are not computed and just the hierarchical scores matrix is returned;
 \item \code{TRUE}: both performance and hierarchical scores matrix are returned;
 }}
 
-\item{flat.file}{name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension)}
+\item{flat.file}{name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension).}
 
-\item{ann.file}{name of the file containing the the label matrix of the examples (without rda extension)}
+\item{ann.file}{name of the file containing the label matrix of the examples (without rda extension).}
 
-\item{dag.file}{name of the file containing the graph that represents the hierarchy of the classes (without rda extension)}
+\item{dag.file}{name of the file containing the graph that represents the hierarchy of the classes (without rda extension).}
 
-\item{flat.dir}{relative path where flat scores matrix is stored}
+\item{flat.dir}{relative path where flat scores matrix is stored.}
 
-\item{ann.dir}{relative path where annotation matrix is stored}
+\item{ann.dir}{relative path where annotation matrix is stored.}
 
-\item{dag.dir}{relative path where graph is stored}
+\item{dag.dir}{relative path where graph is stored.}
 
-\item{hierScore.dir}{relative path where the hierarchical scores matrix must be stored}
+\item{hierScore.dir}{relative path where the hierarchical scores matrix must be stored.}
 
 \item{perf.dir}{relative path where the performance measures must be stored. If \code{compute.performance=FALSE} the functions 
 automatically sets \code{perf.dir} to \code{NULL}.}
@@ -85,25 +85,29 @@ automatically sets \code{perf.dir} to \code{NULL}.}
 \value{
 Two \code{rda} files stored in the respective output directories:
 \enumerate{
-	\item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
-	for each example and for each considered class. It is stored in the \code{hierScore.dir} directory.
-	\item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
-	\enumerate{
-		\item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
-	\item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
-		\item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
-		\item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
+ \item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
+ for each example and for each considered class. It is stored in the \code{hierScore.dir} directory;
+ \item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
+ \enumerate{
+     \item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
+     \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
+     \item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
+     \item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 }}
 It is stored in the \code{perf.dir} directory.
 }
 \description{
 High level function to compute the hierarchical heuristic methods MAX, AND, OR (Heuristic Methods MAX, AND, OR (\cite{Obozinski et al., 
-Genome Biology, 2008})
+Genome Biology, 2008}).
 }
 \details{
 The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
 If so, the number of terms of the annotations matrix is shrunk to the number of terms of the flat scores matrix and
 the corresponding subgraph is computed as well. N.B.: it is supposed that all the nodes of the subgraph are accessible from the root.
+
+We excluded the predictions of the root node in computing all the performances, since it is a \emph{dummy} node added 
+to the ontology for practical reasons (e.g. some graph-based software may require a single root node to work). However, the root node scores 
+are stored in the hierarchical scores matrix.
 }
 \examples{
 data(graph);

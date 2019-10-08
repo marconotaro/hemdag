@@ -7,13 +7,13 @@
 root.node(g)
 }
 \arguments{
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 }
 \value{
-name of the root node
+name of the root node.
 }
 \description{
-Find the root node of a directed graph
+Find the root node of a directed graph.
 }
 \examples{
 data(graph);

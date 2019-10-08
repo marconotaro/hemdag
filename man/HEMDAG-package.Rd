@@ -5,10 +5,24 @@
 \title{HEMDAG: Hierarchical Ensemble Methods for Directed Acyclic Graphs}
 
 \description{
-The HEMDAG package provides an implementation of several Hierarchical Ensemble Methods for DAGs. HEMDAG can be used to enhance the predictions of virtually any flat learning methods, by taking into account the hierarchical nature of the classes of a bio-ontology. HEMDAG is specifically designed for exploiting the hierarchical relationships of DAG-structured taxonomies, such as the Human Phenotype Ontology (HPO) or the Gene Ontology (GO), but it can be also safely applied to tree-structured taxonomies (as FunCat), since trees are DAGs. HEMDAG scale nicely both in terms of the complexity of the taxonomy and in the cardinality of the examples. A comprehensive tutorial on the 'HEMDAG' package, is available at \href{https://hemdag-tutorials.readthedocs.io}{https://hemdag-tutorials.readthedocs.io}.}
+The HEMDAG package: 
+\itemize{
+\item provides an implementation of several Hierarchical Ensemble Methods for DAGs;
+\item reconciles flat predictions with the topology of the ontology;
+\item can enhance predictions of virtually any flat learning methods by taking into account the hierarchical relationships between ontology classes;
+\item provides biologically meaningful predictions that obey the true-path-rule, the biological and logical rule that governs the internal coherence of biomedical ontologies;
+\item is specifically designed for exploiting the hierarchical relationships of DAG-structured taxonomies, such as the Human Phenotype Ontology (HPO) or the Gene Ontology (GO), but can be safely applied to tree-structured taxonomies as well (as FunCat), since trees are DAGs;
+\item scales nicely both in terms of the complexity of the taxonomy and in the cardinality of the examples;
+\item provides several utility functions to process and analyze graphs;
+\item provides several performance metrics to evaluate HEMs algorithms;
+}
+
+A comprehensive tutorial showing how to apply HEMDAG to real case studies in computational biology and precision medicine is available at \href{https://hemdag-tutorials.readthedocs.io}{https://hemdag-tutorials.readthedocs.io}.
+
+}
 
 \details{
-The HEMDAG package provides many utility functions to handle graph data structures and implements several Hierarchical Ensemble Methods for DAGs:
+The HEMDAG package implements the following Hierarchical Ensemble Methods for DAGs:
 \enumerate{
 \item \bold{HTD-DAG}: Hierarchical Top Down (\code{\link{HTD-DAG}});
 \item \bold{GPAV}: Generalized Pool-Adjacent Violators, \cite{Burdakov et al.} (\code{\link{GPAV}});
@@ -27,8 +41,7 @@ Maintainer:
 \emph{Marco Notaro} 
 \email{marco.notaro@unimi.it}\cr
 
-\eqn{^1} \href{https://sites.google.com/site/anacletolaboratory/}{AnacletoLab}, DI, Dipartimento di Informatica, Universita' degli Studi di Milano
-}
+\eqn{^1} \href{https://sites.google.com/site/anacletolaboratory/}{AnacletoLab}, Computational Biology and Bioinformatics Laboratory, Computer Science Department, University of Milan, Italy}
 
 \references{
 Marco Notaro, Max Schubach, Peter N. Robinson and Giorgio Valentini, 

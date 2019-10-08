@@ -2,36 +2,28 @@
 % Please edit documentation in R/graph.utility.R
 \name{specific.annotation.matrix}
 \alias{specific.annotation.matrix}
-\title{HPO specific annotations matrix}
+\title{specific annotation matrix}
 \usage{
-specific.annotation.matrix(file = "gene2pheno.txt.gz",
-  genename = "TRUE")
+specific.annotation.matrix(file = "gene2pheno.txt.gz")
 }
 \arguments{
-\item{file}{text file representing the most specific associations gene-HPO term \cr (\code{def: "gene2pheno.txt"}). 
-The file must be written as sequence of rows. Each row represents a gene and all its
-associations with abnormal phenotype tab separated, \cr \emph{e.g.: gene_1 <tab> phen1 <tab> ... phen_N}. \cr
-See \strong{Details} section to know more information about how to obtain this file.}
-
-\item{genename}{boolean value: 
-\itemize{
-    \item TRUE (def.): the names of genes are \emph{gene symbol} (i.e. characters);
-    \item FALSE: the names of gene are entrez \emph{gene ID} (i.e. integer numbers);
-}}
+\item{file}{text file representing the most specific associations gene-OBO. The file must be written as sequence of rows. 
+Each row represents a gene/protein and all its associations with an ontology term pipe separated, \emph{e.g.: gene1 |obo1|...|oboN}.  
+The input example file used here (\code{def: "gene2pheno.txt"}) shows the gene and all its associations with an HPO terms.}
 }
 \value{
 the annotation matrix of the most specific annotations (0/1): rows are genes and columns are HPO terms.
 Let's denote \eqn{M} the labels matrix. If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
 }
 \description{
-Construct the labels matrix of the most specific HPO terms
+Construct the labels matrix of the most specific OBO terms (as GO or HPO).
 }
 \details{
-The input plain text file representing the most specific associations gene-HPO term can be obtained by forking the GitHub repositoty
-\href{https://github.com/marconotaro/HPOparser}{HPOparser}, a collection of \code{Perl} subroutines to parse the HPO OBO file 
-and the HPO annotations file.
+The input plain text file representing the most specific associations gene-OBO term can be obtained by cloning the GitHub repository
+\href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and 
+their gene annotation file (gaf file).
 }
 \examples{
 gene2pheno <- system.file("extdata/gene2pheno.txt.gz", package="HEMDAG");
-spec.ann <- specific.annotation.matrix(file=gene2pheno, genename=TRUE);
+spec.ann <- specific.annotation.matrix(file=gene2pheno);
 }

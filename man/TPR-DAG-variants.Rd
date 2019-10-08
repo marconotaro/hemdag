@@ -10,11 +10,11 @@ TPR.DAG(S, g, root = "00", positive = "children",
   W = NULL, parallel = FALSE, ncores = 1)
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns}
+\item{S}{a named flat scores matrix with examples on rows and classes on columns.}
 
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{root}{name of the class that it is on the top-level of the hierarchy (\code{def. root="00"})}
+\item{root}{name of the class that it is on the top-level of the hierarchy (\code{def. root="00"}).}
 
 \item{positive}{choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 \itemize{
@@ -36,14 +36,14 @@ It can be one of the following values:
 \item{topdown}{strategy to make the scores hierarchy-consistent. It can be one of the following values:
 \itemize{
  \item \code{HTD} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
- \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}}).
+ \item \code{GPAV}: \code{GPAV} strategy is applied (\code{\link{GPAV}});
 }}
 
 \item{t}{threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants that requiring 
-a threshold for the selection of the positive nodes, otherwise set \code{t} to zero}
+a threshold for the selection of the positive nodes, otherwise set \code{t} to zero.}
 
 \item{w}{weight to balance between the contribution of the node \eqn{i} and that of its positive nodes. Set \code{w} only for the
-\emph{weighted} variants, otherwise set \code{w} to zero}
+\emph{weighted} variants, otherwise set \code{w} to zero.}
 
 \item{W}{vector of weight relative to a single example. If the vector \code{W} is not specified (by \code{def. W=NULL}), \code{W} is a unitary 
 vector of the same length of the columns' number of the flat scores matrix (root node included). Set \code{W} only if \code{topdown=GPAV}.}
@@ -51,7 +51,7 @@ vector of the same length of the columns' number of the flat scores matrix (root
 \item{parallel}{boolean value:
 \itemize{
  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
- \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}}).
+ \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}});
 }
 Use \code{parallel} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.}
 
@@ -60,7 +60,7 @@ otherwise set \code{ncores} to the desired number of cores.
 Use \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the chosen algorithm
+a named matrix with the scores of the classes corrected according to the chosen algorithm.
 }
 \description{
 Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
@@ -69,7 +69,7 @@ In their more general form the \code{TPR-DAG} algorithms adopt a two step learni
  \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
  across the hierarchy;
  \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the hierarchical 
- consistency of the predictions
+ consistency of the predictions;
 }
 }
 \details{
@@ -85,7 +85,7 @@ Different strategies to select the positive children \eqn{\phi_i} can be applied
  \deqn{
      \phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
  }
- \item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can ben selected in two different ways:
+ \item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can be selected in two different ways:
  \enumerate{
      \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
      \deqn{
@@ -110,7 +110,7 @@ contribution of the node \eqn{i} and that of its positive children \eqn{\phi}, t
 If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
 way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors 
 associated to the children nodes vote to predict node \eqn{i}. In the intermediate cases we attribute more importance to the predictor for the
-node \eqn{i} or to its children depending on the values of \eqn{w}. \cr
+node \eqn{i} or to its children depending on the values of \eqn{w}.
 
 The contribution of the descendants of a given node decays exponentially with their distance from the node itself. To enhance the 
 contribution of the most specific nodes to the overall decision of the ensemble we designed a novel variant that we named \code{DESCENS}. 
@@ -127,11 +127,11 @@ and that of its ``positives'' descendants excluding its children by adding a wei
 where \eqn{\phi_i} are the ``positive'' children of \eqn{i} and \eqn{\delta_i=\Delta_i \setminus \phi_i} the descendants of \eqn{i} without its children. 
 If \eqn{\tau=1} we consider only the contribution of the ``positive'' children of \eqn{i}; if \eqn{\tau=0} only the descendants that are not
 children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and 
-\eqn{\delta_i} positive nodes. \cr
+\eqn{\delta_i} positive nodes.
 
-Simply by replacing the \code{HTD} (\code{\link{HTD-DAG}}) top-down step with the \code{GPAV} approach (\code{\link{GPAV}}) we can desing the
+Simply by replacing the \code{HTD} (\code{\link{HTD-DAG}}) top-down step with the \code{GPAV} approach (\code{\link{GPAV}}) we can design the
 \code{TPR-DAG} variant \code{ISO-TPR}. The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by
-construction and selects the closest solution (in the sense of the least squared error) to the flat predictions that obeys to the true path rule.
+construction and selects the closest solution (in the least square sense) to the bottom-up predictions that obeys the true path rule.
 Obviously, any aforementioned strategy for the selection of ``positive'' children or descendants can be applied before executing the \code{GPAV} correction.
 }
 \examples{

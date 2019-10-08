@@ -7,17 +7,17 @@
 do.subgraph(nd, g, edgemode = "directed")
 }
 \arguments{
-\item{nd}{a vector with the nodes for which the subgraph must be built}
+\item{nd}{a vector with the nodes for which the subgraph must be built.}
 
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{edgemode}{can be "directed" or "undirected"}
+\item{edgemode}{can be "directed" or "undirected".}
 }
 \value{
-a subgraph with only the supplied nodes
+a subgraph with only the supplied nodes.
 }
 \description{
-This function returns a subgraph with only the supplied nodes and any edges between them
+This function returns a subgraph with only the supplied nodes and any edges between them.
 }
 \examples{
 data(graph);

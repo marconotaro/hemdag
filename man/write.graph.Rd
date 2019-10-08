@@ -7,15 +7,15 @@
 write.graph(g, file = "graph.txt.gz")
 }
 \arguments{
-\item{g}{a graph of class \code{graphNEL}}
+\item{g}{a graph of class \code{graphNEL}.}
 
 \item{file}{name of the file to be written. The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
-a plain text file representing the graph. Each row corresponds to an edge represented through a pair of vertices separated by blanks
+a plain text file representing the graph. Each row corresponds to an edge represented through a pair of vertices separated by blanks.
 }
 \description{
-An object of class \code{graphNEL} is read and the graph is written on a plain text file as sequence of rows
+An object of class \code{graphNEL} is read and the graph is written on a plain text file as sequence of rows.
 }
 \examples{
 data(graph);

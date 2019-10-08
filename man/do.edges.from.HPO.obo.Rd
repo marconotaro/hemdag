@@ -13,12 +13,15 @@ do.edges.from.HPO.obo(obofile = "hp.obo", file = "edge.file")
 The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
-a text file representing the edges in the format: source  destination (i.e. one row for each edge)
+a text file representing the edges in the format: source  destination (i.e. one row for each edge).
 }
 \description{
 Read an HPO OBO file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write 
 the edges of the DAG on a plain text file. The format of the file is a sequence of
-rows and each row corresponds to an edge represented through a pair of vertices separated by blanks
+rows and each row corresponds to an edge represented through a pair of vertices separated by blanks.
+}
+\details{
+a faster and more flexible parser to handle \emph{obo} file can be found \href{https://github.com/marconotaro/obogaf-parser}{here}.
 }
 \examples{
 \dontrun{

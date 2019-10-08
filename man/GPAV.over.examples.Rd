@@ -7,18 +7,18 @@
 GPAV.over.examples(S, g, W = NULL)
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns (root node included)}
+\item{S}{a named flat scores matrix with examples on rows and classes on columns (root node included).}
 
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
 \item{W}{vector of weight relative to a single example. If the vector \code{W} is not specified (\code{def. W=NULL}), it is assumed that
-\code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included)}
+\code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm
+a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 }
 \description{
-Function to compute \code{GPAV} across all the examples
+Function to compute \code{GPAV} across all the examples.
 }
 \examples{
 data(graph);

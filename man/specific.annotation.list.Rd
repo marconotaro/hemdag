@@ -11,10 +11,10 @@ specific.annotation.list(ann)
 }
 \value{
 a named list, where the names of each component correspond to an examples (genes) and the elements of each component 
-are the most specific classes associated to that genes
+are the most specific classes associated to that genes.
 }
 \description{
-Construct a list of the most specific annotations starting from the table of the most specific annotations
+Construct a list of the most specific annotations starting from the table of the most specific annotations.
 }
 \examples{
 data(labels);

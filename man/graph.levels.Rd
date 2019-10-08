@@ -17,7 +17,7 @@ the second to nodes at maximum distance 1 (level 1), the third to the node at ma
 }
 \description{
 This function groups a set of nodes in according to their maximum depth in the graph. It first inverts the weights 
-of the graph and then applies the Bellman Ford algorithm to find the shortest path, achieving in this way the longest path
+of the graph and then applies the Bellman Ford algorithm to find the shortest path, achieving in this way the longest path.
 }
 \examples{
 data(graph);

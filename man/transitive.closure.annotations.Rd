@@ -7,18 +7,18 @@
 transitive.closure.annotations(ann.spec, anc)
 }
 \arguments{
-\item{ann.spec}{the annotation matrix of the most specific annotations (0/1): rows are genes and columns are HPO terms.}
+\item{ann.spec}{the annotation matrix of the most specific annotations (0/1): rows are genes and columns are OBO terms.}
 
 \item{anc}{list of the ancestors of the ontology.}
 }
 \value{
-an annotation table T: rows correspond to genes and columns to HPO terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
+an annotation table T: rows correspond to genes and columns to OBO terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
 \eqn{T[i,j]=0} means that gene \eqn{i} is not annotated for the term \eqn{j}.
 }
 \description{
 Performs the transitive closure of the annotations using ancestors and the most specific annotation table.
 The annotations are propagated from bottom to top, enriching the most specific annotations table.
-The rows of the matrix correspond to the genes of the most specific annotation table and the columns to the HPO terms/classes
+The rows of the matrix correspond to the genes of the most specific annotation table and the columns to the OBO terms/classes.
 }
 \examples{
 data(graph);

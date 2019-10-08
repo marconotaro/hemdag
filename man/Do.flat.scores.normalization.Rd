@@ -15,20 +15,20 @@ Do.flat.scores.normalization(norm.type = "MaxNorm",
 \item Qnorm: a quantile normalization is applied. Library preprocessCore is used.
 }}
 
-\item{flat.file}{name of the flat scores matrix (without rda extension)}
+\item{flat.file}{name of the flat scores matrix (without rda extension).}
 
-\item{flat.dir}{relative path to folder where flat scores matrix is stored}
+\item{flat.dir}{relative path to folder where flat scores matrix is stored .}
 
-\item{flat.norm.dir}{the directory where the normalized flat scores matrix must be stored}
+\item{flat.norm.dir}{the directory where the normalized flat scores matrix must be stored.}
 }
 \value{
-the matrix of the scores flat normalized w.r.t. MaxNorm or Qnorm in \code{flat.norm.dir}
+the matrix of the scores flat normalized w.r.t. MaxNorm or Qnorm in \code{flat.norm.dir}.
 }
 \description{
-High level functions to normalize a flat scores matrix w.r.t. max normalization (MaxNorm) or quantile normalization (Qnorm)
+High level functions to normalize a flat scores matrix w.r.t. max normalization (MaxNorm) or quantile normalization (Qnorm).
 }
 \details{
-To apply the quantile normalization the \pkg{preprocessCore} library is uded.
+To apply the quantile normalization the \pkg{preprocessCore} package must be installed.
 }
 \examples{
 data(scores);
@@ -37,7 +37,7 @@ save(S, file=paste0(tmpdir,"scores.rda"));
 flat.dir <- flat.norm.dir <- tmpdir;
 norm.types <- c("MaxNorm","Qnorm");
 for(norm.type in norm.types){
-	Do.flat.scores.normalization(norm.type=norm.type, flat.file="scores", 
-	flat.dir=flat.dir, flat.norm.dir=flat.norm.dir);
+    Do.flat.scores.normalization(norm.type=norm.type, flat.file="scores", 
+    flat.dir=flat.dir, flat.norm.dir=flat.norm.dir);
 }
 }

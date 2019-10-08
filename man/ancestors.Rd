@@ -14,7 +14,7 @@ build.ancestors.per.level(g, levels)
 build.ancestors.bottom.up(g, levels)
 }
 \arguments{
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
 \item{levels}{a list of character vectors. Each component represents a graph level and the elements of any 
 component correspond to nodes. The level 0 coincides with the root node.}
@@ -30,7 +30,7 @@ of the graph and its vector is the set of its ancestors including also \eqn{x}. 
 graph and its vector is the set of its ancestors including also \eqn{x}. The nodes are ordered from leaves to root (included).
 }
 \description{
-Compute the ancestors for each node of a graph
+Compute the ancestors for each node of a graph.
 }
 \examples{
 data(graph);

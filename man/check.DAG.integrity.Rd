@@ -7,16 +7,16 @@
 check.DAG.integrity(g, root = "00")
 }
 \arguments{
-\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes}
+\item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{root}{name of the class that is on the top-level of the hierarchy (def:"00")}
+\item{root}{name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).}
 }
 \value{
 If all the nodes are accessible from the root "DAG is OK" is printed, 
-otherwise a message error and the list of the not accessible nodes is printed on the stdout
+otherwise a message error and the list of the not accessible nodes is printed on the stdout.
 }
 \description{
-This function assess the integrity of a DAG
+This function assess the integrity of a DAG.
 }
 \examples{
 data(graph);

@@ -13,14 +13,14 @@ precision.at.given.recall.levels.over.classes(target, predicted,
   by = 0.1))
 }
 \arguments{
-\item{labels}{vector of the true labels (0 negative, 1 positive examples)}
+\item{labels}{vector of the true labels (0 negative, 1 positive examples).}
 
-\item{scores}{a numeric vector of the values of the predicted labels (scores)}
+\item{scores}{a numeric vector of the values of the predicted labels (scores).}
 
-\item{target}{matrix with the target multilabels: rows correspond to examples and columns to classes. 
+\item{target}{matrix with the target multilabel: rows correspond to examples and columns to classes. 
 \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.}
 
-\item{predicted}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes}
+\item{predicted}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.}
 
 \item{folds}{number of folds on which computing the PXR. If \code{folds=NULL} (\code{def.}), the PXR is computed one-shot, 
 otherwise the PXR is computed averaged across folds.}
@@ -28,24 +28,24 @@ otherwise the PXR is computed averaged across folds.}
 \item{seed}{initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
 If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the PXR averaged across folds is computed without seed initialization.}
 
-\item{recall.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1})}
+\item{recall.levels}{a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).}
 }
 \value{
 \code{precision.at.all.recall.levels.single.class} returns a two-columns matrix, representing a pair of precision and recall values. 
-The first column is the precision, the second the recall;\cr
+The first column is the precision, the second the recall;
 \code{precision.at.given.recall.levels.over.classes} returns a list with two elements:
 \enumerate{
-\item avgPXR: a vector with the the average precisions at different recall levels across classes
-\item PXR: a matrix with the precisions at different recall levels: rows are classes, columns precisions at different recall levels
+\item avgPXR: a vector with the average precision at different recall levels across classes;
+\item PXR: a matrix with the precision at different recall levels: rows are classes, columns precision at different recall levels;
 }
 }
 \description{
-Functions to compute the Precision-Recall (PXR) values through \pkg{precrec} package
+Functions to compute the Precision-Recall (PXR) values through \pkg{precrec} package.
 }
 \details{
 \code{precision.at.all.recall.levels.single.class} computes the precision at all recall levels just for a single class.
 
-\code{precision.at.given.recall.levels.over.classes} computes the precision at fixed recall levels over classes
+\code{precision.at.given.recall.levels.over.classes} computes the precision at fixed recall levels over classes.
 }
 \examples{
 data(labels);
@@ -59,5 +59,5 @@ scores <- S[,1];
 rec.levels <- seq(from=0.25, to=1, by=0.25);
 PXR.single <- precision.at.all.recall.levels.single.class(labels, scores);
 PXR <- precision.at.given.recall.levels.over.classes(L, S, folds=5, seed=23, 
-		  recall.levels=rec.levels);
+          recall.levels=rec.levels);
 }

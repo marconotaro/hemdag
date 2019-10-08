@@ -4,31 +4,21 @@
 \alias{weighted.adjacency.matrix}
 \title{Weighted Adjacency Matrix}
 \usage{
-weighted.adjacency.matrix(file = "edges.txt", nodename = TRUE)
+weighted.adjacency.matrix(file = "edges.txt")
 }
 \arguments{
 \item{file}{name of the plain text file to be read (\code{def. edges}). The format of the file is a sequence of rows. 
-Each row corresponds to an edge represented through a pair of vertices separated by blanks and the weight of the edges.\cr
+Each row corresponds to an edge represented through a pair of vertices separated by blanks and the weight of the edges.
 For instance: \code{nodeX nodeY score}.
 The file extension can be or plain format (".txt") or compressed (".gz").}
-
-\item{nodename}{boolean value:
-\itemize{
-    \item TRUE (def.): the names of nodes are gene symbol (i.e. characters);
-    \item FALSE: the names of the nodes are entrez gene ID (i.e. integer numbers);
-}}
 }
 \value{
-a named symmetric weighted adjacency matrix of the graph
+a named symmetric weighted adjacency matrix of the graph.
 }
 \description{
-Construct a Weighted Adjacency Matrix (wadj matrix) of a graph
-}
-\details{
-The input parameter nodename sorts the row names of the wadj matrix in increasing order if they are integer number or 
-in alphabetic order if they are characters.
+Construct a Weighted Adjacency Matrix (wadj matrix) of a graph.
 }
 \examples{
 edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");
-W <- weighted.adjacency.matrix(file=edges, nodename=TRUE);
+W <- weighted.adjacency.matrix(file=edges);
 }

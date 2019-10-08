@@ -12,10 +12,10 @@ to an edge represented through a pair of vertices separated by blanks.
 The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
-an object of class \code{graphNEL}
+an object of class \code{graphNEL}.
 }
 \description{
-A directed graph is read from a file and a \code{graphNEL} object is built
+A directed graph is read from a file and a \code{graphNEL} object is built.
 }
 \examples{
 ed <- system.file("extdata/graph.edges.txt.gz", package= "HEMDAG");

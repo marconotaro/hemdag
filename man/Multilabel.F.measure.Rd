@@ -13,39 +13,39 @@ F.measure.multilabel(target, predicted, b.per.example = FALSE)
   b.per.example = FALSE)
 }
 \arguments{
-\item{target}{matrix with the target multilabels: rows correspond to examples and columns to classes.
-\eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise}
+\item{target}{matrix with the target multilabel: rows correspond to examples and columns to classes.
+\eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.}
 
 \item{predicted}{a numeric matrix with discrete predicted values: rows correspond to examples and columns to classes.
-\eqn{predicted[i,j]=1} if example \eqn{i} is predicted belonging to class \eqn{j}, \eqn{target[i,j]=0} otherwise}
+\eqn{predicted[i,j]=1} if example \eqn{i} is predicted belonging to class \eqn{j}, \eqn{target[i,j]=0} otherwise.}
 
 \item{b.per.example}{boolean. 
 \itemize{
-\item \code{TRUE}: results are returned for each example;
-\item \code{FALSE}: only the average results are returned
+   \item \code{TRUE}: results are returned for each example;
+   \item \code{FALSE}: only the average results are returned;
 }}
 }
 \value{
 Two different outputs respect to the input parameter \code{b.per.example}:
 \itemize{
-\item \code{b.per.example==FALSE}: a list with a single element average. A named vector with average precision (P), recall (R), 
-	specificity (S), F-measure (F), average F-measure (avF) and Accuracy (A) across examples. F is the F-measure computed as the 
-	harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across examples.
-	\item \code{b.per.example==FALSE}: a list with two elements:
-		\enumerate{
-			\item average: a named vector with average precision (P), recall (R), specificity (S), F-measure (F), average F-measure (avF) 
-			and Accuracy (A) across examples; 
-			\item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F) and 
-			av.F-measure (av.F) for each example. Row names correspond to examples, column names correspond respectively to Precision (P), Recall (R), 
-			Specificity (S), Accuracy (A), F-measure (F) and av.F-measure (av.F)
-		}
+   \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with average precision (P), recall (R), 
+    specificity (S), F-measure (F), average F-measure (avF) and Accuracy (A) across examples. F is the F-measure computed as the 
+    harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across examples;
+    \item \code{b.per.example==FALSE}: a list with two elements:
+        \enumerate{
+            \item average: a named vector with average precision (P), recall (R), specificity (S), F-measure (F), average F-measure (avF) 
+            and Accuracy (A) across examples; 
+            \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F) and 
+            av.F-measure (av.F) for each example. Row names correspond to examples, column names correspond respectively to Precision (P), Recall (R), 
+            Specificity (S), Accuracy (A), F-measure (F) and av.F-measure (av.F);
+        }
 }
 }
 \description{
-Method for computing Precision, Recall, Specificity, Accuracy and F-measure for multiclass and multilabel classification
+Method for computing Precision, Recall, Specificity, Accuracy and F-measure for multiclass and multilabel classification.
 }
 \details{
-Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned
+Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned.
 }
 \examples{
 data(labels);

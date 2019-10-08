@@ -11,9 +11,9 @@ AUROC.single.class(labels, scores, folds = NULL, seed = NULL)
 AUROC.single.over.classes(target, predicted, folds = NULL, seed = NULL)
 }
 \arguments{
-\item{labels}{vector of the true labels (0 negative, 1 positive examples)}
+\item{labels}{vector of the true labels (0 negative, 1 positive examples).}
 
-\item{scores}{a numeric vector of the values of the predicted labels (scores)}
+\item{scores}{a numeric vector of the values of the predicted labels (scores).}
 
 \item{folds}{number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the AUROC is computed one-shot, 
 otherwise the AUROC is computed averaged across folds.}
@@ -21,21 +21,21 @@ otherwise the AUROC is computed averaged across folds.}
 \item{seed}{initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
 If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUROC averaged across folds is computed without seed initialization.}
 
-\item{target}{matrix with the target multilabels: rows correspond to examples and columns to classes. 
+\item{target}{annotation matrix: rows correspond to examples and columns to classes. 
 \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.}
 
 \item{predicted}{a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.}
 }
 \value{
-\code{AUROC.single.class} returns a numeric value corresponding to the AUROC for the considered class;\cr
+\code{AUROC.single.class} returns a numeric value corresponding to the AUROC for the considered class;
 \code{AUPR.single.over.classes} returns a list with two elements:
 \enumerate{
-	\item average: the average AUROC across classes;        
-	\item per.class: a named vector with AUROC for each class. Names correspond to classes.
+    \item average: the average AUROC across classes;        
+    \item per.class: a named vector with AUROC for each class. Names correspond to classes.
 }
 }
 \description{
-Function to compute the Area under the ROC Curve through \pkg{precrec} package
+Function to compute the Area under the ROC Curve through \pkg{precrec} package.
 }
 \details{
 The AUROC (for a single class or for a set of classes) is computed either one-shot or averaged across stratified folds.
@@ -48,7 +48,7 @@ For all those classes having zero annotations, the AUROC is set to 0.5. These cl
 averaged across classes, both when the AUROC is computed one-shot or averaged across stratified folds.
 
 The AUROC is set to 0.5 to all those classes having zero annotations.
-Names of rows and columns of \code{labels} and \code{predicted} must be provided in the same order, otherwise a stop message is returned
+Names of rows and columns of \code{labels} and \code{predicted} must be provided in the same order, otherwise a stop message is returned.
 }
 \examples{
 data(labels);

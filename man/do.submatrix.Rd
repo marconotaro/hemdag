@@ -7,12 +7,12 @@
 do.submatrix(ann, n)
 }
 \arguments{
-\item{ann}{the annotations matrix (0/1). Rows are examples and columns are classes}
+\item{ann}{the annotation matrix (0/1). Rows are examples and columns are classes.}
 
-\item{n}{integer number of annotations to be pruned}
+\item{n}{integer number of annotations to be pruned.}
 }
 \value{
-Matrix of annotations having only those terms with more than n annotations
+Matrix of annotations having only those terms with more than n annotations.
 }
 \description{
 Terms having less than n annotations are pruned. Terms having exactly n annotations are discarded as well.
