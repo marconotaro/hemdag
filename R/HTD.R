@@ -1,0 +1,462 @@
+##*********##
+## HTD-DAG ##
+##*********##
+#' @name HTD-DAG
+#' @title HTD-DAG
+#' @description Implementation of a top-down procedure to correct the scores of the hierarchy according to the 
+#' constraints that the score of a node cannot be greater than a score of its parents.
+#' @details The HTD-DAG algorithm modifies the flat scores according to the hierarchy of a DAG through a unique run across
+#' the nodes of the graph. For a given example \eqn{x \in X}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
+#' \eqn{\bar{y}}, by per-level visiting the nodes of the DAG from top to bottom according to the following simple rule:
+#' \deqn{
+#' \bar{y}_i := \left\{
+#'    \begin{array}{lll}
+#'      \hat{y}_i  & {\rm if} \quad i \in root(G) \\
+#'      \min_{j \in par(i)} \bar{y}_j & {\rm if} \quad \min_{j \in par(i)} \bar{y}_j < \hat{y}_i \\
+#'      \hat{y}_i & {\rm otherwise}
+#'    \end{array}
+#'   \right.
+#' }
+#' The node levels correspond to their maximum path length from the root.
+#' @seealso \code{\link{graph.levels}}, \code{\link{hierarchical.checkers}}
+#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
+#' @param root name of the class that it is the top-level (root) of the hierarchy (\code{def:00}).
+#' @return a matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+#' @export
+#' @examples
+#' data(graph);
+#' data(scores);
+#' root <- root.node(g);
+#' S.htd <- htd(S,g,root);
+htd <- function(S, g, root="00"){
+    levels <- graph.levels(g,root);
+
+    # a dummy root is added if it does not exist
+    if(!(root %in% colnames(S))){
+        max.score <- max(S);
+        z <- rep(max.score,nrow(S));
+        S <- cbind(z,S);
+        colnames(S)[1] <- root;
+    }
+    ## check consistency between nodes of g and classes of S
+    class.check <- ncol(S)!=numNodes(g);
+    if(class.check)
+        stop("HTD: The number of nodes of the graph and the number of classes of the scores matrix does not match", call.=FALSE);
+        
+    # nodes are scanned from top to bottom: a list par.tod with the parents for each node (ordered from top to bottom) is obtained  
+    par.tod <- get.parents.top.down(g,levels,root)
+    for(i in 1:length(par.tod)){                                    
+        child <- S[,names(par.tod[i])];                     
+        parents <- as.matrix(S[,par.tod[[i]]]); 
+        # Note: the version with an apply and an ifelse statement is slower ...                         
+        for(j in 1:length(child)){                              
+            x <- min(parents[j,]);                                  
+            if(x < child[j])                                        
+                child[j] <- x;                                      
+        }                                                       
+        S[,names(par.tod[i])] <- child;                         
+    }                                                       
+    return(S);
+}
+
+##************##
+## DO HTD-DAG ##
+##************##
+#' @title HTD-DAG vanilla
+#' @description High level function to correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
+#' @details The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
+#' If so, the number of terms of the annotations matrix is shrunk to the number of terms of the flat scores matrix and
+#' the corresponding subgraph is computed as well. N.B.: it is supposed that all the nodes of the subgraph are accessible from the root.
+#' @details We excluded the predictions of the root node in computing all the performances, since it is a \emph{dummy} node added 
+#' to the ontology for practical reasons (e.g. some graph-based software may require a single root node to work). However, the root node scores 
+#' are stored in the hierarchical scores matrix.
+#' @param norm boolean value: 
+#' \itemize{
+#' \item \code{TRUE} (def.): the flat scores matrix has been already normalized in according to a normalization method; 
+#' \item \code{FALSE}: the flat scores matrix has not been normalized yet. See the parameter \code{norm.type} for which normalization can be applied;
+#' }
+#' @param norm.type can be one of the following three values:
+#'  \enumerate{
+#'  \item \code{NULL} (def.): set \code{norm.type} to \code{NULL} if and only if the parameter \code{norm} is set to \code{TRUE};
+#'  \item \code{MaxNorm}: each score is divided for the maximum of each class;
+#'  \item \code{Qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
+#'  }
+#' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
+#' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
+#' If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}.
+#' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
+#' initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{seed} is automatically set to \code{NULL}.
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} then \code{recall.levels} is automatically set to \code{NULL}.
+#' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
+#' the best threshold on the basis of the best F-measure.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{n.round} is automatically set to \code{NULL}.
+#' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
+#' \enumerate{
+#' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
+#' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
+#' }
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{f.criterion} is automatically set to \code{NULL}.
+#' @param compute.performance boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
+#' \code{multilabel F-score}) be returned?  
+#' \itemize{
+#' \item \code{FALSE}: performance are not computed and just the hierarchical scores matrix is returned;
+#' \item \code{TRUE} (\code{def.}): both performance and hierarchical scores matrix are returned;
+#' }
+#' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension).
+#' @param ann.file name of the file containing the label matrix of the examples (without rda extension).
+#' @param dag.file name of the file containing the graph that represents the hierarchy of the classes (without rda extension).
+#' @param flat.dir relative path where flat scores matrix is stored.
+#' @param ann.dir relative path where annotation matrix is stored.
+#' @param dag.dir relative path where graph is stored.
+#' @param hierScore.dir relative path where the hierarchical scores matrix must be stored.
+#' @param perf.dir relative path where the performance measures must be stored. If \code{compute.performance=FALSE}, 
+#' \code{perf.dir} is automatically set to \code{NULL}.
+#' @return Two \code{rda} files stored in the respective output directories:
+#' \enumerate{
+#'  \item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
+#'  for each example and for each considered class. It is stored in the \code{hierScore.dir} directory;
+#'  \item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
+#'  \enumerate{
+#'      \item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
+#'      \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
+#'      \item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
+#'      \item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
+#' }}
+#' It is stored in the \code{perf.dir} directory.
+#' @seealso \code{\link{HTD-DAG}}
+#' @export
+#' @examples
+#' data(graph);
+#' data(scores);
+#' data(labels);
+#' tmpdir <- paste0(tempdir(),"/");
+#' save(g, file=paste0(tmpdir,"graph.rda"));
+#' save(L, file=paste0(tmpdir,"labels.rda"));
+#' save(S, file=paste0(tmpdir,"scores.rda"));
+#' dag.dir <- flat.dir <- ann.dir <- tmpdir;
+#' hierScore.dir <- perf.dir <- tmpdir;
+#' recall.levels <- seq(from=0.2, to=1, by=0.4);
+#' dag.file <- "graph";
+#' flat.file <- "scores";
+#' ann.file <- "labels";
+#' Do.HTD(norm=FALSE, norm.type="MaxNorm", folds=NULL, seed=23, n.round=3, f.criterion="F", 
+#' recall.levels=recall.levels, compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, 
+#' dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+#' hierScore.dir=hierScore.dir, perf.dir=perf.dir);
+Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.criterion ="F", 
+    recall.levels=seq(from=0.1, to=1, by=0.1), compute.performance=FALSE, flat.file=flat.file, 
+    ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
+    hierScore.dir=hierScore.dir, perf.dir=perf.dir){
+    
+    ## Setting Check
+    if(norm==FALSE && is.null(norm.type))
+        stop("HTD: If norm is set to FALSE, you need also to specify a normalization method among those available", call.=FALSE)
+    if(norm==TRUE && !is.null(norm.type))
+        warning("HTD: If norm is set to TRUE, the input flat matrix is already normalized.", paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+    if(f.criterion!="F" && f.criterion!="avF" && compute.performance==TRUE)
+        stop("HTD: value of parameter 'f.criterion' misspelled", call.=FALSE);  
+    if(compute.performance==FALSE && (!is.null(recall.levels) || !is.null(perf.dir) || !is.null(seed) || !is.null(n.round) || !is.null(f.criterion))){
+        perf.dir <- NULL;
+        recall.levels <- NULL;
+        seed <- NULL;
+        n.round <- NULL;
+        f.criterion <- NULL;
+    }
+                    
+    ## loading dag
+    dag.path <- paste0(dag.dir, dag.file,".rda");
+    g <- get(load(dag.path));
+    root <- root.node(g);
+
+    ## loading annotation matrix
+    ann.path <- paste0(ann.dir, ann.file,".rda");
+    ann <- get(load(ann.path));
+    if(root %in% colnames(ann))
+        ann <- ann[,-which(colnames(ann)==root)];
+
+    ## loading flat matrix
+    flat.path <- paste0(flat.dir, flat.file,".rda");
+    if(norm){
+        S <- get(load(flat.path));
+        if(root %in% colnames(S)){
+            classes.names <- colnames(S)
+            root.scores <- S[,which(colnames(S)==root)];
+            S <- S[,-which(colnames(S)==root)];
+        }
+    }else{
+        S <- get(load(flat.path));
+        S <- scores.normalization(norm.type=norm.type, S);
+        cat(norm.type, "NORMALIZATION: DONE", "\n");
+        if(root %in% colnames(S)){
+            classes.names <- colnames(S)
+            root.scores <- S[,which(colnames(S)==root)];
+            S <- S[,-which(colnames(S)==root)];
+        }
+    }
+
+    ## check if |flat matrix classes| = |annotation matrix classes| 
+    ## if not the classes of annotation matrix are shrunk to those of flat matrix
+    class.check <- ncol(S)!=ncol(ann);
+    if(class.check){
+        ann <- ann[,colnames(S)];
+        nd <- c(root, colnames(S));
+        g <- do.subgraph(nd, g, edgemode="directed");
+    }
+
+    ## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
+    if(compute.performance){
+        PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+        AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+        PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+        FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+        cat("FLAT PERFORMANCE: DONE", "\n");
+    }
+
+    ## Hierarchical Top Down Correction
+    if(exists("root.scores")){
+        S <- cbind(root.scores, S);
+        colnames(S)[1] <- root;
+        S <- S[,classes.names];
+    }
+    S <- htd(S, g, root);
+    S.hier <- S;
+    cat("HIERARCHICAL CORRECTION: DONE", "\n");
+
+    ## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
+    if(compute.performance){
+        if(root %in% colnames(S))
+            S <- S[,-which(colnames(S)==root)];
+        PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+        AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+        PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+        FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+        cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+    }
+
+    ## Storing Results 
+    rm(S); ## duplicate
+    if(norm){
+        save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        if(compute.performance){
+            save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        }
+    }else{
+        save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        if(compute.performance){
+            save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        }
+    }
+}
+
+#' @title HTD-DAG holdout
+#' @description High level function to correct the computed scores in a hierarchy according to the HTD-DAG algorithm applying a 
+#' classical holdout procedure.
+#' @details The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
+#' If so, the number of terms of the annotations matrix is shrunk to the number of terms of the flat scores matrix and
+#' the corresponding subgraph is computed as well. N.B.: it is supposed that all the nodes of the subgraph are accessible from the root.
+#' @details We excluded the predictions of the root node in computing all the performances, since it is a \emph{dummy} node added 
+#' to the ontology for practical reasons (e.g. some graph-based software may require a single root node to work). However, the root node scores 
+#' are stored in the hierarchical scores matrix.
+#' @param norm boolean value: 
+#' \itemize{
+#' \item \code{TRUE} (def.): the flat scores matrix has been already normalized in according to a normalization method; 
+#' \item \code{FALSE}: the flat scores matrix has not been normalized yet. See the parameter \code{norm} for which normalization can be applied;
+#' }
+#' @param norm.type can be one of the following three values:
+#'  \enumerate{
+#'  \item \code{NULL} (def.): set \code{norm.type} to \code{NULL} if and only if the parameter \code{norm} is set to \code{TRUE};
+#'  \item \code{MaxNorm}: each score is divided for the maximum of each class;
+#'  \item \code{Qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+#'  }
+#' @param folds number of folds of the cross validation on which computing the performance metrics averaged across folds (\code{def. 5}).
+#' If \code{folds=NULL}, the performance metrics are computed one-shot, otherwise the performance metrics are averaged across folds.
+#' If \code{compute.performance} is set to \code{FALSE}, \code{folds} is automatically set to \code{NULL}.
+#' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
+#' initialization. The parameter \code{seed} controls both the parameter \code{kk} and the parameter \code{folds}.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{seed} is automatically set to \code{NULL}.
+#' @param recall.levels a vector with the desired recall levels (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}) to compute the 
+#' Precision at fixed Recall level (PXR). If \code{compute.performance=FALSE} then \code{recall.levels} is automatically set to \code{NULL}.
+#' @param n.round number of rounding digits to be applied to the hierarchical scores matrix (\code{def. 3}). It is used for choosing 
+#' the best threshold on the basis of the best F-measure.
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{n.round} is automatically set to \code{NULL}.
+#' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
+#' \enumerate{
+#' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
+#' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
+#' }
+#' If \code{compute.performance} is set to \code{FALSE} and \code{bottomup} is set to \code{threshold.free}, then 
+#' \code{f.criterion} is automatically set to \code{NULL}.
+#' @param compute.performance boolean value: should the flat and hierarchical performance (\code{AUPRC}, \code{AUROC}, \code{PXR}, 
+#' \code{multilabel F-score}) be returned?  
+#' \itemize{
+#' \item \code{FALSE}: performance are not computed and just the hierarchical scores matrix is returned;
+#' \item \code{TRUE} (\code{def.}): both performance and hierarchical scores matrix are returned;
+#' }
+#' @param flat.file name of the file containing the flat scores matrix to be normalized or already normalized (without rda extension).
+#' @param ann.file name of the file containing the label matrix of the examples (without rda extension).
+#' @param dag.file name of the file containing the graph that represents the hierarchy of the classes (without rda extension).
+#' @param ind.test.set name of the file containing a vector of integer numbers corresponding to the indices of the elements (rows) of scores 
+#' matrix to be used in the test set .
+#' @param ind.dir relative path to folder where \code{ind.test.set} is stored.
+#' @param flat.dir relative path where flat scores matrix is stored.
+#' @param ann.dir relative path where annotation matrix is stored.
+#' @param dag.dir relative path where graph is stored.
+#' @param hierScore.dir relative path where the hierarchical scores matrix must be stored.
+#' @param perf.dir relative path where the performance measures must be stored. If \code{compute.performance=FALSE}, 
+#' \code{perf.dir} is automatically set to \code{NULL}.
+#' @return Two \code{rda} files stored in the respective output directories:
+#' \enumerate{
+#'  \item \code{Hierarchical Scores Results}: a matrix with examples on rows and classes on columns representing the computed hierarchical scores 
+#'  for each example and for each considered class. It is stored in the \code{hierScore.dir} directory;
+#'  \item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performace results:
+#'  \enumerate{
+#'      \item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
+#'      \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
+#'      \item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
+#'      \item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
+#' }}
+#' It is stored in the \code{perf.dir} directory.
+#' @seealso \code{\link{HTD-DAG}}
+#' @export
+#' @examples
+#' data(graph);
+#' data(scores);
+#' data(labels);
+#' data(test.index);
+#' tmpdir <- paste0(tempdir(),"/");
+#' save(g, file=paste0(tmpdir,"graph.rda"));
+#' save(L, file=paste0(tmpdir,"labels.rda"));
+#' save(S, file=paste0(tmpdir,"scores.rda"));
+#' save(test.index, file=paste0(tmpdir,"test.index.rda"));
+#' ind.dir <- dag.dir <- flat.dir <- ann.dir <- tmpdir;
+#' hierScore.dir <- perf.dir <- tmpdir;
+#' recall.levels <- seq(from=0.2, to=1, by=0.4);
+#' ind.test.set <- "test.index";
+#' dag.file <- "graph";
+#' flat.file <- "scores";
+#' ann.file <- "labels";
+#' Do.HTD.holdout(norm=FALSE, norm.type="MaxNorm", n.round=3, f.criterion ="F", folds=5, seed=23,
+#' recall.levels=recall.levels, compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, 
+#' dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir,
+#' dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);
+Do.HTD.holdout <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.criterion ="F", 
+    recall.levels=seq(from=0.1, to=1, by=0.1), compute.performance=FALSE, flat.file=flat.file, 
+    ann.file=ann.file, dag.file=dag.file, ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, 
+    ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir){
+    
+    ## Setting Check
+    if(norm==FALSE && is.null(norm.type))
+        stop("HTD: If norm is set to FALSE, you need also to specify a normalization method among those available", call.=FALSE)
+    if(norm==TRUE && !is.null(norm.type))
+        warning("HTD: If norm is set to TRUE, the input flat matrix is already normalized.", paste0(" Set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+    if(f.criterion!="F" && f.criterion!="avF" && compute.performance==TRUE)
+        stop("HTD: value of parameter 'f.criterion' misspelled", call.=FALSE);  
+    if(compute.performance==FALSE && (!is.null(recall.levels) || !is.null(perf.dir) || !is.null(seed) || !is.null(n.round) || !is.null(f.criterion))){
+        perf.dir <- NULL;
+        recall.levels <- NULL;
+        seed <- NULL;
+        n.round <- NULL;
+        f.criterion <- NULL;
+    }
+
+    ## Loading Data
+    ## loading examples indices of the test set
+    ind.set <- paste0(ind.dir, ind.test.set, ".rda");
+    ind.test <- get(load(ind.set));
+
+    ## loading dag
+    dag.path <- paste0(dag.dir, dag.file,".rda");
+    g <- get(load(dag.path)); 
+    root <- root.node(g);
+
+    ## loading annotation matrix
+    ann.path <- paste0(ann.dir, ann.file,".rda");
+    ann <- get(load(ann.path));
+    if(root %in% colnames(ann))
+        ann <- ann[,-which(colnames(ann)==root)];
+
+    ## loading flat matrix
+    flat.path <- paste0(flat.dir, flat.file,".rda");
+    if(norm){
+        S <- get(load(flat.path));
+        if(root %in% colnames(S)){
+            classes.names <- colnames(S)
+            root.scores <- S[,which(colnames(S)==root)];
+            S <- S[,-which(colnames(S)==root)];
+        }
+    }else{
+        S <- get(load(flat.path));
+        S <- scores.normalization(norm.type=norm.type, S);
+        cat(norm.type, "NORMALIZATION: DONE", "\n");
+        if(root %in% colnames(S)){
+            classes.names <- colnames(S)
+            root.scores <- S[,which(colnames(S)==root)];
+            S <- S[,-which(colnames(S)==root)];
+        }
+    }
+
+    ## check if |flat matrix classes| = |annotation matrix classes| 
+    ## if not the classes of annotation matrix are shrunk to those of flat matrix
+    class.check <- ncol(S)!=ncol(ann);
+    if(class.check){
+        ann <- ann[,colnames(S)];
+        nd <- c(root, colnames(S));
+        g <- do.subgraph(nd, g, edgemode="directed");
+    }
+
+    ## shrunk scores flat matrix and annotations tables to test test
+    S <- S[ind.test,];
+    ann <- ann[ind.test,];
+
+    ## Compute FLAT PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
+    if(compute.performance){
+        PRC.flat <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+        AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+        PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+        FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+        cat("FLAT PERFORMANCE: DONE", "\n");
+    }
+
+    ## Hierarchical Top Down Correction
+    if(exists("root.scores")){
+        S <- cbind(root.scores[ind.test], S);
+        colnames(S)[1] <- root;
+        S <- S[,classes.names];
+    }
+    S <- htd(S, g, root);
+    S.hier <- S; 
+    cat("HIERARCHICAL CORRECTION: DONE", "\n");
+
+    ## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
+    if(compute.performance){
+        if(root %in% colnames(S))
+            S <- S[,-which(colnames(S)==root)];
+        PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
+        AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
+        PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
+        FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
+        cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+    }
+    
+    ## Storing Results 
+    rm(S);
+    if(norm){
+        save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        if(compute.performance){
+            save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        }
+    }else{
+        save(S.hier, file=paste0(hierScore.dir, norm.type,".", flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        if(compute.performance){
+            save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", norm.type,".", flat.file, ".hierScores.HTD.rda"), compress=TRUE);
+        }
+    }
+}
