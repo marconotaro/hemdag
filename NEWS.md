@@ -1,8 +1,22 @@
+#### HEMDAG 2.5.9
+
+###### NEW FEATURES
+- added ``build.consistent.graph``;
+
+###### CHANGES
+- added some warning checks in functions that compute performance metrics;
+- improved some graph utility functions;
+- improved manual;
+- improved tutorial on read the docs -- [link](https://hemdag-tutorials.readthedocs.io);
+- namespace made clearer;
+- fixed minor bugs;
+- removed defunct functions;
+
 #### HEMDAG 2.4.8
 
 ###### CHANGES
 - fixed a minor bug in ``Do.GPAV.holdout``;
-- improved pacakge description; 
+- improved package description; 
 
 #### HEMDAG 2.4.7
 
@@ -11,10 +25,10 @@
 - fixed degenerate case in ``precision.at.given.recall.levels.over.classes`` (labels in a fold are all negatives/positives); 
 - fixed degenerate case in ``do.stratified.cv.data.single.class`` (sampling of the labels with just one positive/negative);
 - added input variable ``compute.performance`` to the following high level functions: 
-	- ``Do.TPR.DAG`` and ``Do.TPR.DAG.holdout``; 
-	- ``Do.HTD`` and ``Do.HTD.holdout``; 
-	- ``Do.GPAV`` and ``Do.GPAV.holdout``; 
-	- ``Do.heuristic.methods`` and ``Do.heuristic.methods.holdout``;
+    - ``Do.TPR.DAG`` and ``Do.TPR.DAG.holdout``; 
+    - ``Do.HTD`` and ``Do.HTD.holdout``; 
+    - ``Do.GPAV`` and ``Do.GPAV.holdout``; 
+    - ``Do.heuristic.methods`` and ``Do.heuristic.methods.holdout``;
 
 ###### CHANGES
 - improved manual;
@@ -32,8 +46,8 @@
 
 ###### NEW FEATURES
 - precision-recall performance computed through ``precrec`` package:
-	- added ``precision.at.all.recall.levels.single.class``;
-	- ``PXR.at.multiple.recall.levels.over.classes`` substituted with ``precision.at.given.recall.levels.over.classes``;
+    - added ``precision.at.all.recall.levels.single.class``;
+    - ``PXR.at.multiple.recall.levels.over.classes`` substituted with ``precision.at.given.recall.levels.over.classes``;
 - improved IO functions: the extension of the input or output file can be or plain text (``.txt``) or compressed (``.gz``); 
 
 ###### CHANGES
@@ -48,7 +62,7 @@
 #### HEMDAG 2.2.3
 
 ###### NEW FEATURES
-- Added ``GPAV`` algorithm (Burdakov et al., *Journal of Computational Mathematics*, 2006 -- [link](https://www.jstor.org/stable/43693336));
+- Added ``GPAV`` algorithm (Burdakov et al., *Journal of Computational Mathematics*, 2006 -- [link](https://doi.org/10.1007/0-387-30065-1_3));
 - Embedded ``GPAV`` algorithm in the top-down step of the functions ``TPR.DAG``, ``Do.TPR.DAG`` and ``Do.TPR.DAG.holdout``;
 - Some functions have been defunct. To know the defunct functions just typing in the R environment: ``help("HEMDAG-defunct")``;
 
@@ -67,14 +81,14 @@
 
 ###### NEW FEATURES
 - Improved performance metrics:
-	- added ``compute.Fmeasure.multilabel``;
-	- added ``PXR.at.multiple.recall.levels.over.classes``;
-	- all the performance metrics (``AUPRC``, ``AUROC``, ``FMM``, ``PXR``) can be computed either **one-shot** or averaged **across folds**;
+    - added ``compute.Fmeasure.multilabel``;
+    - added ``PXR.at.multiple.recall.levels.over.classes``;
+    - all the performance metrics (``AUPRC``, ``AUROC``, ``FMM``, ``PXR``) can be computed either **one-shot** or averaged **across folds**;
 
 - Improved the high-level hierarchical ensemble functions:
-	- embedded the new performance metric functions;
-	- added the parameter ``metric``: maximization by ``FMAX`` or ``PRC`` (see manual for further details);
-	- added some checkers (warning/stop messages) to make the library more user-friendly;
+    - embedded the new performance metric functions;
+    - added the parameter ``metric``: maximization by ``FMAX`` or ``PRC`` (see manual for further details);
+    - added some checkers (warning/stop messages) to make the library more user-friendly;
 
 ###### CHANGES
 - improved manual;
@@ -92,30 +106,30 @@
 - Added ``Do.TPR.DAG.holdout``: high-level functions to run ``TPR-DAG`` **holdout** experiments;
 
 - The following ``TPR-DAG`` and ``DESCENS`` high-level functions were removed:
-	- Do.tpr.threshold.free;
-	- Do.tpr.threshold.cv;
-	- Do.tpr.weighted.threshold.free.cv;
-	- Do.tpr.weighted.threshold.cv;
-	- Do.descens.threshold.free;
-	- Do.descens.threshold.cv;
-	- Do.descens.weighted.threshold.free.cv;
-	- Do.descens.tau.cv;
-	- Do.descens.weighted.threshold.cv;
-	- Do.tpr.threshold.free.holdout;
-	- Do.tpr.threshold.holdout;
-	- Do.tpr.weighted.threshold.free.holdout;
-	- Do.tpr.weighted.threshold.holdout;
-	- Do.descens.threshold.free.holdout;
-	- Do.descens.threshold.holdout;
-	- Do.descens.weighted.threshold.free.holdout;
-	- Do.descens.tau.holdout;
-	- Do.descens.weighted.threshold.holdout;
+    - Do.tpr.threshold.free;
+    - Do.tpr.threshold.cv;
+    - Do.tpr.weighted.threshold.free.cv;
+    - Do.tpr.weighted.threshold.cv;
+    - Do.descens.threshold.free;
+    - Do.descens.threshold.cv;
+    - Do.descens.weighted.threshold.free.cv;
+    - Do.descens.tau.cv;
+    - Do.descens.weighted.threshold.cv;
+    - Do.tpr.threshold.free.holdout;
+    - Do.tpr.threshold.holdout;
+    - Do.tpr.weighted.threshold.free.holdout;
+    - Do.tpr.weighted.threshold.holdout;
+    - Do.descens.threshold.free.holdout;
+    - Do.descens.threshold.holdout;
+    - Do.descens.weighted.threshold.free.holdout;
+    - Do.descens.tau.holdout;
+    - Do.descens.weighted.threshold.holdout;
 
 > NOTE: all the removed functions can be run opportunely setting the input parameters of the new high-level function ``Do.TPR.DAG`` (for **cross-validated** experiments) and ``Do.TPR.DAG.holdout`` (for **hold-out** experiments);
 
 ###### CHANGES
 - improved manual;
-	
+    
 #### HEMDAG 1.1.1
 
 ###### NEW FEATURES
