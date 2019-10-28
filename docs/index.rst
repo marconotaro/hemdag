@@ -7,13 +7,16 @@ Welcome to HEMDAG's documentation!
 ==================================
 
 
-*HEMDAG* library:
+*HEMDAG* package:
 
-- implements several Hierarchical Ensemble Methods (HEM) for Directed Acyclic Graphs (DAGs);
-- can be used to *reconcile* flat predictions by considering the topology of the ontology;
-- provides biologically consistent predictions according to the hierarchical nature of the ontology classes;
-- is specifically designed for exploiting the hierarchical relationships of DAG-structured taxonomies, such as the Human Phenotype Ontology (``HPO``) or the Gene Ontology (``GO``). However ``HEMDAG`` can be also safely applied to tree-structured taxonomies (as ``FunCat``), since trees are DAGs;
-- scales nicely both in terms of the complexity of the taxonomy and in the cardinality of the examples.
+- implements several Hierarchical Ensemble Methods (HEMs) for Directed Acyclic Graphs (DAGs);
+- reconciles flat predictions with the topology of the ontology;
+- can enhance the predictions of virtually any flat learning methods by taking into account the hierarchical relationships between ontology classes;
+- guarantees biologically meaningful predictions that always obey the *true-path-rule*, the biological and logical rule that governs the internal coherence of biomedical ontologies;
+- is specifically designed for exploiting the hierarchical relationships of DAG-structured taxonomies, such as the Human Phenotype Ontology (``HPO``) or the Gene Ontology (``GO``), but can be safely applied to tree-structured taxonomies as well (e.g. ``FunCat``), since trees are DAGs;
+- scales nicely both in terms of the complexity of the taxonomy and in the cardinality of the examples;
+- provides several utility functions to process and analyze graphs;
+- provides several performance metrics to evaluate HEMs algorithms.
 
 .. toctree::
    :caption: Installation & Getting Started
@@ -25,13 +28,13 @@ Welcome to HEMDAG's documentation!
    install
 
 .. toctree::
-    :caption: Usage & Tutorials
+    :caption: Usage & Tutorial
     :name: HEMDAG-usage
     :maxdepth: 1
     :hidden:
 
     usage
-    tutorials
+    tutorial
 
 .. toctree::
     :caption: Tips & Tricks
@@ -53,13 +56,3 @@ Welcome to HEMDAG's documentation!
     authors
     history
     license
-
-
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

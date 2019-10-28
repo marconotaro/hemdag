@@ -1,7 +1,4 @@
-name: sphinx
 channels:
-- bioconda
-- conda-forge
 - defaults
 - r
 dependencies:

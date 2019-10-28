@@ -53,7 +53,7 @@ Another possibility to install the development version of ``HEMDAG`` is by using
  .. code-block:: R
 
 	library(devtools);
-	install_github("gecko515/HEMDAG");
+	install_github("marconotaro/HEMDAG");
 
 Before running the above commands be sure to have correctly installed the ``devtools`` package (`link <https://cran.r-project.org/web/packages/devtools/README.html>`_)
 
@@ -78,6 +78,11 @@ For building HEMDAG, you will need the following dependencies
     - graph (bioconductor)
     - precrec
     - preprocessCore  (bioconductor)
+    - plyr
+    - foreach
+    - iterators
+    - parallel
+    - doParallel
 
 Package from CRAN
 -----------------------------------
@@ -85,7 +90,7 @@ On a linux environment, download the package source from the `CRAN repo <https:/
 
  .. code-block:: console
 
-	R CMD INSTALL pippo/HEMDAG_2.1.3.tar.gz
+	R CMD INSTALL pippo/HEMDAG_2.5.9.tar.gz
 
 
 
@@ -101,19 +106,19 @@ In this tutorial, we will download the HEMDAG sources and build them in ``~/HEMD
 .. code-block:: console
 
   ~ $ cd ~
-  ~ $ git clone https://github.com/gecko515/HEMDAG.git HEMDAG
+  ~ $ git clone https://github.com/marconotaro/HEMDAG.git HEMDAG
 
 Building
 --------
 
-You can build HEMDAG using::
+You can build HEMDAG by using:
 
 .. code-block:: console
 
   R CMD build HEMDAG
 
-This will generate the file ``HEMDAG_2.1.3.tar.gz`` and just install the package via:
+This will generate the file ``HEMDAG_2.5.9.tar.gz`` and just install the package via:
 
 .. code-block:: console
 
-  R CMD INSTALL HEMDAG_2.1.3.tar.gz
+  R CMD INSTALL HEMDAG_2.5.9.tar.gz

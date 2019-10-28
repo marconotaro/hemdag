@@ -17,7 +17,7 @@ Types of Contributions
 Report Bugs
 ===========
 
-Report bugs at https://github.com/visze/HEMDAG/issues
+Report bugs at https://github.com/marconotaro/HEMDAG/issues
 
 If you are reporting a bug, please include:
 
@@ -53,7 +53,7 @@ See `doc_setup` on creating a local setup for building the documentation.
 Submit Feedback
 ===============
 
-The best way to send feedback is to file an issue at https://github.com/visze/HEMDAG/issues
+The best way to send feedback is to file an issue at https://github.com/marconotaro/HEMDAG/issues
 
 If you are proposing a feature:
 
@@ -163,20 +163,13 @@ Ready to contribute?
 
   Now you can make your changes locally.
 
-5. When you're done making your changes, make sure that the build runs through.
-   For R:
-
-   .. code-block:: console
-
-    $ TODO
-
-   For documentation:
+4. When you're done making your changes, make sure that the build runs through.
 
    .. code-block:: console
 
       $ cd docs && make clean && make html
 
-6. Commit your changes and push your branch to GitHub:
+5. Commit your changes and push your branch to GitHub:
 
   .. code-block:: console
 

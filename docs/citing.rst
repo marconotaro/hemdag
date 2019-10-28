@@ -8,6 +8,6 @@ If you use this software package please cite our `BMC Bioinformatics article <ht
 
 .. code-block:: text
 
-	M. Notaro, M. Schubach, P. N. Robinson, and G Valentini. (2017).
+	M. Notaro, M. Schubach, P. N. Robinson, and G Valentini. 
 	Prediction of Human Phenotype Ontology terms by means of hierarchical ensemble methods.
-	BMC Bioinformatics, 18(1), 449.
+	BMC Bioinformatics, 18(1):449, 2017.

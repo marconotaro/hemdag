@@ -4,5 +4,5 @@
 History
 =======
 
-.. literalinclude:: ../CHANGELOG
+.. literalinclude:: ../NEWS.md
     :language: text
