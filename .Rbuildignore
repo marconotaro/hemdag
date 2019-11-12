@@ -1,0 +1,11 @@
+docs/
+run/
+tests/
+.Rd2pdf*/
+md5sum.sh
+build.sh
+build.R
+configure.test.pl
+LICENSE.md
+README.md
+TODO
