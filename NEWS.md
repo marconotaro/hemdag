@@ -1,3 +1,10 @@
+#### HEMDAG 2.6.0
+
+###### CHANGES
+- fixed NAMESPACE notes in CRAN checks;
+- added link to the GitHub repository ``obogaf::parser``;
+- adjusted link to read the docs;
+
 #### HEMDAG 2.5.9
 
 ###### NEW FEATURES
@@ -7,7 +14,7 @@
 - added some warning checks in functions that compute performance metrics;
 - improved some graph utility functions;
 - improved manual;
-- improved tutorial on read the docs -- [link](https://hemdag-tutorials.readthedocs.io);
+- improved tutorial on read the docs -- [link](https://hemdag.readthedocs.io);
 - namespace made clearer;
 - fixed minor bugs;
 - removed defunct functions;
@@ -139,7 +146,7 @@
 
 ###### CHANGES
 - improved manual;
-- Added link to the GitHub repository **HPOparser** ([link](https://github.com/marconotaro/HPOparser));
+- Added link to the GitHub repository ``HPOparser`` (note: from version ``2.6.0`` ``HPOparser`` was changed in ``obogaf::parser``);
 - Added ``CITATION`` file;
 
 #### HEMDAG 1.0.0
