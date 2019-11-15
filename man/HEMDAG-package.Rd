@@ -17,7 +17,7 @@ The HEMDAG package:
 \item provides several performance metrics to evaluate HEMs algorithms;
 }
 
-A comprehensive tutorial showing how to apply HEMDAG to real case studies in computational biology and precision medicine is available at \href{https://hemdag-tutorials.readthedocs.io}{https://hemdag-tutorials.readthedocs.io}.
+A comprehensive tutorial showing how to apply HEMDAG to real case bio-medical case studies is available at \href{https://hemdag.readthedocs.io}{https://hemdag.readthedocs.io}.
 
 }
 
