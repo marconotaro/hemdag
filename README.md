@@ -1,3 +1,15 @@
+
+|          | Bioconda Badges | CRAN  Badges |
+| -------- | --------------- | ------------ | 
+| License | [![GPL3-License](https://img.shields.io/cran/l/HEMDAG?label=License&style=flat-square&color=orange)](https://anaconda.org/bioconda/r-hemdag) | [![GPL3-License](https://img.shields.io/cran/l/HEMDAG?label=License&color=orange)](https://anaconda.org/bioconda/r-hemdag) 
+| Last Version | [![Anaconda-Version](https://anaconda.org/bioconda/r-hemdag/badges/version.svg)](https://anaconda.org/bioconda/r-hemdag) | [![CRAN-version](http://www.r-pkg.org/badges/version/HEMDAG?color=blue)](https://cran.r-project.org/package=HEMDAG)
+| Last Updated | [![Anaconda-Last-Updated](https://anaconda.org/bioconda/r-hemdag/badges/latest_release_relative_date.svg)](https://anaconda.org/bioconda/r-hemdag)| [![CRAN-Last-Updated](https://www.r-pkg.org/badges/ago/HEMDAG?color=blue)](https://cran.r-project.org/package=HEMDAG) 
+| Sphinx Doc | [![Sphinx Status](https://readthedocs.org/projects/hemdag/badge/?version=latest)](https://hemdag.readthedocs.io/en/latest/?badge=latest) | [![Sphinx Status](https://readthedocs.org/projects/hemdag/badge/?version=latest)](https://hemdag.readthedocs.io/en/latest/?badge=latest)
+| Total Downloads | [![Anaconda-Downloads](https://anaconda.org/bioconda/r-hemdag/badges/downloads.svg)](https://anaconda.org/bioconda/r-hemdag) | [![CRAN-Downloads](http://cranlogs.r-pkg.org/badges/grand-total/HEMDAG?color=green)](https://cranlogs.r-pkg.org/downloads/total/2017-08-11:last-day/HEMDAG) 
+<!-- trick: to know daily HEMDAG downloads (and from how many days HEMDAG lives) replace total with daily in the cranlogs link -->
+
+---
+
 ## Brief Description
 **HEMDAG** package:
 
@@ -11,7 +23,7 @@
 - provides several performance metrics to evaluate HEMs algorithms.
 
 ## Documentation
-Please get a look to the [documentation](http://hemdag-tutorials.readthedocs.io "HEMDAG’s documentation") to know how to download, install and make experiments with the **HEMDAG** package. 
+Please get a look to the [documentation](https://hemdag.readthedocs.io "HEMDAG’s documentation") to know how to download, install and make experiments with the **HEMDAG** package. 
 
 ## Cite HEMDAG
 If you use HEMDAG, please cite our [BMC Bioinformatics article](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1854-y):
