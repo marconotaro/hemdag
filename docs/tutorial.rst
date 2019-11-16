@@ -10,7 +10,7 @@ Tutorial
 The hierarchical ensemble methods proposed in ``HEMDAG`` package can be run by using any ontology listed in OBO foundry (`link <http://www.obofoundry.org>`__). In this tutorial we perform experiments by using the Human Phenotype Ontology (``HPO``, `link <https://hpo.jax.org/>`__) and the Gene Ontology (``GO``, `link <http://geneontology.org/>`__).
 
 .. note::
-    The experiments run on this tutorial were executed by using the ``HEMDAG`` version ``2.5.9``, the ``R`` version ``3.6.1`` and on a machine having Ubuntu ``16.04`` as operative system. 
+    The experiments run on this tutorial were executed by using the ``HEMDAG`` version ``2.6.0``, the ``R`` version ``3.6.1`` and on a machine having Ubuntu ``16.04`` as operative system. 
 
 Hierarchical Prediction of HPO terms
 ====================================

@@ -63,7 +63,6 @@ Before running the above commands be sure to have correctly installed the ``devt
 Installing from Source
 =======================
 
-
 This section describes how to build HEMDAG from scratch.
 
 Prequisites
@@ -80,8 +79,6 @@ For building HEMDAG, you will need the following dependencies
     - preprocessCore  (bioconductor)
     - plyr
     - foreach
-    - iterators
-    - parallel
     - doParallel
 
 Package from CRAN
@@ -90,9 +87,7 @@ On a linux environment, download the package source from the `CRAN repo <https:/
 
  .. code-block:: console
 
-	R CMD INSTALL pippo/HEMDAG_2.5.9.tar.gz
-
-
+	R CMD INSTALL pippo/HEMDAG_2.6.0.tar.gz
 
 Direct Git Checkout
 --------------------
