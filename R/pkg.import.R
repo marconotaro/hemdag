@@ -5,10 +5,10 @@
 #' @importFrom methods setGeneric setMethod
 #' @importFrom foreach foreach %dopar%
 #' @importFrom doParallel registerDoParallel
+#' @importFrom parallel detectCores
 #' @importFrom plyr mapvalues
 #' @importFrom utils read.table write.table
 #' @useDynLib HEMDAG, .registration=TRUE 
-
 
 ## Quiet concerns of R CMD check. 
 ## Avoid this warning: no visible binding for global variable

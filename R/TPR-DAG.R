@@ -1,6 +1,7 @@
-##******************##
-## TPR-DAG VARIANTS ##
-##******************##
+#############
+## TPR-DAG ##
+#############
+
 #' @name TPR-DAG-variants
 #' @seealso \code{\link{GPAV}}, \code{\link{HTD-DAG}}
 #' @title TPR-DAG Ensemble Variants
@@ -270,7 +271,6 @@ TPR.DAG <- function(S, g, root="00", positive="children", bottomup="threshold.fr
     } 
     return(S);
 }
-
 
 #' @name TPR-DAG-cross-validation
 #' @title TPR-DAG cross-validation experiments
@@ -1065,4 +1065,35 @@ Do.TPR.DAG.holdout <- function(threshold=seq(from=0.1, to=0.9, by=0.1), weight=s
             save(PRC.flat, PRC.hier, AUC.flat, AUC.hier, PXR.flat, PXR.hier, FMM.flat, FMM.hier, file=paste0(perf.dir, "PerfMeas.", norm.type, ".", flat.file, ".hierScores.",meth.name,".rda"), compress=TRUE);
         }
     }
+}
+
+#' @title Unstratified Cross Validation
+#' @description This function splits a dataset in k-fold in an unstratified way, i.e. a fold does not contain an equal amount of positive and 
+#' negative examples. This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where 
+#' splitting dataset in a stratified way is not needed. 
+#' @param S matrix of the flat scores. It must be a named matrix, where rows are example (e.g. genes) and columns are classes/terms (e.g. GO terms).
+#' @param kk number of folds in which to split the dataset (\code{def. k=5}).
+#' @param seed seed for the random generator. If \code{NULL} (def.) no initialization is performed.
+#' @return a list with \eqn{k=kk} components (folds). Each component of the list is a character vector contains the index of the examples, i.e. the 
+#' index of the rows of the matrix S.
+#' @export
+#' @examples
+#' data(scores);
+#' foldIndex <- do.unstratified.cv.data(S, kk=5, seed=23);
+do.unstratified.cv.data <- function(S, kk=5, seed=NULL){
+    set.seed(seed);
+    examples <- 1:nrow(S);
+    n <- nrow(S);
+    size <- c();
+    folds <- vector(mode="list", length=kk)
+    names(folds) <- paste0(rep("fold",kk), 1:kk)
+    for(k in 1:kk){
+        first <- ((k - 1) * n) %/% kk
+        last <- (k * n) %/% kk
+        size <- last-first;
+        x    <- sample(examples,size);
+        folds[[k]] <- x;
+        examples <- setdiff(examples,x);
+    }
+    return(folds);
 }

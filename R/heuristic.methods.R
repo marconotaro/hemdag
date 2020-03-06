@@ -1,6 +1,7 @@
 ###################################
 ##  Obozinski Heuristic Methods  ##
 ###################################
+
 #' @name Heuristic-Methods
 #' @aliases heuristic.max
 #' @aliases heuristic.and
@@ -104,9 +105,6 @@ heuristic.or <- function(S, g, root="00"){
     return(S.corr);
 }
 
-##**********************##
-## DO HEURISTIC METHODS ##
-##**********************##
 #' @title Do Heuristic Methods
 #' @seealso \code{\link{Heuristic-Methods}}
 #' @description High level function to compute the hierarchical heuristic methods MAX, AND, OR (Heuristic Methods MAX, AND, OR (\cite{Obozinski et al., 

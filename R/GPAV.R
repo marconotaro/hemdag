@@ -1,6 +1,7 @@
-##********* ##
+##############
 ## GPAV-DAG ##
-##********* ##
+##############
+
 #' @title Binary Upper Triangular Adjacency Matrix
 #' @description This function returns a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
 #' @details The nodes of the matrix are topologically sorted (by using the \code{tsort} function of the \pkg{RBGL} package). 
@@ -136,7 +137,7 @@ GPAV.over.examples <- function(S, g, W=NULL){
         M <- rbind(M, GPAV(S[i,], W=W, adj));
     rownames(M) <- rownames(S);
     M <- M[,colnames(S)];
-    S <- M;    rm(M);
+    S <- M; rm(M);
     return(S);
 }
 
@@ -182,9 +183,6 @@ GPAV.parallel <- function(S, g, W=NULL, ncores=8){
     return(S);
 }
 
-##*********##
-## DO GPAV ##
-##*********##
 #' @title GPAV -- High Level Function
 #' @description High level function to correct the computed scores in a hierarchy according to the \code{GPAV} algorithm.
 #' @details The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.
@@ -323,7 +321,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
     }else{
         S <- get(load(flat.path));
         S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "NORMALIZATION: DONE", "\n");
+        cat(norm.type, "NORMALIZATION: DONE\n");
         if(root %in% colnames(S)){
             root.scores <- S[,which(colnames(S)==root)];  ## needed to compute GPAV 
             S <- S[,-which(colnames(S)==root)];
@@ -345,7 +343,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
         AUC.flat <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
         PXR.flat <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
         FMM.flat <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
-        cat("FLAT PERFORMANCE: DONE", "\n");
+        cat("FLAT PERFORMANCE: DONE\n");
     }
     ## Hierarchical Correction 
     ## before running GPAV we need to re-add the root node scores
@@ -365,20 +363,20 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
     }else{
         S <- GPAV.over.examples(S, W=W, g);
     }
-    ## remove root node before computing performance
-    S <- S[,-which(colnames(S)==root)];
-    cat("HIERARCHICAL CORRECTION: DONE", "\n");
+    S.hier <- S; # store hierarchical scores matrix with root node
+    cat("HIERARCHICAL CORRECTION: DONE\n");
 
     ## Compute HIER PRC, AUC, PXR (average and per class) and FMM (average and per-example) one-shoot or cross-validated 
     if(compute.performance){
+        ## remove root node before computing performance
+        S <- S[,-which(colnames(S)==root)];
         PRC.hier <- AUPRC.single.over.classes(ann, S, folds=folds, seed=seed);
         AUC.hier <- AUROC.single.over.classes(ann, S, folds=folds, seed=seed);
         PXR.hier <- precision.at.given.recall.levels.over.classes(ann, S, folds=folds, seed=seed, recall.levels=recall.levels);
         FMM.hier <- compute.Fmeasure.multilabel(ann, S, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=TRUE, folds=folds, seed=seed);
-        cat("HIERARCHICAL PERFORMANCE: DONE", "\n");
+        cat("HIERARCHICAL PERFORMANCE: DONE\n");
     }
     ## Storing Results
-    S.hier <- S;
     rm(S);
     if(norm){
         save(S.hier, file=paste0(hierScore.dir, flat.file, ".hierScores.GPAV.rda"), compress=TRUE);
@@ -464,7 +462,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 #'     \item \code{Performance Measures}: \emph{flat} and \emph{hierarchical} performance results:
 #'     \enumerate{
 #'         \item AUPRC results computed though \code{AUPRC.single.over.classes} (\code{\link{AUPRC}});
-#'        \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
+#'         \item AUROC results computed through \code{AUROC.single.over.classes} (\code{\link{AUROC}}); 
 #'         \item PXR results computed though \code{precision.at.given.recall.levels.over.classes} (\code{\link{PXR}});
 #'         \item FMM results computed though \code{compute.Fmeasure.multilabel} (\code{\link{FMM}}); 
 #' }}
@@ -489,7 +487,7 @@ Do.GPAV <- function(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1,
 #' flat.file <- "scores";
 #' ann.file <- "labels";
 #' Do.GPAV.holdout(norm=FALSE, norm.type="MaxNorm", W=NULL, parallel=FALSE, ncores=1, 
-#' n.round=3, f.criterion ="F", folds=NULL, seed=23, recall.levels=recall.levels, 
+#' n.round=3, f.criterion="F", folds=NULL, seed=23, recall.levels=recall.levels, 
 #' compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, 
 #' ind.test.set=ind.test.set, ind.dir=ind.dir, flat.dir=flat.dir, ann.dir=ann.dir, 
 #' dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir);

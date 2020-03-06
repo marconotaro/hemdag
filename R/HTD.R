@@ -1,6 +1,7 @@
-##*********##
+#############
 ## HTD-DAG ##
-##*********##
+#############
+
 #' @name HTD-DAG
 #' @title HTD-DAG
 #' @description Implementation of a top-down procedure to correct the scores of the hierarchy according to the 
@@ -60,9 +61,6 @@ htd <- function(S, g, root="00"){
     return(S);
 }
 
-##************##
-## DO HTD-DAG ##
-##************##
 #' @title HTD-DAG vanilla
 #' @description High level function to correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
 #' @details The function checks if the number of classes between the flat scores matrix and the annotations matrix mismatched.

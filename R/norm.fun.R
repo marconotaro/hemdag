@@ -1,6 +1,7 @@
-##**********##
-## MAX-NORM ##
-##**********##
+##########################
+## Normalization Method ##
+##########################
+
 #' @title Max normalization
 #' @description Function to normalize the scores of a flat scores matrix per class.
 #' @details The scores of each class are normalized by dividing the score values for the maximum score of that class.
@@ -22,9 +23,6 @@ normalize.max <- function(S){
     return(S);
 }
 
-##********************##
-## FLAT NORMALIZATION ##
-##********************##
 #' @title Scores Normalization Function
 #' @description Functions to normalize a flat scores matrix w.r.t. max normalization (MaxNorm) or quantile normalization (Qnorm) 
 #' @details To apply the quantile normalization the \pkg{preprocessCore} package must be installed.
@@ -58,7 +56,6 @@ scores.normalization <- function(norm.type="MaxNorm", S){
     }
     return(S);
 }
-
 
 #' @title Flat scores normalization
 #' @description High level functions to normalize a flat scores matrix w.r.t. max normalization (MaxNorm) or quantile normalization (Qnorm). 
