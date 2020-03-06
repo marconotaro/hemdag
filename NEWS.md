@@ -1,3 +1,8 @@
+#### HEMDAG 2.6.1
+
+###### CHANGES
+- fixed ``stringsAsFactors`` issue -- [link](https://developer.r-project.org/Blog/public/2020/02/16/stringsasfactors/index.html);
+
 #### HEMDAG 2.6.0
 
 ###### CHANGES

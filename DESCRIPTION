@@ -1,6 +1,6 @@
 Package: HEMDAG
 Title: Hierarchical Ensemble Methods for Directed Acyclic Graphs
-Version: 2.6.0
+Version: 2.6.1
 Author: Marco Notaro [aut, cre] (<https://orcid.org/0000-0003-4309-2200>),
   Alessandro Petrini [ctb] (<https://orcid.org/0000-0002-0587-1484>),
   Giorgio Valentini [aut] (<https://orcid.org/0000-0002-5694-3919>)
@@ -16,9 +16,9 @@ Encoding: UTF-8
 Repository: CRAN
 LazyLoad: true
 NeedsCompilation: yes
-Imports: graph, RBGL, precrec, preprocessCore, methods, plyr, foreach, doParallel
-Suggests: Rgraphviz
+Imports: graph, RBGL, precrec, preprocessCore, methods, plyr, foreach, doParallel, parallel
+Suggests: Rgraphviz, testthat
 Authors@R: c( person(given="Marco", family="Notaro", role=c("aut", "cre"), comment=c(ORCID="0000-0003-4309-2200"), email="marco.notaro@unimi.it"),
               person(given="Alessandro", family="Petrini", role="ctb", comment=c(ORCID="0000-0002-0587-1484")),
               person(given="Giorgio", family="Valentini", role="aut", comment=c(ORCID="0000-0002-5694-3919")))
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
