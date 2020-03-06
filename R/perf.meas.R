@@ -1,6 +1,7 @@
-##***************##
-## AUORC & AUROC ##
-##***************##
+##############################################
+## Functions to evaluate HEMDAG performance ##
+##############################################
+
 #' @name AUPRC 
 #' @aliases AUPRC.single.class
 #' @aliases AUPRC.single.over.classes
@@ -354,9 +355,6 @@ AUROC.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
     return(AUC.res);
 }
 
-##**********************************************************##
-## Functions to compute Kiritchenko-like multilabel F-score ##
-##**********************************************************##
 #' @name Multilabel.F.measure
 #' @aliases F.measure.multilabel
 #' @title Multilabel F-measure 
@@ -744,7 +742,7 @@ precision.at.all.recall.levels.single.class <- function(labels, scores){
         return(PXR);
     }else{
         res <- evalmod(mode="basic", labels=labels, scores=scores);
-        df <- data.frame(res);
+        df <- data.frame(res, stringsAsFactors=TRUE);
         precision <- subset(df, df$type=="precision")$y;
         recall <- subset(df, df$type=="sensitivity")$y;
         PXR <- cbind(precision=precision, recall=recall);
@@ -789,7 +787,7 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
                         prec2rec[j] <- 0;                            
                     }else{                                        
                         res <- evalmod(mode="basic", scores=nfold$scores[k], labels=nfold$labels[k], modnames="m1", dsids=k);                
-                        df <- data.frame(res);
+                        df <- data.frame(res, stringsAsFactors=TRUE);
                         precision <- subset(df, df$type=="precision")$y;
                         recall <- subset(df, df$type=="sensitivity")$y;    
                         ## we take the higher precision value at the given recall level. NB: recall is monotone...
@@ -828,7 +826,7 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
         }else{
             for(j in 1:len.level){
                 res <- evalmod(mode="basic", labels=labels, scores=scores);
-                df <- data.frame(res);
+                df <- data.frame(res, stringsAsFactors=TRUE);
                 precision <- subset(df, df$type=="precision")$y;
                 recall <- subset(df, df$type=="sensitivity")$y;    
                 ## we take the higher precision value at the given recall level. NB: recall is monotone...
@@ -842,4 +840,153 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
     names(avgPXR) <- recall.levels;
     res <- list(avgPXR=avgPXR, PXR=PXR);
     return(res);
+}
+
+#' @name stratified.cross.validation
+#' @aliases do.stratified.cv.data.single.class
+#' @aliases do.stratified.cv.data.over.classes
+#' @title Stratified Cross Validation
+#' @description Generate data for the stratified cross-validation. 
+#' @details the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples. 
+#' @param labels labels matrix. Rows are genes and columns are classes. Let's denote \eqn{M} the labels matrix. 
+#' If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
+#' @param examples indices or names of the examples. Can be either a vector of integers or a vector of names. 
+#' @param positives vector of integers or vector of names. The indices (or names) refer to the indices (or names) of 'positive' examples.    
+#' @param kk number of folds (\code{def. kk=5}).
+#' @param seed seed of the random generator (\code{def. seed=NULL}). If is set to \code{NULL} no initialization is performed.
+#' @examples
+#' data(labels);
+#' examples.index <- 1:nrow(L);
+#' examples.name <- rownames(L);
+#' positives <- which(L[,3]==1);
+#' x <- do.stratified.cv.data.single.class(examples.index, positives, kk=5, seed=23);
+#' y <- do.stratified.cv.data.single.class(examples.name, positives, kk=5, seed=23);
+#' z <- do.stratified.cv.data.over.classes(L, examples.index, kk=5, seed=23);
+#' k <- do.stratified.cv.data.over.classes(L, examples.name, kk=5, seed=23);
+
+#' @rdname stratified.cross.validation
+#' @return \code{do.stratified.cv.data.single.class} returns a list with 2 two component:
+#' \itemize{
+#'  \item fold.non.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the non-positive elements. 
+#'     Indices (or names) refer to row numbers (or names) of a data matrix;
+#'     \item fold.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the positive elements. 
+#'     Indices (or names) refer to row numbers (or names) of a data matrix;
+#' }
+#' @export
+do.stratified.cv.data.single.class <- function(examples, positives, kk=5, seed=NULL){
+    set.seed(seed);
+    if(is.numeric(examples) && length(names(positives))!=0)
+        positives <- unname(positives);
+    if(is.character(examples) && length(names(positives))!=0)
+        positives <- names(positives);
+    ## degenerate case when labels have only one positive 
+    if(length(positives)==1){
+        positives <- positives;
+    }else{
+        positives <- sample(positives);
+    }
+    ## degenerate case when labels have only one negative 
+    negatives <- setdiff(examples,positives);
+    if(length(negatives)==1){
+        negatives <- negatives;
+    }else{
+        negatives <- sample(negatives);
+    }
+    n <- length(positives);        
+    m <- length(negatives);        
+    set.pos <- list();
+    set.neg <- list();
+    for (k in 1:kk) {
+        ## folds of indices of positive examples 
+        last.pos <- (k * n) %/% kk;
+        first.pos  <- ((k - 1) * n) %/% kk;
+        size.pos <-  last.pos - first.pos;
+        if(size.pos>1){subset.pos <- positives[1:size.pos];}
+        if(size.pos==1){subset.pos <- positives[size.pos];}
+        if(size.pos==0){subset.pos <- integer(0);}
+        set.pos[[k]] <- subset.pos;
+        positives <- setdiff(positives, subset.pos);
+        ## folds of indices of negatives examples
+        last.neg <- (k * m) %/% kk;
+        first.neg  <- ((k - 1) * m) %/% kk;
+        size.neg <-  last.neg - first.neg;    
+        if(size.neg>1){subset.neg <- negatives[1:size.neg];}
+        if(size.neg==1){subset.neg <- negatives[size.neg];}
+        if(size.neg==0){subset.neg <- integer(0);}
+        set.neg[[k]] <- subset.neg;
+        negatives <- setdiff(negatives, subset.neg);
+    }
+    return(list(fold.positives=set.pos, fold.negatives=set.neg));
+}
+
+#' @rdname stratified.cross.validation
+#' @return \code{do.stratified.cv.data.over.classes} returns a list with \eqn{n} components, where \eqn{n} is the number of classes of the labels matrix. 
+#' Each component \eqn{n} is in turn a list with \eqn{k} elements, where \eqn{k} is the number of folds. 
+#' Each fold contains an equal amount of positives and negatives examples.
+#' @export
+do.stratified.cv.data.over.classes <- function(labels, examples, kk=5, seed=NULL){
+    set.seed(seed);
+    folds <- list();
+    for(class in colnames(labels)){
+        folds[[class]] <- list();
+        positives <- which(labels[,class]==1);
+        strfold <- do.stratified.cv.data.single.class(examples,positives, kk=kk, seed=seed);
+        for(k in 1:kk){
+            folds[[class]][[k]] <- list();
+            names(folds[[class]])[k] <- paste0("fold",k);
+            folds[[class]][[k]] <- append(strfold$fold.positives[[k]], strfold$fold.negatives[[k]]);
+        }
+    }
+    return(folds);
+}
+
+#' @title DataFrame for Stratified Cross Validation
+#' @description Create a data frame for stratified cross-validation.
+#' @details the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples.
+#' @param labels vector of the true labels (0 negative, 1 positive).
+#' @param scores a numeric vector of the values of the predicted labels.
+#' @param seed initialization seed for the random generator to create folds (\code{def. seed=23}).
+#' If \code{seed=NULL}, the stratified folds are generated without seed initialization.
+#' @param folds number of folds of the cross validation (\code{def. folds=5}).
+#' @return a data frame with three columns: 
+#' \itemize{
+#'  \item \code{scores}: contains the predicted scores;
+#'    \item \code{labels}: contains the labels as \code{pos} or \code{neg};
+#'  \item \code{folds}: contains the index of the fold in which the example falls.
+#'    The index can range from 1 to the number of folds.
+#' }
+#' @export
+#' @examples
+#' data(labels);
+#' data(scores);
+#' df <- create.stratified.fold.df(L[,3], S[,3], folds=5, seed=23);
+create.stratified.fold.df <- function(labels, scores, folds=5, seed=23){
+    if(is.matrix(labels) || is.matrix(scores))
+        stop("create.stratified.fold.df: labels or scores must be a vector", call.=FALSE);
+    if(length(scores)!=length(labels))
+        stop("create.stratified.fold.df: length of true and predicted labels does not match", call.=FALSE);
+    if(any((labels!=0) & (labels!=1)))
+        stop("create.stratified.fold.df: labels variable must take values 0 or 1", call.=FALSE);
+    if(is.null(folds))
+        stop("create.stratified.fold.df: folds must be an integer number", call.=FALSE);
+    if(is.null(seed))
+        warning("create.stratified.fold.df: folds are generated without seed initialization", call.=FALSE);
+    indices <- 1:length(labels);
+    positives <- which(labels==1);
+    foldIndex <- do.stratified.cv.data.single.class(indices, positives, kk=folds, seed=seed);
+    testIndex <- mapply(c, foldIndex$fold.positives, foldIndex$fold.negatives, SIMPLIFY=FALSE);
+    fold.check <- unlist(lapply(testIndex,length));
+    if(any(fold.check==0))
+        stop("create.stratified.fold.df: number of folds selected too high: some folds have no examples. Please reduce the number of folds", call.=FALSE);
+    fold.len <- sapply(testIndex,length);
+    tmp.list <- vector(mode="list", length=folds);
+    for(k in 1:folds)
+        tmp.list[[k]] <- rep(k, length(testIndex[[k]]));
+    foldcol <- numeric(length(scores));
+    labelschar <- ifelse(labels==1, "pos", "neg");
+    df <- data.frame(scores, labelschar, foldcol, stringsAsFactors=TRUE);
+    for(i in 1:length(tmp.list))
+        df$foldcol[testIndex[[i]]] <- tmp.list[[i]];
+    names(df) <- c("scores","labels","folds");
+    return(df);
 }
