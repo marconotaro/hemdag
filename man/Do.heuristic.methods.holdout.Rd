@@ -4,14 +4,27 @@
 \alias{Do.heuristic.methods.holdout}
 \title{Do Heuristic Methods holdout}
 \usage{
-Do.heuristic.methods.holdout(heuristic.fun = "AND", norm = TRUE,
-  norm.type = NULL, folds = 5, seed = 23, n.round = 3,
-  f.criterion = "F", recall.levels = seq(from = 0.1, to = 1, by = 0.1),
-  compute.performance = FALSE, flat.file = flat.file,
-  ann.file = ann.file, dag.file = dag.file,
-  ind.test.set = ind.test.set, ind.dir = ind.dir,
-  flat.dir = flat.dir, ann.dir = ann.dir, dag.dir = dag.dir,
-  hierScore.dir = hierScore.dir, perf.dir = perf.dir)
+Do.heuristic.methods.holdout(
+  heuristic.fun = "AND",
+  norm = TRUE,
+  norm.type = NULL,
+  folds = 5,
+  seed = 23,
+  n.round = 3,
+  f.criterion = "F",
+  recall.levels = seq(from = 0.1, to = 1, by = 0.1),
+  compute.performance = FALSE,
+  flat.file = flat.file,
+  ann.file = ann.file,
+  dag.file = dag.file,
+  ind.test.set = ind.test.set,
+  ind.dir = ind.dir,
+  flat.dir = flat.dir,
+  ann.dir = ann.dir,
+  dag.dir = dag.dir,
+  hierScore.dir = hierScore.dir,
+  perf.dir = perf.dir
+)
 }
 \arguments{
 \item{heuristic.fun}{can be one of the following three values:

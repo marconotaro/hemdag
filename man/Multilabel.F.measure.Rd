@@ -9,8 +9,7 @@
 \usage{
 F.measure.multilabel(target, predicted, b.per.example = FALSE)
 
-\S4method{F.measure.multilabel}{matrix,matrix}(target, predicted,
-  b.per.example = FALSE)
+\S4method{F.measure.multilabel}{matrix,matrix}(target, predicted, b.per.example = FALSE)
 }
 \arguments{
 \item{target}{matrix with the target multilabel: rows correspond to examples and columns to classes.

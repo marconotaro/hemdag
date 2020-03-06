@@ -8,9 +8,13 @@
 \usage{
 precision.at.all.recall.levels.single.class(labels, scores)
 
-precision.at.given.recall.levels.over.classes(target, predicted,
-  folds = NULL, seed = NULL, recall.levels = seq(from = 0.1, to = 1,
-  by = 0.1))
+precision.at.given.recall.levels.over.classes(
+  target,
+  predicted,
+  folds = NULL,
+  seed = NULL,
+  recall.levels = seq(from = 0.1, to = 1, by = 0.1)
+)
 }
 \arguments{
 \item{labels}{vector of the true labels (0 negative, 1 positive examples).}

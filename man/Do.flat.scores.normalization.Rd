@@ -4,9 +4,12 @@
 \alias{Do.flat.scores.normalization}
 \title{Flat scores normalization}
 \usage{
-Do.flat.scores.normalization(norm.type = "MaxNorm",
-  flat.file = flat.file, flat.dir = flat.dir,
-  flat.norm.dir = flat.norm.dir)
+Do.flat.scores.normalization(
+  norm.type = "MaxNorm",
+  flat.file = flat.file,
+  flat.dir = flat.dir,
+  flat.norm.dir = flat.norm.dir
+)
 }
 \arguments{
 \item{norm.type}{can be one of the following two values:

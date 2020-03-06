@@ -4,8 +4,14 @@
 \alias{find.best.f}
 \title{Best hierarchical F-score}
 \usage{
-find.best.f(target, predicted, n.round = 3, f.criterion = "F",
-  verbose = TRUE, b.per.example = FALSE)
+find.best.f(
+  target,
+  predicted,
+  n.round = 3,
+  f.criterion = "F",
+  verbose = TRUE,
+  b.per.example = FALSE
+)
 }
 \arguments{
 \item{target}{matrix with the target multilabel: rows correspond to examples and columns to classes.

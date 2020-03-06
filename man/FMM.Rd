@@ -5,9 +5,16 @@
 \alias{compute.Fmeasure.multilabel}
 \title{Compute F-measure Multilabel}
 \usage{
-compute.Fmeasure.multilabel(target, predicted, n.round = 3,
-  f.criterion = "F", verbose = TRUE, b.per.example = FALSE,
-  folds = NULL, seed = NULL)
+compute.Fmeasure.multilabel(
+  target,
+  predicted,
+  n.round = 3,
+  f.criterion = "F",
+  verbose = TRUE,
+  b.per.example = FALSE,
+  folds = NULL,
+  seed = NULL
+)
 }
 \arguments{
 \item{target}{matrix with the target multilabel: rows correspond to examples and columns to classes.

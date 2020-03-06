@@ -5,9 +5,19 @@
 \alias{TPR.DAG}
 \title{TPR-DAG Ensemble Variants}
 \usage{
-TPR.DAG(S, g, root = "00", positive = "children",
-  bottomup = "threshold.free", topdown = "HTD", t = 0, w = 0,
-  W = NULL, parallel = FALSE, ncores = 1)
+TPR.DAG(
+  S,
+  g,
+  root = "00",
+  positive = "children",
+  bottomup = "threshold.free",
+  topdown = "HTD",
+  t = 0,
+  w = 0,
+  W = NULL,
+  parallel = FALSE,
+  ncores = 1
+)
 }
 \arguments{
 \item{S}{a named flat scores matrix with examples on rows and classes on columns.}

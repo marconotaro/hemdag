@@ -4,13 +4,27 @@
 \alias{Do.GPAV}
 \title{GPAV -- High Level Function}
 \usage{
-Do.GPAV(norm = TRUE, norm.type = NULL, W = NULL, parallel = FALSE,
-  ncores = 1, folds = 5, seed = 23, n.round = 3,
-  f.criterion = "F", recall.levels = seq(from = 0.1, to = 1, by = 0.1),
-  compute.performance = FALSE, flat.file = flat.file,
-  ann.file = ann.file, dag.file = dag.file, flat.dir = flat.dir,
-  ann.dir = ann.dir, dag.dir = dag.dir,
-  hierScore.dir = hierScore.dir, perf.dir = perf.dir)
+Do.GPAV(
+  norm = TRUE,
+  norm.type = NULL,
+  W = NULL,
+  parallel = FALSE,
+  ncores = 1,
+  folds = 5,
+  seed = 23,
+  n.round = 3,
+  f.criterion = "F",
+  recall.levels = seq(from = 0.1, to = 1, by = 0.1),
+  compute.performance = FALSE,
+  flat.file = flat.file,
+  ann.file = ann.file,
+  dag.file = dag.file,
+  flat.dir = flat.dir,
+  ann.dir = ann.dir,
+  dag.dir = dag.dir,
+  hierScore.dir = hierScore.dir,
+  perf.dir = perf.dir
+)
 }
 \arguments{
 \item{norm}{boolean value:
