@@ -1,6 +1,5 @@
 docs/_build/
 run/
-tests/
 .Rd2pdf*/
 src/GPAV.o
 src/HEMDAG.so
@@ -9,4 +8,5 @@ md5sum.sh
 build.sh
 build.R
 configure.test.pl
+codecov.sh
 TODO
