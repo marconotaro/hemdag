@@ -153,11 +153,6 @@ DESCENS: Descendants Ensemble Classifier
     S.descensW      <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="HTD", w=0.5);
     S.descensWT     <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="HTD", t=0.5, w=05);
     S.descensTAU    <- TPR.DAG(S, g, root, positive="descendants", bottomup="tau", topdown="HTD", t=0.5);
-    S.ISOdescensTF  <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold.free", topdown="GPAV");
-    S.ISOdescensT   <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold", topdown="GPAV", t=0.5);
-    S.ISOdescensW   <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="GPAV", w=0.5);
-    S.ISOdescensWT  <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="HTD", t=0.5, w=05);
-    S.ISOdescensTAU <- TPR.DAG(S, g, root, positive="descendants", bottomup="tau", topdown="GPAV", t=0.5);
 
 ISO-DESCENS: Isotonic Regression with Descendants Ensemble Classifier
 ------------------------------------------------------------------------
