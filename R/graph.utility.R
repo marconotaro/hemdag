@@ -675,6 +675,7 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 #' blank and the weight of the edges, e.g \code{nodeX nodeY score}.
 #' @param m a weighted adjacency matrix of the graph. Rows and columns are examples. It must be a square named matrix.
 #' @param output.file name of the file of the  to be written.
+#' @param digits number of digits to be used to save scores of \code{m} (\code{def. digits=3}).
 #' The extension of the file can be or plain format (".txt") or compressed (".gz").
 #' @details Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded. 
 #' In other words in the \code{output.file} are reported only those nodes having a weight different from zero. 
@@ -683,9 +684,9 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 #' @examples
 #' data(wadj);
 #' tmpdir <- paste0(tempdir(),"/");
-#' tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"));
-#' tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt"));
-tupla.matrix <- function(m, output.file="net.file.gz"){
+#' tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"), digits=3);
+#' tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt", digits=3));
+tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
     im <- which(m!=0, arr.ind=TRUE);
     rows <- rownames(im);
     colrep.names <- intersect(colnames(m), rownames(im));
@@ -694,9 +695,9 @@ tupla.matrix <- function(m, output.file="net.file.gz"){
     df <- data.frame(row=rows, col=cols, score=m[im]);
     tmp <- strsplit(output.file, "[.,/,_]")[[1]];
     if(any(tmp %in% "gz")){
-        write.table(df, file=gzfile(output.file), quote=FALSE, row.names=FALSE, col.names=FALSE);
+        write.table(format(df,digits=digits), file=gzfile(output.file), quote=FALSE, row.names=FALSE, col.names=FALSE);
     }else{
-        write.table(df, file=output.file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+        write.table(format(df,digits=digits), file=output.file, quote=FALSE, row.names=FALSE, col.names=FALSE);
     }
 }
 
