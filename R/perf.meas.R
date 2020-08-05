@@ -506,7 +506,7 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
 #'         \enumerate{
 #'             \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R), 
 #'            Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
-#'             \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F),    av.F-measure (av.F)
+#'             \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F)
 #'             and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively 
 #'            to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
 #'         }
@@ -607,10 +607,10 @@ find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=T
 #'    \item \code{TRUE}: results are returned for each example;
 #'    \item \code{FALSE}: only the average results are returned;
 #' }
-#' @param folds number of folds on which computing the AUROC. If \code{folds=NULL} (\code{def.}), the AUROC is computed one-shot, 
-#' otherwise the AUROC is computed averaged across folds.
+#' @param folds number of folds on which computing the FMM. If \code{folds=NULL} (\code{def.}), the FMM is computed one-shot, 
+#' otherwise the FMM is computed averaged across folds.
 #' @param seed initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
-#' If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUROC averaged across folds is computed without seed initialization.
+#' If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the FMM averaged across folds is computed without seed initialization.
 #' @return Two different outputs respect to the input parameter \code{b.per.example}:
 #' \itemize{
 #'    \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms 
