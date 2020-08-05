@@ -500,7 +500,7 @@ check.DAG.integrity <- function(g, root="00"){
 #' data(graph);
 #' data(scores);
 #' root <- root.node(g);
-#' S.hier <- htd(S,g,root);
+#' S.hier <- HTD(S,g,root);
 #' S.hier.single.example <- S.hier[sample(ncol(S.hier),1),];
 #' check.hierarchy.single.sample(S.hier.single.example, g, root=root);
 #' check.hierarchy(S.hier, g, root);
@@ -734,17 +734,17 @@ do.edges.from.HPO.obo <- function(obofile="hp.obo", file="edge.file"){
         }
         if(i>=n.lines){break();}
         i <- i + 1; # id
-        destination <- strsplit(line[i], split="[ +\t]")[[1]][2];
-        while( (line[i]!="") && (strsplit(line[i], split="[ +\t]")[[1]][1]!="is_a:") ){ # checking first is_a entry
+        destination <- strsplit(line[i], split="[\\s+\t]")[[1]][2];
+        while( (line[i]!="") && (strsplit(line[i], split="[\\s+\t]")[[1]][1]!="is_a:") ){ # checking first is_a entry
             i <- i + 1;
         }
         if (line[i] == ""){next();}  # we are at the end of the record and is_a has been found
-        source <- strsplit(line[i], split="[ +\t]")[[1]][2];
+        source <- strsplit(line[i], split="[\\s+\t]")[[1]][2];
         j <- j + 1;
         i <- i + 1;
         m[j,]<-c(source,destination);
         while( (line[i]!="") && (strsplit(line[i], split="[ +\t]")[[1]][1]=="is_a:") ){# checking successive is_a entry
-            source <- strsplit(line[i], split="[ +\t]")[[1]][2];
+            source <- strsplit(line[i], split="[\\s+\t]")[[1]][2];
             i <- i + 1;
             j <- j + 1;
             m[j,]<-c(source,destination);

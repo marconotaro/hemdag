@@ -25,7 +25,7 @@ specific.annotation.matrix <- function(file="gene2pheno.txt.gz"){
     }else{
         line <- readLines(file);
     }
-    tmp <- strsplit(line, split="[ |]"); #nb: space before pipe useful to separate gene from obo terms
+    tmp <- strsplit(line, split="[(\\s+,\t)|]", perl=TRUE); #nb: space (or tab) before pipe useful to separate gene from obo terms
     genenames <- c();
     for(i in 1:length(tmp)) genenames <- c(genenames,tmp[[i]][1]);
     ann.list <- list();
