@@ -2,10 +2,10 @@
 % Please edit documentation in R/HTD.R
 \name{HTD-DAG}
 \alias{HTD-DAG}
-\alias{htd}
+\alias{HTD}
 \title{HTD-DAG}
 \usage{
-htd(S, g, root = "00")
+HTD(S, g, root = "00")
 }
 \arguments{
 \item{S}{a named flat scores matrix with examples on rows and classes on columns.}
@@ -40,7 +40,7 @@ The node levels correspond to their maximum path length from the root.
 data(graph);
 data(scores);
 root <- root.node(g);
-S.htd <- htd(S,g,root);
+S.htd <- HTD(S,g,root);
 }
 \seealso{
 \code{\link{graph.levels}}, \code{\link{hierarchical.checkers}}

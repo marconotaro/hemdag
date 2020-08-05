@@ -29,8 +29,8 @@
 #' data(graph);
 #' data(scores);
 #' root <- root.node(g);
-#' S.htd <- htd(S,g,root);
-htd <- function(S, g, root="00"){
+#' S.htd <- HTD(S,g,root);
+HTD <- function(S, g, root="00"){
     levels <- graph.levels(g,root);
 
     # a dummy root is added if it does not exist
@@ -222,7 +222,7 @@ Do.HTD <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=3, f.cri
         colnames(S)[1] <- root;
         S <- S[,classes.names];
     }
-    S <- htd(S, g, root);
+    S <- HTD(S, g, root);
     S.hier <- S;
     cat("HIERARCHICAL CORRECTION: DONE", "\n");
 
@@ -429,7 +429,7 @@ Do.HTD.holdout <- function(norm=TRUE, norm.type=NULL, folds=5, seed=23, n.round=
         colnames(S)[1] <- root;
         S <- S[,classes.names];
     }
-    S <- htd(S, g, root);
+    S <- HTD(S, g, root);
     S.hier <- S; 
     cat("HIERARCHICAL CORRECTION: DONE", "\n");
 

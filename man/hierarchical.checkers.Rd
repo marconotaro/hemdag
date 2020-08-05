@@ -44,7 +44,7 @@ parent or an ancestor node is always larger or equal than that of its children o
 data(graph);
 data(scores);
 root <- root.node(g);
-S.hier <- htd(S,g,root);
+S.hier <- HTD(S,g,root);
 S.hier.single.example <- S.hier[sample(ncol(S.hier),1),];
 check.hierarchy.single.sample(S.hier.single.example, g, root=root);
 check.hierarchy(S.hier, g, root);
