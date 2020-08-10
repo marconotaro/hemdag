@@ -671,15 +671,14 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 }
 
 #' @title Tupla Matrix
-#' @description Transform a Weighted Adjacency Matrix (wadj matrix) of a graph in a tupla, i.e. as a sequences of rows separated by 
-#' blank and the weight of the edges, e.g \code{nodeX nodeY score}.
-#' @param m a weighted adjacency matrix of the graph. Rows and columns are examples. It must be a square named matrix.
-#' @param output.file name of the file of the  to be written.
+#' @description Transform a named score matrix in a tupla, i.e. in the form \code{nodeX nodeY score}.
+#' @param m a named score matrix. It can be either a \code{m x n} matrix (where \code{m} are example and \code{n}
+#' are functional terms, e.g. GO terms) or it can be a square named matrix \code{m x m}, where \code{m} are examples.
+#' @param output.file name of the file on which the matrix must be written.
 #' @param digits number of digits to be used to save scores of \code{m} (\code{def. digits=3}).
 #' The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @details Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded. 
-#' In other words in the \code{output.file} are reported only those nodes having a weight different from zero. 
-#' @return the weighted adjacency matrix as tupla is stored in the output.file. 
+#' @details Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded.
+#' @return tupla score matrix stored in output.file.
 #' @export
 #' @examples
 #' data(wadj);
@@ -689,7 +688,7 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
     im <- which(m!=0, arr.ind=TRUE);
     rows <- rownames(im);
-    colrep.names <- intersect(colnames(m), rownames(im));
+    colrep.names <- colnames(m);
     colrep.times <- table(im[,2])
     cols <- rep(colrep.names, times=colrep.times);
     df <- data.frame(row=rows, col=cols, score=m[im]);
