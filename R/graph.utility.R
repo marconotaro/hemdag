@@ -411,7 +411,7 @@ distances.from.leaves <- function(g){
 #' @description This function returns a matrix with two columns and as many rows as there are edges.
 #' The entries of the first columns are the index of the node the edge comes from (i.e. children nodes), 
 #' the entries of the second columns indicate the index of node the edge is to (i.e. parents nodes). 
-#' Referring to a DAG this matrix defines a partial order. 
+#' Referring to a dag this matrix defines a partial order.
 #' @param g a graph of class \code{graphNELL}. It represents the hierarchy of the classes.
 #' @return a constraints matrix w.r.t the graph \code{g}.
 #' @export
@@ -457,18 +457,18 @@ do.subgraph <- function(nd, g, edgemode="directed"){
     return(G);
 }
 
-#' @title DAG checker
-#' @description This function assess the integrity of a DAG.
+#' @title dag checker
+#' @description This function assess the integrity of a dag.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).
-#' @return If all the nodes are accessible from the root "DAG is OK" is printed, 
+#' @return If all the nodes are accessible from the root "dag is ok" is printed,
 #' otherwise a message error and the list of the not accessible nodes is printed on the stdout.
 #' @export
 #' @examples
 #' data(graph);
 #' root <- root.node(g);
-#' check.DAG.integrity(g, root=root);
-check.DAG.integrity <- function(g, root="00"){
+#' check.dag.integrity(g, root=root);
+check.dag.integrity <- function(g, root="00"){
     if(sum(nodes(g) %in% root)==0) 
         stop("root node not found in g. Insert the root node");
     if(root.node(g)!=root) 
@@ -477,11 +477,11 @@ check.DAG.integrity <- function(g, root="00"){
   acc.nodes <- names(acc(g,root)[[1]]);
   if((length(all.nodes) - length(acc.nodes)) > 1) {
         n <- setdiff(all.nodes,c(acc.nodes,root));
-        cat("check.GO.integrity: not all nodes accessible from root\n");
+        cat("check.dag.integrity: not all nodes accessible from root\n");
         cat("Nodes not accessible from root:\n");
         cat(n,"\n");
     }else{ 
-        cat("DAG is OK\n")
+        cat("dag is ok\n")
     };
 }
 
@@ -581,7 +581,7 @@ check.hierarchy <- function(S.hier,g, root="00"){
 #' @description Nodes of a graph are sorted according to a lexicographical topological ordering.
 #' @details A topological sorting is a linear ordering of the nodes such that given an edge from 
 #' \code{u} to \code{v}, the node \code{u} comes before node \code{v} in the ordering. 
-#' Topological sorting is not possible if the graph \code{g} is not a DAG.
+#' Topological sorting is not possible if the graph \code{g} is not a dag.
 #' To implement the topological sorting algorithm we applied the Kahn’s algorithm.
 #' @param g an object of class \code{graphNEL} 
 #' @return a vector in which the nodes of the graph \code{g} are sorted according to a lexicographical topological order.
@@ -593,14 +593,14 @@ lexicographical.topological.sort <- function(g){
     ## check self-loop: graph with self-loop cannot be processed
     indegree <- degree(g)$inDegree;
     if(!(any(indegree==0))){
-        stop("input graph g is not a DAG"); ## self-loop detect
+        stop("input graph g is not a dag"); ## self-loop detect
     }
     T <- c();
     indegree <- degree(g)$inDegree;
     while(length(indegree)!=0){
         queue <- names(which(indegree==0));
         if(length(queue)==0)
-            stop("input graph g is not a DAG"); ## check self-loop 
+            stop("input graph g is not a dag"); ## check self-loop
         queue <- queue[order(queue, decreasing=FALSE)];
         T <- append(T, queue[1]);
         indegree <- indegree[-which(names(indegree)==queue[1])];
@@ -700,21 +700,21 @@ tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
     }
 }
 
-#' @title Parse an HPO OBO file
-#' @description Read an HPO OBO file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write 
-#' the edges of the DAG on a plain text file. The format of the file is a sequence of
+#' @title Parse an HPO obo file
+#' @description Read an HPO obo file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write
+#' the edges of the dag on a plain text file. The format of the file is a sequence of
 #' rows and each row corresponds to an edge represented through a pair of vertices separated by blanks.
 #' @details a faster and more flexible parser to handle \emph{obo} file can be found \href{https://github.com/marconotaro/obogaf-parser}{here}.
-#' @param obofile an HPO OBO file. The extension of the obofile can be or plain format (".txt") or compressed (".gz").
+#' @param obofile an HPO obo file. The extension of the obofile can be or plain format (".txt") or compressed (".gz").
 #' @param file name of the file of the edges to be written.
 #' The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @return a text file representing the edges in the format: source  destination (i.e. one row for each edge). 
+#' @return a text file representing the edges in the format: source  destination (i.e. one row for each edge).
 #' @export
 #' @examples
 #' \dontrun{
 #' hpobo <- "http://purl.obolibrary.org/obo/hp.obo";
-#' do.edges.from.HPO.obo(obofile=hpobo, file="hp.edge");}
-do.edges.from.HPO.obo <- function(obofile="hp.obo", file="edge.file"){
+#' do.edges.from.hpo.obo(obofile=hpobo, file="hp.edge");}
+do.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
     tmp <- strsplit(obofile, "[.,/,_]")[[1]];
     if(any(tmp %in% "gz")){
         con <- gzfile(obofile);

@@ -43,7 +43,7 @@ htd <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("htd: The number of nodes of the graph and the number of classes of the scores matrix does not match", call.=FALSE);
+        stop("htd: the number of nodes of the graph and the number of classes of the scores matrix does not match", call.=FALSE);
         
     # nodes are scanned from top to bottom: a list par.tod with the parents for each node (ordered from top to bottom) is obtained  
     par.tod <- get.parents.top.down(g,levels,root)
@@ -94,7 +94,7 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
     ## htd correction 
     root <- root.node(g);
     S <- htd(S, g, root);
-    cat("HTD-DAG correction: done", "\n");
+    cat("htd-dag correction: done", "\n");
     return(S);
 }
 
@@ -136,6 +136,6 @@ htd.dag.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL){
     ## hierarchical top-down
     root <- root.node(g); 
     S <- htd(S, g, root);
-    cat("HTD-DAG correction: done", "\n");
+    cat("htd-dag correction: done", "\n");
     return(S);
 }

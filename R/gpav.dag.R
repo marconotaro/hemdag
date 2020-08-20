@@ -242,7 +242,7 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
     }else{
         S <- gpav.over.examples(S, g, W=W);
     }
-    cat("GPAV-DAG correction: done", "\n");
+    cat("gpav-dag correction: done", "\n");
     return(S);
 }
 
@@ -309,7 +309,7 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
     }else{
         S <- gpav.over.examples(S, g, W=W);
     }
-    cat("GPAV-DAG correction: done", "\n");
+    cat("gpav-dag correction: done", "\n");
     return(S);
 }
 

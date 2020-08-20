@@ -6,7 +6,7 @@
 #include <algorithm>
 
 extern "C"
-int GPAV_cpp (
+int gpav_cpp (
     double  * const W,
     double  * const adj,
     int     * const n,
