@@ -130,35 +130,6 @@ test_that("full.annotation.matrix works", {
     expect_equal(full.ann, full.ann.control);
 })
 
-test_that("Do.full.annotation.matrix works", {
-    g <- make.graph();
-    anc <- build.ancestors(g);
-    W <- make.adj();
-    spec.ann <- make.spec.ann();
-    ann <- transitive.closure.annotations(spec.ann, anc);
-    full.ann <- full.annotation.matrix(W,anc,spec.ann);
-    
-    tmpdir <- paste0(tempdir(),"/");
-    save(g, file=paste0(tmpdir,"graph.rda"));
-    save(ann, file=paste0(tmpdir,"labels.rda"));
-    save(W, file=paste0(tmpdir,"wadj.rda"));
-    save(anc, file=paste0(tmpdir,"ancestors.rda"));
-    anc.dir <- net.dir <- ann.dir <- output.dir <- tmpdir;
-    anc.file.name <- "ancestors";
-    net.file <- "wadj";
-    ann.file.name <- "labels";
-    output.name <- "full.ann.matrix";
-
-    Do.full.annotation.matrix(anc.file.name=anc.file.name, anc.dir=anc.dir, net.file=net.file,
-        net.dir=net.dir, ann.file.name=ann.file.name, ann.dir=ann.dir, output.name=output.name, 
-        output.dir=output.dir);
-
-    full.ann.control <- get(load(paste0(tmpdir,"full.ann.matrix.rda")));
-
-    expect_equal(full.ann, full.ann.control);
-})
-
-
 test_that("do.submatrix works", {
     ann <- make.notca.ann();
     subann <- do.submatrix(ann,2);

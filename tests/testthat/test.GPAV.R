@@ -1,6 +1,6 @@
 library(HEMDAG);
 
-context("test GPAV");
+context("test gpav-DAG");
 
 check.graph <- function(){ 
     if(requireNamespace("graph", quietly=TRUE)){ 
@@ -69,7 +69,7 @@ test_that("adj.upper.tri works",{
     expect_equal(adj, adj.control);
 })
 
-test_that("GPAV works", {
+test_that("gpav works", {
     g <- make.graph();
     adj <- adj.upper.tri(g);
 
@@ -81,22 +81,22 @@ test_that("GPAV works", {
     W.trim <- rep(1,length(Y.trim));
 
 
-    S.gpav  <- GPAV(Y, W=NULL, adj); ## if W=NULL it is assumed that W is unitary
-    S.gpav2 <- GPAV(Y, W=W, adj);
+    S.gpav  <- gpav(Y, W=NULL, adj); ## if W=NULL it is assumed that W is unitary
+    S.gpav2 <- gpav(Y, W=W, adj);
     S.check <- c(0.53333333,0.30000000,0.53333333,0.53333333,0.53333333,0.53333333,0.53333333,0.55000000,0.55000000,0.90000000);
     names(S.check) <- c("H","I","J","F","D","B","C","E","G","A");
 
     expect_equal(S.gpav,  S.check, tolerance=1e-8);
     expect_equal(S.gpav2, S.check, tolerance=1e-8);
-    expect_error(GPAV(Y.trim,W=NULL,adj), "GPAV: mismatch between the number of classes between 'Y' and 'adj'", fixed=TRUE);
-    expect_error(GPAV(Y,W=W.trim,adj), "GPAV: mismatch between the number of classes between 'Y' and 'adj'", fixed=TRUE);
+    expect_error(gpav(Y.trim,W=NULL,adj), "gpav: mismatch between the number of classes between 'Y' and 'adj'", fixed=TRUE);
+    expect_error(gpav(Y,W=W.trim,adj), "gpav: mismatch between the number of classes between 'Y' and 'adj'", fixed=TRUE);
 })
 
-test_that("GPAV.over.examples works", {
+test_that("gpav.over.examples works", {
     S <- make.scores();
     g <- make.graph();
 
-    S.gpav <- GPAV.over.examples(S, g, W=NULL);
+    S.gpav <- gpav.over.examples(S, g, W=NULL);
 
     pr1 <- c(0.90000000, 0.53333333, 0.53333333, 0.53333333, 0.55000000, 0.53333333, 0.55000000, 0.53333333, 0.30000000, 0.53333333);
     pr2 <- c(0.83333333, 0.83333333, 0.80000000, 0.83333333, 0.43333333, 0.63333333, 0.43333333, 0.43333333, 0.63333333, 0.63333333);
@@ -107,17 +107,17 @@ test_that("GPAV.over.examples works", {
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
 
     expect_equal(S.gpav, S.check, tolerance=1e-8);
-    expect_error(GPAV.over.examples(S.error, g, W=NULL), 
-        "GPAV: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
+    expect_error(gpav.over.examples(S.error, g, W=NULL),
+        "gpav: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
 })
 
-test_that("GPAV.parallel works", {
+test_that("gpav.parallel works", {
     S <- make.scores();
     g <- make.graph();
 
     if(Sys.info()['sysname']!="Windows"){ 
-        S.gpav1core <- GPAV.parallel(S, W=NULL, g, ncores=1);
-        S.gpav2core <- GPAV.parallel(S, W=NULL, g, ncores=2); 
+        S.gpav1core <- gpav.parallel(S, W=NULL, g, ncores=1);
+        S.gpav2core <- gpav.parallel(S, W=NULL, g, ncores=2);
     }
 
     pr1 <- c(0.90000000, 0.53333333, 0.53333333, 0.53333333, 0.55000000, 0.53333333, 0.55000000, 0.53333333, 0.30000000, 0.53333333);
@@ -130,11 +130,11 @@ test_that("GPAV.parallel works", {
 
     expect_equal(S.gpav2core, S.check, tolerance=1e-8);
     expect_equal(S.gpav1core, S.check, tolerance=1e-8);
-    expect_error(GPAV.parallel(S.error, g, W=NULL),
-        "GPAV: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
+    expect_error(gpav.parallel(S.error, g, W=NULL),
+        "gpav: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
 })    
 
-test_that("GPAV.parallel works with ncores>2", {
+test_that("gpav.parallel works with ncores>2", {
     S <- make.scores();
     g <- make.graph();
 
@@ -149,175 +149,20 @@ test_that("GPAV.parallel works with ncores>2", {
     ## not_on_cran allows to execute test locally (with covr) but not on CRAN check
     not_on_cran <- function(){identical(Sys.getenv("NOT_CRAN"), "TRUE");}  ## set NOT_CRAN environment variable to TRUE
     if(not_on_cran()){
-        S.gpav0core <- GPAV.parallel(S, W=NULL, g, ncores=0);
+        S.gpav0core <- gpav.parallel(S, W=NULL, g, ncores=0);
         expect_equal(S.gpav0core, S.check, tolerance=1e-8); 
     }else{
         skip_on_cran(); ## skip test on CRAN
     }
 })
 
-test_that("Do.GPAV works", {
-    g <- make.graph();
-    S <- make.scores();
-    ann <- make.ann();
-    S.noroot <- S[,-which(colnames(S)==root.node(g))];
-    S.shrank <- S[,colnames(do.submatrix(ann,2))];
-    
-    tmpdir <- paste0(tempdir(),"/");
-    save(g, file=paste0(tmpdir,"graph.rda"));
-    save(ann, file=paste0(tmpdir,"labels.rda"));
-    save(S, file=paste0(tmpdir,"scores.rda"));
-    save(S.noroot, file=paste0(tmpdir,"scores-noroot.rda"));
-    save(S.shrank, file=paste0(tmpdir,"scores-shrunk.rda"));
-    dag.dir <- flat.dir <- ann.dir <- tmpdir;
-    hierScore.dir <- perf.dir <- tmpdir;
-    recall.levels <- seq(from=0.25, to=1, by=0.25);
-    dag.file <- "graph";
-    flat.file <- "scores";
-    flat.file.noroot <- "scores-noroot";
-    flat.file.shrunk <- "scores-shrunk";
-    ann.file <- "labels";
-    
-    ## test S -> NoNorm
-    expect_output(
-        Do.GPAV(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, folds=NULL, seed=23, n.round=3, 
-            f.criterion ="F", recall.levels=recall.levels, compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir), 
-        "FLAT PERFORMANCE: DONE\\nHIERARCHICAL CORRECTION: DONE\\nHIERARCHICAL PERFORMANCE: DONE"
-    );
-
-    ## test hierarchical scores matrix
-    S.hier <- get(load(paste0(tmpdir,"scores.hierScores.GPAV.rda")));
-    S.gpav <- GPAV.over.examples(S, g, W=NULL); 
-    expect_equal(S.hier, S.gpav);
-
-    ## testing flat vs hierarchical performance
-    perfs <- mget(load(paste0(tmpdir,"PerfMeas.scores.hierScores.GPAV.rda")));
-    ann.noroot <- ann[,-which(colnames(S)==root.node(g))];
-    S.gpav.noroot <- S.gpav[,-which(colnames(S.gpav)==root.node(g))];
-
-    AUC.flat <- AUROC.single.over.classes(ann.noroot, S.noroot, folds=NULL, seed=23);
-    PRC.flat <- AUPRC.single.over.classes(ann.noroot, S.noroot, folds=NULL, seed=23);
-    FMM.flat <- compute.Fmeasure.multilabel(ann.noroot, S.noroot, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=NULL, seed=23);
-    AUC.gpav <- AUROC.single.over.classes(ann.noroot, S.gpav.noroot, folds=NULL, seed=23);
-    PRC.gpav <- AUPRC.single.over.classes(ann.noroot, S.gpav.noroot, folds=NULL, seed=23);
-    FMM.gpav <- compute.Fmeasure.multilabel(ann.noroot, S.gpav.noroot, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=NULL, seed=23);
-
-    expect_equal(perfs$AUC.flat, AUC.flat);
-    expect_equal(perfs$PRC.flat, PRC.flat);
-    expect_equal(perfs$FMM.flat, FMM.flat);
-    expect_equal(perfs$AUC.hier, AUC.gpav);
-    expect_equal(perfs$PRC.hier, PRC.gpav);
-    expect_equal(perfs$FMM.hier, FMM.gpav);
-
-    ## test S -> MaxNorm 
-    expect_output( 
-        Do.GPAV(norm=FALSE, norm.type="MaxNorm", W=NULL, parallel=FALSE, ncores=1, folds=NULL, seed=23, n.round=3, 
-            f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL), 
-        "MaxNorm NORMALIZATION: DONE\\nHIERARCHICAL CORRECTION: DONE"
-    );
-
-    ## test S -> Qnorm
-    expect_output(
-        Do.GPAV(norm=FALSE, norm.type="Qnorm", W=NULL, parallel=FALSE, ncores=1, folds=NULL, seed=23, n.round=3, 
-            f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL), 
-        "Qnorm NORMALIZATION: DONE\\nHIERARCHICAL CORRECTION: DONE"
-    );
-
-    ## test misspelled norm method
-    expect_error(
-        Do.GPAV(norm=FALSE, norm.type="BlaBla", W=NULL, parallel=TRUE, ncores=2, folds=NULL, seed=23, n.round=3,
-            f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL),
-        "scores.normalization: the chosen normalization method is not among those available or it has been misspelled"
-    );
-
-    ## test misspelled performance
-    expect_error(
-        Do.GPAV(norm=FALSE, norm.type="Qnorm", W=NULL, parallel=TRUE, ncores=2, folds=NULL, seed=23, n.round=3,
-            f.criterion="Fmax", recall.levels=recall.levels, compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir),
-        "GPAV: value of parameter 'f.criterion' misspelled"
-    );
-
-    ## test error norm=FALSE and norm.type=NULL
-    expect_error(
-        Do.GPAV(norm=FALSE, norm.type=NULL, W=NULL, parallel=TRUE, ncores=2, folds=NULL, seed=23, n.round=3,
-            f.criterion="F", recall.levels=recall.levels, compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir),
-        "GPAV: If norm is set to FALSE, you need to specify a normalization method among those available"
-    );
-
-    ## test S without root 
-    expect_output(
-        Do.GPAV(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, folds=NULL, seed=23, n.round=3, 
-            f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file.noroot, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL), 
-        "HIERARCHICAL CORRECTION: DONE"
-    );
-
-    ## test GPAV parallel
-    expect_output(
-        Do.GPAV(norm=TRUE, norm.type=NULL, W=NULL, parallel=TRUE, ncores=2, folds=NULL, seed=23, n.round=3, 
-            f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL), 
-        "HIERARCHICAL CORRECTION: DONE"
-    );
-
-    ## test GPAV parallel warning 
-    expect_output( 
-        expect_warning(
-            Do.GPAV(norm=TRUE, norm.type=NULL, W=NULL, parallel=TRUE, ncores=1, folds=NULL, seed=23, n.round=3,
-                f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, 
-                dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL),  
-                "GPAV: set ncores greater than 2 to exploit the GPAV parallel version"
-        ),
-        "HIERARCHICAL CORRECTION: DONE"
-    );
-
-    expect_output( 
-        expect_warning(
-            Do.GPAV(norm=TRUE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=2, folds=NULL, seed=23, n.round=3,
-                f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, 
-                dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL),  
-                "GPAV: no GPAV parallel version is running, but ncores is higher or equal to 2.", " Set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version"
-        ),
-        "HIERARCHICAL CORRECTION: DONE"
-    );
-
-    ## test normalization warning
-    expect_output( 
-        expect_warning(
-            Do.GPAV(norm=TRUE, norm.type="MaxNorm", W=NULL, parallel=TRUE, ncores=2, folds=NULL, seed=23, n.round=3,
-                f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file, ann.file=ann.file, 
-                dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL),  
-                "GPAV: If norm is set to TRUE, the input flat matrix is already normalized. Set norm.type to NULL and not to 'MaxNorm' to avoid this warning message"
-        ),
-        "HIERARCHICAL CORRECTION: DONE"
-    );
-
-    ## test compute.performance=TRUE and norm=FALSE
-    expect_output(
-        Do.GPAV(norm=FALSE, norm.type="MaxNorm", W=NULL, parallel=TRUE, ncores=2, folds=NULL, seed=23, n.round=3, 
-            f.criterion="F", recall.levels=recall.levels, compute.performance=TRUE, flat.file=flat.file, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=perf.dir), 
-        "HIERARCHICAL CORRECTION: DONE"
-    );
-
-    ## test shrunk flat scores matrix -> matrix having a subset of ontology terms (on the basis of annotations number)
-    expect_output(
-        Do.GPAV(norm=TRUE, norm.type=NULL, W=NULL, parallel=TRUE, ncores=2, folds=NULL, seed=23, n.round=3, 
-            f.criterion=NULL, recall.levels=NULL, compute.performance=FALSE, flat.file=flat.file.shrunk, ann.file=ann.file, 
-            dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, perf.dir=NULL), 
-        "HIERARCHICAL CORRECTION: DONE"
-    );
-})
+# test_that("gpav.vanilla works", {
+     ## to do
+# })
 
 
-# test_that("Do.GPAV.holdout works", {
-    ## to be added
+# test_that("gpav.holdout works", {
+    ## to do
 # })
 
 

@@ -27,7 +27,7 @@ make.graph <- function(){
     edL[[9]] <- list(edges=c());
     g <- graph::graphNEL(nodes=V, edgeL=edL, edgemode="directed");   
     return(g);
-    ## optional: plotting the DAG g
+    ## optional: plotting the dag g
     ## library(Rgraphviz); plot(g);
 }
 
@@ -212,8 +212,8 @@ test_that("lexicographical.topological.sort works", {
     gL2 <- graph::addEdge(from="C",to="C",g);
     
     expect_equal(lexicographical.topological.sort(g), c("A","B","C","D","F","G","E","H","I","J"));
-    expect_error(lexicographical.topological.sort(gL1), "input graph g is not a DAG", fixed=TRUE);
-    expect_error(lexicographical.topological.sort(gL2), "input graph g is not a DAG", fixed=TRUE);
+    expect_error(lexicographical.topological.sort(gL1), "input graph g is not a dag", fixed=TRUE);
+    expect_error(lexicographical.topological.sort(gL2), "input graph g is not a dag", fixed=TRUE);
 })
 
 test_that("build.consistent.graph works", {
@@ -227,7 +227,7 @@ test_that("build.consistent.graph works", {
     expect_output(build.consistent.graph(G, root=root), "removed nodes not accessible from root:\\n1 \\t Z");
 })
 
-test_that("check.DAG.integrity works", { 
+test_that("check.dag.integrity works", { 
     if (!check.graph()){ skip("graph package cannot be loaded"); }
 
     g <- make.graph();
@@ -236,11 +236,11 @@ test_that("check.DAG.integrity works", {
     G <- graph::addEdge(from="Z",to="C",G); 
     G <- graph::addEdge(from="Z",to="Z",G); 
 
-    expect_output(check.DAG.integrity(g, root=root), "DAG is OK");
-    expect_output(check.DAG.integrity(G, root=root), 
+    expect_output(check.dag.integrity(g, root=root), "dag is OK");
+    expect_output(check.dag.integrity(G, root=root), 
         "check.GO.integrity: not all nodes accessible from root\nNodes not accessible from root:\nZ", fixed=TRUE);
-    expect_error(check.DAG.integrity(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
-    expect_error(check.DAG.integrity(g, root="B"), "the supplied root node is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
+    expect_error(check.dag.integrity(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
+    expect_error(check.dag.integrity(g, root="B"), "the supplied root node is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
 })
 
 test_that("find.leaves works", {

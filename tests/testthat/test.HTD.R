@@ -1,6 +1,6 @@
 library(HEMDAG);
 
-context("test HTD");
+context("test HTD-DAG");
 
 check.graph <- function(){ 
     if(requireNamespace("graph", quietly=TRUE)){ 
@@ -49,13 +49,13 @@ make.ann <- function(){
     return(ann);
 }
 
-test_that("HTD works", {
+test_that("htd works", {
     g <- make.graph();
     root <- root.node(g);
     
     ## test with root
     S  <- make.scores();
-    S.htd  <- HTD(S, g, root);
+    S.htd  <- htd(S, g, root);
     pr1 <- c(0.9, 0.4, 0.4, 0.3, 0.5, 0.3, 0.5, 0.3, 0.3, 0.3);
     pr2 <- c(0.7, 0.7, 0.7, 0.7, 0.3, 0.2, 0.3, 0.2, 0.2, 0.2);
     pr3 <- c(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
@@ -65,7 +65,7 @@ test_that("HTD works", {
 
     ## test without root
     S2 <- S[,-which(colnames(S) %in% root)]; 
-    S.htd2 <- HTD(S2, g, root);
+    S.htd2 <- htd(S2, g, root);
     pr1 <- c(1, 0.4, 0.4, 0.3, 0.5, 0.3, 0.5, 0.3, 0.3, 0.3);
     pr2 <- c(1, 0.9, 0.8, 0.9, 0.3, 0.2, 0.3, 0.2, 0.2, 0.2);
     pr3 <- c(1, 0.9, 0.7, 0.9, 0.8, 0.4, 0.8, 0.4, 0.1, 0.4);
@@ -75,8 +75,8 @@ test_that("HTD works", {
 
     ## test class mismatch
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(HTD(S.error, g, root),
-        "HTD: The number of nodes of the graph and the number of classes of the scores matrix does not match");
+    expect_error(htd(S.error, g, root),
+        "htd: the number of nodes of the graph and the number of classes of the scores matrix does not match");
 })
 
 
