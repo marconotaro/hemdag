@@ -2,9 +2,7 @@
 ## TPR-DAG ##
 #############
 
-#' @name TPR-DAG-variants
-#' @seealso \code{\link{GPAV-DAG}}, \code{\link{HTD-DAG}}
-#' @title TPR-DAG Ensemble Variants
+#' @title TPR-DAG ensemble variants
 #' @description Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
 #' In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 #' \enumerate{
@@ -69,60 +67,57 @@
 #' children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and 
 #' \eqn{\delta_i} positive nodes.
 #'
-#' Simply by replacing the \code{HTD} (\code{\link{HTD-DAG}}) top-down step with the \code{GPAV} approach (\code{\link{GPAV-DAG}}) we can design the
-#' \code{TPR-DAG} variant \code{ISO-TPR}. The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by
-#' construction and selects the closest solution (in the least square sense) to the bottom-up predictions that obeys the true path rule.
-#' Obviously, any aforementioned strategy for the selection of ``positive'' children or descendants can be applied before executing the \code{GPAV} correction.
+#' Simply by replacing the top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we can design the \code{ISO-TPR} variant. 
+#' The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and selects the closest solution (in the least square sense) 
+#' to the bottom-up predictions that obeys the true path rule.
+#' @seealso \code{\link{gpav}}, \code{\link{htd}}
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that it is on the top-level of the hierarchy (\code{def. root="00"}).
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
-#'  \item \code{children} (\code{def.}): for each node are considered its positive children;
-#'  \item \code{descendants}: for each node are considered its positive descendants;
+#'  \item \code{children} (\code{def.}): positive children are are considered for each node;
+#'  \item \code{descendants}: positive descendants are are considered for each node;
 #' }
-#' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
-#' It can be one of the following values:
+#' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. It can be one of the following values:
 #' \itemize{
 #'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
 #'  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
 #'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
-#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
 #' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
-#'  \item \code{htd} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-#'  \item \code{gpav}: \code{GPAV} strategy is applied (\code{\link{GPAV-DAG}});
+#'  \item \code{htd} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{htd}});
+#'  \item \code{gpav}: \code{GPAV} strategy is applied (\code{\link{gpav}});
 #' }
-#' @param t threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants that requiring 
-#' a threshold for the selection of the positive nodes, otherwise set \code{t} to zero.
-#' @param w weight to balance between the contribution of the node \eqn{i} and that of its positive nodes. Set \code{w} only for the
-#' \emph{weighted} variants, otherwise set \code{w} to zero.
-#' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same length of 
-#' the columns' number of the matrix \code{S} (root node included). Set \code{W} only if \code{topdown=GPAV}.
+#' @param t threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants requiring a threshold for the selection of the positive nodes, otherwise set \code{t=0}.
+#' @param w weight to balance between the contribution of the node \eqn{i} and that of its positive nodes. Set \code{w} only for the \emph{weighted} variants, otherwise set \code{w=0}.
+#' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same length of the columns' number of the 
+#' matrix \code{S} (root node included). Set \code{W} only if \code{topdown=gpav}.
 #' @param parallel boolean value:
 #' \itemize{
-#'  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{GPAV.parallel}});
-#'  \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{GPAV.over.examples}});
+#'  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{gpav.parallel}});
+#'  \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{gpav.over.examples}});
 #' }
 #' Use \code{parallel} only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
-#' @param ncores number of cores to use for parallel execution (\code{def. 8}). Set \code{ncores=1} if \code{parallel=FALSE}, 
-#' otherwise set \code{ncores} to the desired number of cores.
-#' Use \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{parallel=1}.
-#' @return a named matrix with the scores of the classes corrected according to the TPR-DAG ensemble algorithm.
+#' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores} to the desired number of cores.
+#' Set \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{ncores=1}.
+#' @return a named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
 #' @export 
 #' @examples
 #' data(graph);
 #' data(scores);
 #' data(labels);
 #' root <- root.node(g);
-#' S.tpr <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="htd", t=0, w=0, W=NULL, parallel=FALSE, ncores=1);
+#' S.tpr <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", 
+#' topdown="gpav", t=0, w=0, W=NULL, parallel=FALSE, ncores=1);
 tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.free", topdown="htd", t=0, w=0, W=NULL, parallel=FALSE, ncores=1){
     ## parameters check
     if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && 
-        bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="HTD" && topdown!="GPAV")
+        bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
         stop("tpr.dag: positive or bottomup or topdown value misspelled", call.=FALSE);
     if(positive=="children" && bottomup=="tau")
         stop("tpr.dag: tau is a descendants variants. Please set positive to descendants", call.=FALSE);
@@ -135,15 +130,15 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
     if(bottomup=="weighted.threshold.free")
         t <-0;
     if(t==1 || w==1)
-        warning("tpr.dag: when t or w is equal to 1, TPR-DAG is reduced to HTD-DAG", call.=FALSE);  
+        warning("tpr.dag: when t or w is equal to 1, tpr-dag is reduced to htd-dag", call.=FALSE);  
     if(topdown=="gpav" && parallel==TRUE && ncores<2)
         warning("gpav: set ncores greater than 2 to exploit the gpav parallel version", call.=FALSE);
     if(topdown=="gpav" && parallel==FALSE && ncores>=2)
         warning("tpr.dag: set ncores greater than 2 to exploit the gpav parallel version", call.=FALSE);
     if(topdown=="htd" && (parallel==TRUE || ncores>=2))
-        warning("TPR-DAG: does not exist a parallel version of HTD. Set 'parallel' to FALSE and/or 'ncores' to 1 to avoid this warning message", call.=FALSE);   
+        warning("tpr.dag: does not exist a parallel version of htd. Set 'parallel' to FALSE and/or 'ncores' to 1 to avoid this warning message", call.=FALSE);   
 
-    ## add root node to S if it does not exist
+    ## add root node if it does not exist
     if(!(root %in% colnames(S))){
         max.score <- max(S);
         z <- rep(max.score,nrow(S));
@@ -269,13 +264,13 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
     return(S);
 }
 
-#' @name TPR-DAG-cross-validation
 #' @title TPR-DAG cross-validation experiments
-#' @seealso \code{\link{TPR-DAG-variants}}
-#' @description Correct the computed scores in a hierarchy according to the chosen TPR-DAG ensemble variant. 
+#' @description Function to correct the computed scores in a hierarchy according to the a TPR-DAG ensemble variant. 
 #' @details The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric}, 
+#' @seealso \code{\link{tpr.dag}}
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
+#' @param ann an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{ann[i,j]=0} otherwise.
 #' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
 #' @param norm.type can be one of the following values: 
 #'  \enumerate{
@@ -283,61 +278,68 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
 #'  }
-#' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same length of 
-#' the columns' number of the matrix \code{S} (root node included). Set \code{W} only if \code{topdown=GPAV}.
-#' @param parallel boolean value. Should the parallel version \code{GPAV-DAG} be run?
-#' \itemize{
-#'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
-#'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
-#' }
-#' @param ncores number of cores to use for parallel execution (\code{def. 1}).
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
-#'  \item \code{children} (\code{def.}): for each node are considered its positive children;
-#'  \item \code{descendants}: for each node are considered its positive descendants;
+#'  \item \code{children} (\code{def.}): positive children are are considered for each node;
+#'  \item \code{descendants}: positive descendants are are considered for each node;
 #' }
-#' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
-#' It can be one of the following values:
+#' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. It can be one of the following values:
 #' \itemize{
-#'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
-#'  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
+#'  \item \code{threshold.free}: positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+#'  \item \code{threshold} (\code{def.}): positive nodes are selected on the basis of the \code{threshold} strategy;
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
-#'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy;
-#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+#'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
-#' @param topdown strategy to make the scores 'ontology-aware'. It can be one of the following values:
+#' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
-#'  \item \code{htd} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-#'  \item \code{gpav}: \code{GPAV} strategy is applied (\code{\link{GPAV-DAG}});
+#'  \item \code{htd}: \code{HTD-DAG} strategy is applied (\code{\link{htd}});
+#'  \item \code{gpav} (\code{def.}): \code{GPAV} strategy is applied (\code{\link{gpav}});
 #' }
+#' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same length of the columns' number of the 
+#' matrix \code{S} (root node included). Set \code{W} only if \code{topdown=gpav}.
+#' @param parallel boolean value:
+#' \itemize{
+#'  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{gpav.parallel}});
+#'  \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{gpav.over.examples}});
+#' }
+#' Use \code{parallel} only if \code{topdown=gpav}; otherwise set \code{parallel=FALSE}.
+#' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores} to the desired number of cores.
+#' Set \code{ncores} if and only if \code{topdown=gpav}; otherwise set \code{ncores=1}.
 #' @param threshold range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
-#' The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher.
-#' Set this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variants, \code{threshold} is automatically set to zero.
+#' The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher. For the \emph{threshold-free} variants, set \code{threshold=0}.
 #' @param weight range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
-#' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Set this parameter only for the \emph{weighted} variants; for the \emph{weight-free} variants,
-#' the parameter \code{weight} is automatically set to zero.
-#' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. 
-#' It can be one of the following values:
+#' The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher. For the \emph{weight-free} variants, set \code{weight=0}.
+#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and \code{tau} of the parametric ensemble variants. 
+#' For the non-parametric variants (i.e. if \code{bottomup = threshold.free}), set \code{kk=NULL}. 
+#' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{seed=NULL} folds are generated without seed initialization. 
+#' If \code{bottomup=threshold.free}, set \code{seed=NULL}.
+#' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 #' \enumerate{
-#' \item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{AUPRC}});
-#' \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{Multilabel.F.measure}};
+#' \item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
+#' \item \code{fmax} (def.): the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
 #' \item \code{NULL}: on the \code{threshold.free} variant none parameter optimization is needed, since the variant is non-parametric.
-#' So, if \code{bottomup=threshold.free} set \code{metric=NULL} (\code{def.});
 #' }
-#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
-#' \code{tau} of the parametric ensemble variants. For the non-parametric variants(i.e. if \code{bottomup = threshold.free}), \code{kk} is automatically set to zero. 
-#' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
-#' initialization. If \code{compute.performance=FALSE} and \code{bottomup=threshold.free}, \code{seed} is automatically set to \code{NULL}.
-#' @return a named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
+#' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold on the basis of the best Fmax.
+#' If \code{bottomup==threshold.free}, set \code{n.round=NULL}.
+#' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
+#' \enumerate{
+#' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
+#' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
+#' }
+#' If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.
+#' @return a named matrix with the scores of the functional terms corrected according to the chosen TPR-DAG ensemble algorithm.
 #' @export
 #' @examples
 #' data(graph);
 #' data(scores);
-#' S.tpr <- tpr.dag.cv(S, g, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=1, W=NULL, positive="children", bottomup="threshold.free", topdown="htd", threshold=0, weight=0, W=NULL, metric=NULL);
-tpr.dag.cv <- function(S, g, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=1, W=NULL, positive="children", bottomup="threshold.free", topdown="HTD",  
-    threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric=NULL){
+#' data(labels);
+#' S.tpr <- tpr.dag.cv(S, g, ann=L, norm=FALSE, norm.type=NULL, positive="children", 
+#' bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, ncores=1, 
+#' threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL);
+tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE, ncores=1,   
+    threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric="fmax", n.round=3, f.criterion="F"){
     ## parameters check 
     if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
         stop("tpr.dag.cv: positive or bottomup or topdown value misspelled", call.=FALSE);
@@ -368,23 +370,34 @@ tpr.dag.cv <- function(S, g, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=
     if(is.null(seed) && bottomup!="threshold.free")
         warning("tpr.dag.cv: folds are generate without seed initialization", call.=FALSE);
     
+    ## add root node if it does not exist
+    root <- root.node(g);
+    if(!(root %in% colnames(S))){
+        max.score <- max(S);
+        z <- rep(max.score,nrow(S));
+        S <- cbind(z,S);
+        colnames(S)[1] <- root;
+    }
+
+    ## check consistency between nodes of g and terms of S
+    class.check <- ncol(S)!=numNodes(g);
+    if(class.check)
+        stop("tpr.dag.cv: mismatch between the number of nodes of the graph g and the number of terms of the scores matrix S", call.=FALSE);
+
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done", "\n");
     }
     
-    ## compute root node
-    root <- root.node(g);
-
     ## tpr-dag hierarchical correction 
     if(bottomup=="threshold.free"){
         S.hier <- tpr.dag(S, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
-        cat("tpr-dag correction: done\n");
+        cat("tpr-dag correction done\n");
         rm(S); gc();
     }else{
         ## let's start k-fold crossing validation for choosing best threshold and weight maximizing on the selected metric
-        testIndex <- do.unstratified.cv.data(S, kk=kk, seed=seed); 
+        testIndex <- unstratified.cv.data(S, kk=kk, seed=seed); 
         S.hier <- c(); # variable to host the k-assembled sub-matrix  
         # training.top <- vector(mode="list", length=kk); ## for check
         for(k in 1:kk){
@@ -400,7 +413,7 @@ tpr.dag.cv <- function(S, g, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=
             bestW <- 0;
             for(t in threshold){
                 for(w in weight){
-                    pred.training <- TPR.DAG(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
+                    pred.training <- tpr.dag(training, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
                     if(metric=="fmax"){
                         if(root %in% colnames(pred.training))
                             pred.training <- pred.training[,-which(colnames(pred.training)==root)];
@@ -408,7 +421,7 @@ tpr.dag.cv <- function(S, g, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=
                     }else{
                         if(root %in% colnames(pred.training))
                             pred.training <- pred.training[,-which(colnames(pred.training)==root)];
-                        training.metric <- auprc.single.over.class(target.training, pred.training, folds=NULL, seed=NULL)$average;
+                        training.metric <- auprc.single.over.classes(target.training, pred.training, folds=NULL, seed=NULL)$average;
                     }
                     if(training.metric > top.metric){
                         top.metric <- training.metric;
@@ -433,19 +446,19 @@ tpr.dag.cv <- function(S, g, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=
         }
         ## put the rows (i.e. genes) of assembled k sub-matrix in the same order of the beginning matrix
         S.hier <- S.hier[rownames(S),];
-        cat("tpr-dag correction: done\n");
+        cat("tpr-dag correction done\n");
         rm(S, testIndex, pred.test, test, training, target.test, target.training); gc();
     }
     return(S.hier);
 }
 
-#' @name TPR-DAG-holdout
 #' @title TPR-DAG holdout experiments
-#' @seealso \code{\link{TPR-DAG-variants}}
 #' @description Correct the computed scores in a hierarchy according to the chosen TPR-DAG ensemble variant by applying a classical holdout procedure.
 #' @details The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric}, 
+#' @seealso \code{\link{tpr.dag}}
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
+#' @param ann an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{ann[i,j]=0} otherwise.
 #' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
 #' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
 #' @param norm.type can be one of the following values: 
@@ -454,63 +467,69 @@ tpr.dag.cv <- function(S, g, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
 #'  }
-#' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
-#' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
-#' @param parallel boolean value. Should the parallel version \code{GPAV-DAG} be run?
-#' \itemize{
-#'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
-#'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
-#' }
-#' @param ncores number of cores to use for parallel execution (\code{def. 8}).
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
-#'  \item \code{children} (\code{def.}): for each node are considered its positive children;
-#'  \item \code{descendants}: for each node are considered its positive descendants;
+#'  \item \code{children} (\code{def.}): positive children are are considered for each node;
+#'  \item \code{descendants}: positive descendants are are considered for each node;
 #' }
-#' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. 
-#' It can be one of the following values:
+#' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. It can be one of the following values:
 #' \itemize{
-#'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
-#'  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
+#'  \item \code{threshold.free}: positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+#'  \item \code{threshold} (\code{def.}): positive nodes are selected on the basis of the \code{threshold} strategy;
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
-#'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy;
-#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you use \code{tau} strategy you must set the parameter \code{positive=descendants};
+#'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
-#' @param topdown strategy to make the scores 'ontology-aware'. It can be one of the following values:
+#' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
-#'  \item \code{htd} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{HTD-DAG}});
-#'  \item \code{gpav}: \code{GPAV} strategy is applied (\code{\link{GPAV-DAG}});
+#'  \item \code{htd}: \code{HTD-DAG} strategy is applied (\code{\link{htd}});
+#'  \item \code{gpav} (\code{def.}): \code{GPAV} strategy is applied (\code{\link{gpav}});
 #' }
+#' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same length of the columns' number of the 
+#' matrix \code{S} (root node included). Set \code{W} only if \code{topdown=gpav}.
+#' @param parallel boolean value:
+#' \itemize{
+#'  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{gpav.parallel}});
+#'  \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{gpav.over.examples}});
+#' }
+#' Use \code{parallel} only if \code{topdown=gpav}; otherwise set \code{parallel=FALSE}.
+#' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores} to the desired number of cores.
+#' Set \code{ncores} if and only if \code{topdown=gpav}; otherwise set \code{ncores=1}.
 #' @param threshold range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
-#' The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher.
-#' Set this parameter only for the \emph{thresholded} variants; for the \emph{threshold-free} variants, \code{threshold} is automatically set to zero.
+#' The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher. For the \emph{threshold-free} variants, set \code{threshold=0}.
 #' @param weight range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
-#' The denser the range is, the higher the probability to find the best threshold is, but obviously the execution time will be higher.
-#' Set this parameter only for the \emph{weighted} variants; for the \emph{weight-free} variants,
-#' the parameter \code{weight} is automatically set to zero.
-#' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. 
-#' It can be one of the following values:
+#' The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher. For the \emph{weight-free} variants, set \code{weight=0}.
+#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and \code{tau} of the parametric ensemble variants. 
+#' For the non-parametric variants (i.e. if \code{bottomup = threshold.free}), set \code{kk=NULL}. 
+#' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{seed=NULL} folds are generated without seed initialization. 
+#' If \code{bottomup=threshold.free}, set \code{seed=NULL}.
+#' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 #' \enumerate{
-#' \item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{AUPRC}});
-#' \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{Multilabel.F.measure}};
+#' \item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
+#' \item \code{fmax} (def.): the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
 #' \item \code{NULL}: on the \code{threshold.free} variant none parameter optimization is needed, since the variant is non-parametric.
-#' So, if \code{bottomup=threshold.free} set \code{metric=NULL} (\code{def.});
 #' }
-#' @param kk number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and 
-#' \code{tau} of the parametric ensemble variants. For the non-parametric variants(i.e. if \code{bottomup = threshold.free}), \code{kk} is automatically set to zero. 
-#' @param seed initialization seed for the random generator to create folds (\code{def. 23}). If \code{NULL} folds are generated without seed 
-#' initialization. If \code{compute.performance=FALSE} and \code{bottomup=threshold.free}, \code{seed} is automatically set to \code{NULL}.
+#' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold on the basis of the best Fmax.
+#' If \code{bottomup==threshold.free}, set \code{n.round=NULL}.
+#' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
+#' \enumerate{
+#' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
+#' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
+#' }
+#' If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.
 #' @return a named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples
 #' data(graph);
 #' data(scores);
+#' data(labels);
 #' data(test.index);
-#' S.tpr <- tpr.dag.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL, parallel=FALSE, ncores=1, W=NULL, 
-#' positive="children", bottomup="threshold.free", topdown="htd", threshold=0, weight=0, W=NULL, metric=NULL);
-tpr.dag.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, positive="children", bottomup="threshold.free",
-    topdown="htd",  threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric=NULL){
+#' S.tpr <- tpr.dag.holdout(S, g, ann, testIndex=test.index, norm=FALSE, norm.type=NULL, 
+#' positive="children", bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, 
+#' ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL);
+tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, positive="children", bottomup="threshold",
+    topdown="htd",  threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric="fmax", n.round=3, f.criterion="F"){
     ## parameters check 
     if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
         stop("tpr.dag.cv: positive or bottomup or topdown value misspelled", call.=FALSE);
@@ -541,36 +560,39 @@ tpr.dag.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL, W=NULL,
     if(is.null(seed) && bottomup!="threshold.free")
         warning("tpr.dag.cv: folds are generate without seed initialization", call.=FALSE);
 
+    ## add root node if it does not exist
+    root <- root.node(g);
+    if(!(root %in% colnames(S))){
+        max.score <- max(S);
+        z <- rep(max.score,nrow(S));
+        S <- cbind(z,S);
+        colnames(S)[1] <- root;
+    }
+    
+    ## check consistency between nodes of g and classes of S
+    class.check <- ncol(S)!=numNodes(g);
+    if(class.check)
+        stop("tpr.dag.holdout: mismatch between the number of nodes of the graph g and the number of class of the scores matrix S", call.=FALSE);
+
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done", "\n");
+        cat(norm.type, "normalization done\n");
     }
     
-    ## compute root node
-    root <- root.node(g);
-
-    ## check if |flat matrix classes| = |annotation matrix classes| 
-    ## if not the classes of annotation matrix are shrunk to those of flat matrix
-    # class.check <- ncol(S)!=ncol(ann);
-    # if(class.check){
-    #     ann <- ann[,colnames(S)];
-    #     nd <- c(root, colnames(S));
-    #     g <- do.subgraph(nd, g, edgemode="directed");
-    # }
-
-    ## scores flat matrix are shrunk to test and training test respectively
+    ## shrink S and ann matrix to test and train indexes
     S.test <- S[testIndex,];
-    S.training <- S[-testIndex,];
 
-    ## tpr-dag hierarchical correction 
+    ## tpr-dag correction 
     if(bottomup=="threshold.free"){
         S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
-        cat("tpr-dag correction: done\n");
+        cat("tpr.dag.holdout done\n");
         rm(S);
     }else{
         ## let's start k-fold crossing validation for choosing best threshold and weight maximizing on the selected metric
-        foldIndex <- do.unstratified.cv.data(S.training, kk=kk, seed=seed);
+        S.training <- S[-testIndex,];
+        ann.training <- ann[-testIndex,];
+        foldIndex <- unstratified.cv.data(S.training, kk=kk, seed=seed);
         # training.top <- vector(mode="list", length=kk); ## for check
         for(k in 1:kk){
             ## training and test set
@@ -590,7 +612,7 @@ tpr.dag.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL, W=NULL,
                     }else{
                         if(root %in% colnames(pred.training))
                             pred.training <- pred.training[,-which(colnames(pred.training)==root)];
-                        training.metric <- auprc.single.over.class(target.training, pred.training, folds=NULL, seed=NULL)$average;     
+                        training.metric <- auprc.single.over.classes(target.training, pred.training, folds=NULL, seed=NULL)$average;     
                     }
                     if(training.metric > top.metric){
                         top.metric <- training.metric;
@@ -610,13 +632,13 @@ tpr.dag.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL, W=NULL,
             }
         }
         S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
-        cat("tpr-dag correction: done\n");
+        cat("tpr.dag.holdout done\n");
         rm(S, S.test, S.training, training); gc();
     }
     return(S.hier);
 }
 
-#' @title Unstratified Cross Validation
+#' @title Unstratified cross validation
 #' @description This function splits a dataset in k-fold in an unstratified way, i.e. a fold does not contain an equal amount of positive and 
 #' negative examples. This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where 
 #' splitting dataset in a stratified way is not needed. 
@@ -628,8 +650,8 @@ tpr.dag.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL, W=NULL,
 #' @export
 #' @examples
 #' data(scores);
-#' foldIndex <- do.unstratified.cv.data(S, kk=5, seed=23);
-do.unstratified.cv.data <- function(S, kk=5, seed=NULL){
+#' foldIndex <- unstratified.cv.data(S, kk=5, seed=23);
+unstratified.cv.data <- function(S, kk=5, seed=NULL){
     set.seed(seed);
     examples <- 1:nrow(S);
     n <- nrow(S);

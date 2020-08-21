@@ -2,7 +2,7 @@
 ## GPAV-DAG ##
 ##############
 
-#' @title Binary Upper Triangular Adjacency Matrix
+#' @title Binary upper triangular adjacency matrix
 #' @description This function returns a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
 #' @details The nodes of the matrix are topologically sorted (by using the \code{tsort} function of the \pkg{RBGL} package). 
 #' Let's denote with \code{adj} our adjacency matrix. Then \code{adj} represents a partial
@@ -50,7 +50,6 @@ adj.upper.tri <- function(g){
     return(adj);
 }
 
-#' @name GPAV-DAG
 #' @title Generalized Pool-Adjacent Violators (GPAV)
 #' @description Implementation of \code{GPAV} (Generalized Pool-Adjacent Violators) algorithm.
 #' (\cite{Burdakov et al., In: Di Pillo G, Roma M, editors. An O(n2) Algorithm for Isotonic Regression. Boston, MA: Springer US; 2006. 
@@ -67,13 +66,13 @@ adj.upper.tri <- function(g){
 #'    \end{array}
 #' \right.
 #'}
+#' @seealso \code{\link{adj.upper.tri}}
 #' @param Y vector of scores relative to a single example. \code{Y} must be a numeric named vector, where names
 #' correspond to classes' names, i.e. nodes of the graph \code{g} (root node included).
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @param adj adjacency matrix of the graph which must be sparse, logical and upper triangular. Number of columns of \code{adj} must be
 #' equal to the length of \code{Y} and \code{W}.
-#' @seealso \code{\link{adj.upper.tri}}
 #' @return a list of 3 elements:
 #' \itemize{
 #'    \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
@@ -114,14 +113,14 @@ gpav <- function(Y, W=NULL, adj){
     return(YFit);
 }
 
-#' @title GPAV Over Examples
+#' @title GPAV over examples
 #' @description Function to compute \code{GPAV} across all the examples.
+#' @seealso \code{\link{gpav.parallel}}
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
-#' @seealso \code{\link{gpav.parallel}}
 #' @export
 #' @examples
 #' data(graph);
@@ -142,7 +141,7 @@ gpav.over.examples <- function(S, g, W=NULL){
     return(S);
 }
 
-#' @title GPAV Over Examples -- Parallel Implementation
+#' @title GPAV over examples -- parallel implementation
 #' @description Function to compute \code{GPAV} across all the examples (parallel implementation).
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
@@ -184,7 +183,7 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
     return(S);
 }
 
-#' @title GPAV-DAG 
+#' @title GPAV-DAG vanilla
 #' @description Function to correct the computed scores in a hierarchy according to the \code{GPAV} algorithm.
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
@@ -204,7 +203,7 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
 #'  }
 #' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
-#' @seealso \code{\link{GPAV-DAG}}
+#' @seealso \code{\link{gpav}}
 #' @export
 #' @examples
 #' data(graph);
@@ -267,13 +266,13 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
 #'  }
 #' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
-#' @seealso \code{\link{GPAV-DAG}}
+#' @seealso \code{\link{gpav}}
 #' @export
 #' @examples
 #' data(graph);
 #' data(scores);
 #' data(test.index);
-#' S.gpav <- gpav.dag.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL);
+#' S.gpav <- gpav.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL);
 gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm=TRUE, norm.type=NULL){
     ## parameters check
     if(norm==TRUE && is.null(norm.type))
@@ -291,9 +290,6 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
         cat(norm.type, "normalization: done", "\n");
     }
    
-    ## shrink flat scores matrix to test test
-    S <- S[testIndex,];
-
     ## check root scores before running gpav
     root <- root.node(g);
     if(!(root %in% colnames(S))){
@@ -302,6 +298,9 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
         S <- cbind(z,S);
         colnames(S)[1] <- root;
     }
+
+    ## shrink flat scores matrix to test test
+    S <- S[testIndex,];
 
     ## gpav correction
     if(parallel){

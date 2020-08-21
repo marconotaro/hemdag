@@ -2,7 +2,7 @@
 ## Utility functions to process and analyze graphs ##
 #####################################################
 
-#' @title Build Graph Levels 
+#' @title Build graph levels 
 #' @description This function groups a set of nodes in according to their maximum depth in the graph. It first inverts the weights 
 #' of the graph and then applies the Bellman Ford algorithm to find the shortest path, achieving in this way the longest path.
 #' @param g an object of class \code{graphNEL} 
@@ -41,7 +41,7 @@ graph.levels <- function(g, root="00"){
     return(levels);
 }
 
-#' @title Flip Graph
+#' @title Flip graph
 #' @description Compute a directed graph with edges in the opposite direction.
 #' @param g a \code{graphNEL} directed graph
 #' @return a graph (as an object of class \code{graphNEL}) with edges in the opposite direction w.r.t. g.
@@ -407,7 +407,7 @@ distances.from.leaves <- function(g){
     return(dist);
 }
 
-#' @title Constraints Matrix
+#' @title Constraints matrix
 #' @description This function returns a matrix with two columns and as many rows as there are edges.
 #' The entries of the first columns are the index of the node the edge comes from (i.e. children nodes), 
 #' the entries of the second columns indicate the index of node the edge is to (i.e. parents nodes). 
@@ -437,8 +437,8 @@ constraints.matrix <- function(g){
 #' data(graph);
 #' anc <- build.ancestors(g);
 #' nd <- anc[["HP:0001371"]];
-#' subg <- do.subgraph(nd, g, edgemode="directed");
-do.subgraph <- function(nd, g, edgemode="directed"){
+#' subg <- build.subgraph(nd, g, edgemode="directed");
+build.subgraph <- function(nd, g, edgemode="directed"){
     ed <- edges(g);
     ed.sel <- ed[nd];
     ndL <- vector(mode="list", length=length(ed.sel));
@@ -500,7 +500,7 @@ check.dag.integrity <- function(g, root="00"){
 #' data(graph);
 #' data(scores);
 #' root <- root.node(g);
-#' S.hier <- HTD(S,g,root);
+#' S.hier <- htd(S,g,root);
 #' S.hier.single.example <- S.hier[sample(ncol(S.hier),1),];
 #' check.hierarchy.single.sample(S.hier.single.example, g, root=root);
 #' check.hierarchy(S.hier, g, root);
@@ -577,7 +577,7 @@ check.hierarchy <- function(S.hier,g, root="00"){
     return(l);
 }
 
-#' @title Lexicographical Topological Sorting
+#' @title Lexicographical topological sorting
 #' @description Nodes of a graph are sorted according to a lexicographical topological ordering.
 #' @details A topological sorting is a linear ordering of the nodes such that given an edge from 
 #' \code{u} to \code{v}, the node \code{u} comes before node \code{v} in the ordering. 
@@ -611,7 +611,7 @@ lexicographical.topological.sort <- function(g){
     return(T);
 }
 
-#' @title Build Consistent Graph
+#' @title Build consistent graph
 #' @description build a graph in which all nodes are reachable from root.
 #' @details all nodes not accessible from the root (if any) are removed from the graph and printed on stdout.
 #' @param g an object of class \code{graphNEL}.
@@ -632,11 +632,11 @@ build.consistent.graph <- function(g=g, root="00"){
         ndinc <- names(dk.sp[which(dk.sp==Inf)]);
         cat("removed nodes not accessible from root:", paste(1:length(ndinc), "\t", ndinc), sep="\n");
     }
-    g <- do.subgraph(nd, g);
+    g <- build.subgraph(nd, g);
     return(g);
 }
 
-#' @title Weighted Adjacency Matrix
+#' @title Weighted adjacency matrix
 #' @description Construct a Weighted Adjacency Matrix (wadj matrix) of a graph.
 #' @param file name of the plain text file to be read (\code{def. edges}). The format of the file is a sequence of rows. 
 #' Each row corresponds to an edge represented through a pair of vertices separated by blanks and the weight of the edges.
@@ -670,14 +670,14 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
     return(W);
 }
 
-#' @title Tupla Matrix
+#' @title Tupla matrix
 #' @description Transform a named score matrix in a tupla, i.e. in the form \code{nodeX nodeY score}.
+#' @details Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded.
 #' @param m a named score matrix. It can be either a \code{m x n} matrix (where \code{m} are example and \code{n}
 #' are functional terms, e.g. GO terms) or it can be a square named matrix \code{m x m}, where \code{m} are examples.
 #' @param output.file name of the file on which the matrix must be written.
 #' @param digits number of digits to be used to save scores of \code{m} (\code{def. digits=3}).
 #' The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @details Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded.
 #' @return tupla score matrix stored in output.file.
 #' @export
 #' @examples
@@ -688,8 +688,13 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
     im <- which(m!=0, arr.ind=TRUE);
     rows <- rownames(im);
-    colrep.names <- colnames(m);
-    colrep.times <- table(im[,2])
+    ## degenerate case when m is symmetric and some interactions are zero
+    if(isSymmetric(m) && any(rowSums(m)==0)){
+        colrep.names <- intersect(colnames(m), rows);
+    }else{
+        colrep.names <- colnames(m);
+    }
+    colrep.times <- table(im[,2]);
     cols <- rep(colrep.names, times=colrep.times);
     df <- data.frame(row=rows, col=cols, score=m[im]);
     tmp <- strsplit(output.file, "[.,/,_]")[[1]];
@@ -713,8 +718,8 @@ tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
 #' @examples
 #' \dontrun{
 #' hpobo <- "http://purl.obolibrary.org/obo/hp.obo";
-#' do.edges.from.hpo.obo(obofile=hpobo, file="hp.edge");}
-do.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
+#' build.edges.from.hpo.obo(obofile=hpobo, file="hp.edge");}
+build.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
     tmp <- strsplit(obofile, "[.,/,_]")[[1]];
     if(any(tmp %in% "gz")){
         con <- gzfile(obofile);

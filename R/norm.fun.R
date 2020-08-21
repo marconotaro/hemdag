@@ -22,7 +22,7 @@ normalize.max <- function(S){
     return(S);
 }
 
-#' @title Scores Normalization Function
+#' @title Scores normalization function
 #' @description Functions to normalize a flat scores matrix w.r.t. max normalization (\code{maxnorm}) or quantile normalization (\code{qnorm}) 
 #' @details To apply the quantile normalization the \pkg{preprocessCore} package must be properly installed.
 #' @param norm.type can be one of the following two values:

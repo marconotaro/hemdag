@@ -2,7 +2,6 @@
 ## HTD-DAG ##
 #############
 
-#' @name HTD-DAG
 #' @title HTD-DAG
 #' @description Implementation of a top-down procedure to correct the scores of the hierarchy according to the 
 #' constraints that the score of a node cannot be greater than a score of its parents.
@@ -116,8 +115,8 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 #' data(graph);
 #' data(scores);
 #' data(test.index);
-#' S.htd <- htd.dag.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL);
-htd.dag.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL){
+#' S.htd <- htd.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL);
+htd.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL){
     ## check
     if(norm==TRUE && is.null(norm.type))
         stop("htd.dag: choose a normalization methods among those available", call.=FALSE);

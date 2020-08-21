@@ -168,8 +168,8 @@ full.annotation.matrix <- function(W, anc, ann.spec){
 #' @export
 #' @examples
 #' data(labels);
-#' subm <- do.submatrix(L,5);
-do.submatrix <- function(ann,n){
+#' subm <- build.submatrix(L,5);
+build.submatrix <- function(ann,n){
     ann.sel <- ann[,colSums(ann)>n];
     return(ann.sel);
 }

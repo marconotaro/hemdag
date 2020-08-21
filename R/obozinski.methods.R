@@ -2,12 +2,12 @@
 ##  Obozinski Heuristic Methods  ##
 ###################################
 
-#' @name Heuristic-Methods
+#' @name Obozinski-heuristic-methods
 #' @aliases heuristic.max
 #' @aliases heuristic.and
 #' @aliases heuristic.or
 #' @title Obozinski Heuristic Methods 
-#' @description Implementation of the Heuristic Methods \code{MAX}, \code{AND}, \code{OR} (\cite{Obozinski et al., Genome Biology, 2008, 
+#' @description Implementation of the Obozinski's heuristic methods \code{MAX}, \code{AND}, \code{OR} (\cite{Obozinski et al., Genome Biology, 2008, 
 #' \href{https://genomebiology.biomedcentral.com/articles/10.1186/gb-2008-9-s1-s6}{doi:10.1186/gb-2008-9-s1-s6}}).
 #' @details Heuristic Methods:
 #' \enumerate{
@@ -51,7 +51,7 @@ heuristic.max <- function(S, g, root="00"){
     return(S);
 }
 
-#' @rdname Heuristic-Methods
+#' @rdname Obozinski-heuristic-methods
 #' @export 
 heuristic.and <- function(S, g, root="00"){
     if(!(root %in% colnames(S))) {
@@ -79,7 +79,7 @@ heuristic.and <- function(S, g, root="00"){
     return(S.hier);
 }
 
-#' @rdname Heuristic-Methods
+#' @rdname Obozinski-heuristic-methods
 #' @export 
 heuristic.or <- function(S, g, root="00"){
     if(!(root %in% colnames(S))) {
@@ -106,16 +106,16 @@ heuristic.or <- function(S, g, root="00"){
     return(S.hier);
 }
 
-#' @title Call Heuristic Methods
-#' @seealso \code{\link{Heuristic-Methods}}
-#' @description Function to compute the hierarchical heuristic methods MAX, AND, OR (Heuristic Methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}).
+#' @title Call Obozinski's heuristic methods
+#' @seealso \code{\link{Obozinski-heuristic-methods}}
+#' @description Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}).
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param heuristic can be one of the following three values:
 #' \enumerate{
-#'  \item "MAX": run the method \code{heuristic.max};
-#'  \item "AND": run the method \code{heuristic.and};
-#'  \item "OR": run the method \code{heuristic.or};
+#'  \item "max": run the method \code{heuristic.max};
+#'  \item "and": run the method \code{heuristic.and};
+#'  \item "or": run the method \code{heuristic.or};
 #' }
 #' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
 #' @param norm.type can be one of the following values: 
@@ -149,18 +149,18 @@ heuristic.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
     root <- root.node(g);
 
     ## Obozinski's hierarchical heuristic methods 
-    if(heuristic.fun=="and")
+    if(heuristic=="and")
         S <- heuristic.and(S, g, root);
-    if(heuristic.fun=="max")
+    if(heuristic=="max")
         S <- heuristic.max(S, g, root);
-    if(heuristic.fun=="or")
+    if(heuristic=="or")
         S <- heuristic.or(S, g, root);  
     cat("Obozinski's heuristic", toupper(heuristic), "correction: done", "\n");
     return(S);
 }
 
-#' @title Holdout Heuristic Methods
-#' @description Function to compute the hierarchical heuristic methods MAX, AND, OR (Heuristic Methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}) applying a classical holdout procedure.
+#' @title Heuristic methods holdout
+#' @description Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}) applying a classical holdout procedure.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
