@@ -7,7 +7,7 @@
 \description{
 The HEMDAG package: 
 \itemize{
-\item provides an implementation of several Hierarchical Ensemble Methods for DAGs;
+\item provides an implementation of several Hierarchical Ensemble Methods (HEMs) for Directed Acyclic Graphs (DAGs);
 \item reconciles flat predictions with the topology of the ontology;
 \item can enhance predictions of virtually any flat learning methods by taking into account the hierarchical relationships between ontology classes;
 \item provides biologically meaningful predictions that obey the true-path-rule, the biological and logical rule that governs the internal coherence of biomedical ontologies;
@@ -24,12 +24,12 @@ A comprehensive tutorial showing how to apply HEMDAG to real case bio-medical ca
 \details{
 The HEMDAG package implements the following Hierarchical Ensemble Methods for DAGs:
 \enumerate{
-\item \bold{HTD-DAG}: Hierarchical Top Down (\code{\link{HTD-DAG}});
-\item \bold{GPAV}: Generalized Pool-Adjacent Violators, \cite{Burdakov et al.} (\code{\link{GPAV}});
-\item \bold{TPR-DAG}: True-Path Rule (\code{\link{TPR-DAG-variants}});
-\item \bold{DESCENS}: Descendants Ensemble Classifier (\code{\link{TPR-DAG-variants}});
-\item \bold{ISO-TPR}: Isotonic-True-Path Rule (\code{\link{TPR-DAG-variants}});
-\item \bold{MAX}, \bold{AND}, \bold{OR}: Heuristic Methods, \cite{Obozinski et al.} (\code{\link{Heuristic-Methods}});
+\item \bold{HTD-DAG}: Hierarchical Top Down (\code{\link{htd}});
+\item \bold{GPAV-DAG}: Generalized Pool-Adjacent Violators, \cite{Burdakov et al.} (\code{\link{gpav}});
+\item \bold{TPR-DAG}: True-Path Rule (\code{\link{tpr.dag}});
+\item \bold{DESCENS}: Descendants Ensemble Classifier (\code{\link{tpr.dag}});
+\item \bold{ISO-TPR}: Isotonic-True-Path Rule (\code{\link{tpr.dag}});
+\item \bold{MAX}, \bold{AND}, \bold{OR}: Heuristic Methods, \cite{Obozinski et al.} (\code{\link{Obozinski-heuristic-methods}});
 }}
 
 \author{

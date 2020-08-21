@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.utility.R
 \name{weighted.adjacency.matrix}
 \alias{weighted.adjacency.matrix}
-\title{Weighted Adjacency Matrix}
+\title{Weighted adjacency matrix}
 \usage{
 weighted.adjacency.matrix(file = "edges.txt")
 }

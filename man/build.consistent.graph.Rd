@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.utility.R
 \name{build.consistent.graph}
 \alias{build.consistent.graph}
-\title{Build Consistent Graph}
+\title{Build consistent graph}
 \usage{
 build.consistent.graph(g = g, root = "00")
 }

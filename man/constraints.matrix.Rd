@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.utility.R
 \name{constraints.matrix}
 \alias{constraints.matrix}
-\title{Constraints Matrix}
+\title{Constraints matrix}
 \usage{
 constraints.matrix(g)
 }
@@ -16,7 +16,7 @@ a constraints matrix w.r.t the graph \code{g}.
 This function returns a matrix with two columns and as many rows as there are edges.
 The entries of the first columns are the index of the node the edge comes from (i.e. children nodes), 
 the entries of the second columns indicate the index of node the edge is to (i.e. parents nodes). 
-Referring to a DAG this matrix defines a partial order.
+Referring to a dag this matrix defines a partial order.
 }
 \examples{
 data(graph);

@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.utility.R
 \name{graph.levels}
 \alias{graph.levels}
-\title{Build Graph Levels}
+\title{Build graph levels}
 \usage{
 graph.levels(g, root = "00")
 }

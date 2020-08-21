@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.utility.R
 \name{compute.flipped.graph}
 \alias{compute.flipped.graph}
-\title{Flip Graph}
+\title{Flip graph}
 \usage{
 compute.flipped.graph(g)
 }

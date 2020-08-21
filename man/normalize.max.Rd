@@ -10,14 +10,13 @@ normalize.max(S)
 \item{S}{matrix with the raw non normalized scores. Rows are examples and columns are classes.}
 }
 \value{
-A score matrix with the same dimensions of \code{S}, but with scores max/normalized separately for each class.
+A score matrix with the same dimensions of \code{S}, but with scores normalized.
 }
 \description{
-Function to normalize the scores of a flat scores matrix per class.
+Function to normalize the scores of the flat scores matrix \code{S} per class.
 }
 \details{
-The scores of each class are normalized by dividing the score values for the maximum score of that class.
-If the max score of a class is zero, no normalization is needed, otherwise \code{NaN} value will be printed as results of 0 out of 0 division.
+the score of each class is normalized by dividing the score values for the maximum score of that class.
 }
 \examples{
 data(scores);

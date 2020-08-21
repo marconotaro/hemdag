@@ -2,7 +2,7 @@
 % Please edit documentation in R/perf.meas.R
 \name{create.stratified.fold.df}
 \alias{create.stratified.fold.df}
-\title{DataFrame for Stratified Cross Validation}
+\title{DataFrame for stratified cross validation}
 \usage{
 create.stratified.fold.df(labels, scores, folds = 5, seed = 23)
 }

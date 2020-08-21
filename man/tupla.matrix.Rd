@@ -2,30 +2,31 @@
 % Please edit documentation in R/graph.utility.R
 \name{tupla.matrix}
 \alias{tupla.matrix}
-\title{Tupla Matrix}
+\title{Tupla matrix}
 \usage{
-tupla.matrix(m, output.file = "net.file.gz")
+tupla.matrix(m, output.file = "net.file.gz", digits = 3)
 }
 \arguments{
-\item{m}{a weighted adjacency matrix of the graph. Rows and columns are examples. It must be a square named matrix.}
+\item{m}{a named score matrix. It can be either a \code{m x n} matrix (where \code{m} are example and \code{n}
+are functional terms, e.g. GO terms) or it can be a square named matrix \code{m x m}, where \code{m} are examples.}
 
-\item{output.file}{name of the file of the  to be written.
+\item{output.file}{name of the file on which the matrix must be written.}
+
+\item{digits}{number of digits to be used to save scores of \code{m} (\code{def. digits=3}).
 The extension of the file can be or plain format (".txt") or compressed (".gz").}
 }
 \value{
-the weighted adjacency matrix as tupla is stored in the output.file.
+tupla score matrix stored in output.file.
 }
 \description{
-Transform a Weighted Adjacency Matrix (wadj matrix) of a graph in a tupla, i.e. as a sequences of rows separated by 
-blank and the weight of the edges, e.g \code{nodeX nodeY score}.
+Transform a named score matrix in a tupla, i.e. in the form \code{nodeX nodeY score}.
 }
 \details{
-Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded. 
-In other words in the \code{output.file} are reported only those nodes having a weight different from zero.
+Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactions are discarded.
 }
 \examples{
 data(wadj);
 tmpdir <- paste0(tempdir(),"/");
-tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"));
-tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt"));
+tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"), digits=3);
+tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt", digits=3));
 }

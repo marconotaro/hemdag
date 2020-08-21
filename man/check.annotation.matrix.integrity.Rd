@@ -7,18 +7,17 @@
 check.annotation.matrix.integrity(anc, ann.spec, ann)
 }
 \arguments{
-\item{anc}{list of the ancestors of the ontology.}
+\item{anc}{ancestor list.}
 
 \item{ann.spec}{the annotation matrix of the most specific annotations (0/1): rows are genes and columns are terms.}
 
-\item{ann}{the full annotation matrix (0/1), that is the matrix in which the transitive closure of the annotation was performed.
-Rows are examples and columns are classes.}
+\item{ann}{the full annotation matrix (0/1), that is the matrix where the transitive closure of the annotation was performed. Rows are examples and columns are terms.}
 }
 \value{
-If the transitive closure of the annotations is well performed "OK" is returned, otherwise a message error is printed on the stdout.
+If the transitive closure of the annotations is well performed \code{OK} is returned, otherwise a message error is printed on the stdout.
 }
 \description{
-This function assess the integrity of an annotation table in which a transitive closure of annotations was performed.
+This function assess the integrity of an annotation matrix where a transitive closure of annotations was performed.
 }
 \examples{
 data(graph);

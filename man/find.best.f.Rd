@@ -46,7 +46,7 @@ examples and T is the best selected threshold;
         \enumerate{
             \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R), 
            Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
-            \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F),    av.F-measure (av.F)
+            \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F)
             and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively 
            to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
         }
@@ -70,5 +70,5 @@ data(scores);
 root <- root.node(g);
 L <- L[,-which(colnames(L)==root)];
 S <- S[,-which(colnames(S)==root)];
-FMM <- find.best.f(L, S, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=TRUE);
+fscore <- find.best.f(L, S, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=TRUE);
 }

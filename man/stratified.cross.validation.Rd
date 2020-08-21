@@ -2,13 +2,13 @@
 % Please edit documentation in R/perf.meas.R
 \name{stratified.cross.validation}
 \alias{stratified.cross.validation}
-\alias{do.stratified.cv.data.single.class}
-\alias{do.stratified.cv.data.over.classes}
-\title{Stratified Cross Validation}
+\alias{stratified.cv.data.single.class}
+\alias{stratified.cv.data.over.classes}
+\title{Stratified cross validation}
 \usage{
-do.stratified.cv.data.single.class(examples, positives, kk = 5, seed = NULL)
+stratified.cv.data.single.class(examples, positives, kk = 5, seed = NULL)
 
-do.stratified.cv.data.over.classes(labels, examples, kk = 5, seed = NULL)
+stratified.cv.data.over.classes(labels, examples, kk = 5, seed = NULL)
 }
 \arguments{
 \item{examples}{indices or names of the examples. Can be either a vector of integers or a vector of names.}
@@ -23,15 +23,15 @@ do.stratified.cv.data.over.classes(labels, examples, kk = 5, seed = NULL)
 If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.}
 }
 \value{
-\code{do.stratified.cv.data.single.class} returns a list with 2 two component:
+\code{stratified.cv.data.single.class} returns a list with 2 two component:
 \itemize{
  \item fold.non.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the non-positive elements. 
-    Indices (or names) refer to row numbers (or names) of a data matrix;
+    Indexes (or names) refer to row numbers (or names) of a data matrix;
     \item fold.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the positive elements. 
-    Indices (or names) refer to row numbers (or names) of a data matrix;
+    Indexes (or names) refer to row numbers (or names) of a data matrix;
 }
 
-\code{do.stratified.cv.data.over.classes} returns a list with \eqn{n} components, where \eqn{n} is the number of classes of the labels matrix. 
+\code{stratified.cv.data.over.classes} returns a list with \eqn{n} components, where \eqn{n} is the number of classes of the labels matrix. 
 Each component \eqn{n} is in turn a list with \eqn{k} elements, where \eqn{k} is the number of folds. 
 Each fold contains an equal amount of positives and negatives examples.
 }
@@ -46,8 +46,8 @@ data(labels);
 examples.index <- 1:nrow(L);
 examples.name <- rownames(L);
 positives <- which(L[,3]==1);
-x <- do.stratified.cv.data.single.class(examples.index, positives, kk=5, seed=23);
-y <- do.stratified.cv.data.single.class(examples.name, positives, kk=5, seed=23);
-z <- do.stratified.cv.data.over.classes(L, examples.index, kk=5, seed=23);
-k <- do.stratified.cv.data.over.classes(L, examples.name, kk=5, seed=23);
+x <- stratified.cv.data.single.class(examples.index, positives, kk=5, seed=23);
+y <- stratified.cv.data.single.class(examples.name, positives, kk=5, seed=23);
+z <- stratified.cv.data.over.classes(L, examples.index, kk=5, seed=23);
+k <- stratified.cv.data.over.classes(L, examples.name, kk=5, seed=23);
 }

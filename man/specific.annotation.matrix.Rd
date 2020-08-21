@@ -2,24 +2,24 @@
 % Please edit documentation in R/annotation.utility.R
 \name{specific.annotation.matrix}
 \alias{specific.annotation.matrix}
-\title{specific annotation matrix}
+\title{Specific annotation matrix}
 \usage{
 specific.annotation.matrix(file = "gene2pheno.txt.gz")
 }
 \arguments{
-\item{file}{text file representing the most specific associations gene-OBO. The file must be written as sequence of rows. 
+\item{file}{text file representing the associations gene-OBO terms. The file must be written as sequence of rows. 
 Each row represents a gene/protein and all its associations with an ontology term pipe separated, \emph{e.g.: gene1 |obo1|...|oboN}.  
-The input example file used here (\code{def: "gene2pheno.txt"}) shows the gene and all its associations with an HPO terms.}
+The input example file used here (\code{def: "gene2pheno.txt"}) shows the gene and all its associations with a functional terms (such as GO or HPO).}
 }
 \value{
-the annotation matrix of the most specific annotations (0/1): rows are genes and columns are HPO terms.
+the annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms (such as GO or HPO).
 Let's denote \eqn{M} the labels matrix. If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
 }
 \description{
-Construct the labels matrix of the most specific OBO terms (as GO or HPO).
+Build the annotation matrix of the most specific functional terms.
 }
 \details{
-The input plain text file representing the most specific associations gene-OBO term can be obtained by cloning the GitHub repository
+The input plain text file (representing the associations gene-OBO terms) can be obtained by cloning the GitHub repository
 \href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and 
 their gene annotation file (gaf file).
 }
