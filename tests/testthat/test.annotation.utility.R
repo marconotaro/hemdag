@@ -130,9 +130,9 @@ test_that("full.annotation.matrix works", {
     expect_equal(full.ann, full.ann.control);
 })
 
-test_that("do.submatrix works", {
+test_that("build.submatrix works", {
     ann <- make.notca.ann();
-    subann <- do.submatrix(ann,2);
+    subann <- build.submatrix(ann,2);
 
     pr1 <- c(1,1,1,1,1);
     pr2 <- c(1,1,1,1,1);

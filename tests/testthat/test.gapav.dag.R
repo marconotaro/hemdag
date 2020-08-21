@@ -1,6 +1,6 @@
 library(HEMDAG);
 
-context("test gpav-DAG");
+context("test gpav-dag");
 
 check.graph <- function(){ 
     if(requireNamespace("graph", quietly=TRUE)){ 
@@ -108,7 +108,7 @@ test_that("gpav.over.examples works", {
 
     expect_equal(S.gpav, S.check, tolerance=1e-8);
     expect_error(gpav.over.examples(S.error, g, W=NULL),
-        "gpav: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
+        "gpav.over.examples: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
 })
 
 test_that("gpav.parallel works", {
@@ -131,7 +131,7 @@ test_that("gpav.parallel works", {
     expect_equal(S.gpav2core, S.check, tolerance=1e-8);
     expect_equal(S.gpav1core, S.check, tolerance=1e-8);
     expect_error(gpav.parallel(S.error, g, W=NULL),
-        "gpav: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
+        "gpav.parallel: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
 })    
 
 test_that("gpav.parallel works with ncores>2", {

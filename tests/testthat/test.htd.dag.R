@@ -1,6 +1,6 @@
 library(HEMDAG);
 
-context("test HTD-DAG");
+context("test htd-dag");
 
 check.graph <- function(){ 
     if(requireNamespace("graph", quietly=TRUE)){ 

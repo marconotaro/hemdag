@@ -236,9 +236,9 @@ test_that("check.dag.integrity works", {
     G <- graph::addEdge(from="Z",to="C",G); 
     G <- graph::addEdge(from="Z",to="Z",G); 
 
-    expect_output(check.dag.integrity(g, root=root), "dag is OK");
+    expect_output(check.dag.integrity(g, root=root), "dag is ok");
     expect_output(check.dag.integrity(G, root=root), 
-        "check.GO.integrity: not all nodes accessible from root\nNodes not accessible from root:\nZ", fixed=TRUE);
+        "check.dag.integrity: not all nodes accessible from root\nNodes not accessible from root:\nZ", fixed=TRUE);
     expect_error(check.dag.integrity(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
     expect_error(check.dag.integrity(g, root="B"), "the supplied root node is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
 })
