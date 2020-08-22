@@ -588,7 +588,7 @@ find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=T
     }
 }
 
-#' @name Fmax
+#' @name fmax
 #' @title Compute Fmax 
 #' @description Function to compute the best hierarchical Fmax either one-shot or averaged across folds
 #' @details Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned.
