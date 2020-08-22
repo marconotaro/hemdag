@@ -2,11 +2,11 @@
 ##  Obozinski Heuristic Methods  ##
 ###################################
 
-#' @name Obozinski-heuristic-methods
+#' @name obozinski-heuristic-methods
 #' @aliases heuristic.max
 #' @aliases heuristic.and
 #' @aliases heuristic.or
-#' @title Obozinski Heuristic Methods 
+#' @title Obozinski heuristic methods 
 #' @description Implementation of the Obozinski's heuristic methods \code{MAX}, \code{AND}, \code{OR} (\cite{Obozinski et al., Genome Biology, 2008, 
 #' \href{https://genomebiology.biomedcentral.com/articles/10.1186/gb-2008-9-s1-s6}{doi:10.1186/gb-2008-9-s1-s6}}).
 #' @details Heuristic Methods:
@@ -26,10 +26,10 @@
 #' data(graph);
 #' data(scores);
 #' root  <- root.node(g);
-#' S.max <- heuristic.max(S,g,root);
-#' S.and <- heuristic.and(S,g,root);
-#' S.or  <- heuristic.or(S,g,root);
-heuristic.max <- function(S, g, root="00"){
+#' S.max <- obozinski.max(S,g,root);
+#' S.and <- obozinski.and(S,g,root);
+#' S.or  <- obozinski.or(S,g,root);
+obozinski.max <- function(S, g, root="00"){
     if(!(root %in% colnames(S))) {
         max.score <- max(S);
         z <- rep(max.score,nrow(S));
@@ -39,21 +39,19 @@ heuristic.max <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("heuristic.max: the number of nodes of the graph and the number of classes of the flat scores matrix does not match", call.=FALSE);
+        stop("obozinski.max: the number of nodes of the graph g and the number of classes of the flat scores matrix S does not match", call.=FALSE);
 
     desc <- build.descendants(g);
     for(i in 1:length(desc)){
-        curr.nd <- S[,names(desc[i])];
-        progeny <- as.matrix(S[,desc[[i]]]);
-        curr.nd <- apply(progeny, 1, max);
-        S[,names(desc[i])] <- curr.nd;
+        m <- as.matrix(S[,desc[[i]]]);
+        S[,names(desc[i])] <- apply(m, 1, max);
     }
     return(S);
 }
 
-#' @rdname Obozinski-heuristic-methods
+#' @rdname obozinski-heuristic-methods
 #' @export 
-heuristic.and <- function(S, g, root="00"){
+obozinski.and <- function(S, g, root="00"){
     if(!(root %in% colnames(S))) {
         max.score <- max(S);
         z <- rep(max.score,nrow(S));
@@ -63,25 +61,23 @@ heuristic.and <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("heuristic.and: the number of nodes of the graph and the number of classes of the flat scores matrix does not match", call.=FALSE);
+        stop("obozinski.and: the number of nodes of the graph g and the number of classes of the flat scores matrix S does not match", call.=FALSE);
 
     S.hier <- S;
     anc <- build.ancestors(g);
     for(i in 1:length(anc)){
-      if(length(anc[[i]]) > 1){  # ancestors of i include also i
-            curr.nd <- S[,names(anc[i])];
-            forefathers <- as.matrix(S[,anc[[i]]]);
-            curr.nd <- apply(forefathers, 1, prod);
-            S.hier[,names(anc[i])] <- curr.nd;  
-        }   
+        m <- as.matrix(S[,anc[[i]]]);
+        idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
+        m.idx <- as.matrix(m[idx,]); ## handle with one descendant -> apply needs a matrix
+        S.hier[idx,names(anc[i])] <- apply(m.idx, 1, prod);
     }
     rm(S); gc();
     return(S.hier);
 }
 
-#' @rdname Obozinski-heuristic-methods
+#' @rdname obozinski-heuristic-methods
 #' @export 
-heuristic.or <- function(S, g, root="00"){
+obozinski.or <- function(S, g, root="00"){
     if(!(root %in% colnames(S))) {
         max.score <- max(S);
         z <- rep(max.score,nrow(S));
@@ -91,22 +87,21 @@ heuristic.or <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("heuristic.or: the number of nodes of the graph and the number of classes of the flat scores matrix does not match", call.=FALSE);
+        stop("obozinski.or: the number of nodes of the graph g and the number of classes of the flat scores matrix S does not match", call.=FALSE);
 
     S.hier <- S;
     desc <- build.descendants(g);
     for(i in 1:length(desc)){
-      if(length(desc[[i]]) > 1){  # descendants of i include also i
-            comp.progeny <- 1 - as.matrix(S[,desc[[i]]]);
-            curr.nd <- apply(comp.progeny, 1, prod);        
-            S.hier[,names(desc[i])] <- 1 - curr.nd;
-        }
+        m <- as.matrix(S[,desc[[i]]]);
+        idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
+        m.idx <- as.matrix(m[idx,]); ## handle with one descendant -> apply needs a matrix
+        S.hier[idx,names(desc[i])] <- 1-(apply(1-m.idx,1,prod));
     }
     rm(S); gc();
     return(S.hier);
 }
 
-#' @title Call Obozinski's heuristic methods
+#' @title Obozinski's heuristic methods calling
 #' @seealso \code{\link{Obozinski-heuristic-methods}}
 #' @description Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}).
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
@@ -129,8 +124,8 @@ heuristic.or <- function(S, g, root="00"){
 #' @examples
 #' data(graph);
 #' data(scores);
-#' S.and <- heuristic.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
-heuristic.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL){
+#' S.and <- obozinski.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
+obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL){
     ## check
     if(heuristic!="max" && heuristic!="and" && heuristic!="or")
         stop("heuristic.methods: the chosen heuristic method is not among those available or it has been misspelled", call.=FALSE);
@@ -150,16 +145,16 @@ heuristic.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
 
     ## Obozinski's hierarchical heuristic methods 
     if(heuristic=="and")
-        S <- heuristic.and(S, g, root);
+        S <- obozinski.and(S, g, root);
     if(heuristic=="max")
-        S <- heuristic.max(S, g, root);
+        S <- obozinski.max(S, g, root);
     if(heuristic=="or")
-        S <- heuristic.or(S, g, root);  
+        S <- obozinski.or(S, g, root);  
     cat("Obozinski's heuristic", toupper(heuristic), "correction: done", "\n");
     return(S);
 }
 
-#' @title Heuristic methods holdout
+#' @title Obozinski's heuristic methods -- holdout
 #' @description Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}) applying a classical holdout procedure.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
@@ -183,8 +178,8 @@ heuristic.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
 #' data(graph);
 #' data(scores);
 #' data(test.index);
-#' S.and <- heuristic.holdout(S, g, testIndex=test.index, heuristic="and", norm=FALSE, norm.type=NULL);
-heuristic.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm.type=NULL){
+#' S.and <- obozinski.holdout(S, g, testIndex=test.index, heuristic="and", norm=FALSE, norm.type=NULL);
+obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm.type=NULL){
     ## check
     if(heuristic!="max" && heuristic!="and" && heuristic!="or")
         stop("heuristic.methods: the chosen heuristic method is not among those available or it has been misspelled", call.=FALSE);
@@ -207,11 +202,11 @@ heuristic.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm
    
     ## Obozinski's hierarchical heuristic methods 
     if(heuristic=="and")
-        S <- heuristic.and(S, g, root);
+        S <- obozinski.and(S, g, root);
     if(heuristic=="max")
-        S <- heuristic.max(S, g, root);
+        S <- obozinski.max(S, g, root);
     if(heuristic=="or")
-        S <- heuristic.or(S, g, root);
+        S <- obozinski.or(S, g, root);
     cat("Obozinski's heuristic", toupper(heuristic), "correction: done", "\n");
     return(S);
 }
