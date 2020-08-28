@@ -11,15 +11,15 @@ unstratified.cv.data(S, kk = 5, seed = NULL)
 
 \item{kk}{number of folds in which to split the dataset (\code{def. k=5}).}
 
-\item{seed}{seed for the random generator. If \code{NULL} (def.) no initialization is performed.}
+\item{seed}{seed for random generator. If \code{NULL} (def.) no initialization is performed.}
 }
 \value{
-a list with \eqn{k=kk} components (folds). Each component of the list is a character vector contains the index of the examples, i.e. the 
-index of the rows of the matrix S.
+A list with \eqn{k=kk} components (folds). Each component of the list is a character vector contains the index of the examples,
+i.e. the index of the rows of the matrix S.
 }
 \description{
-This function splits a dataset in k-fold in an unstratified way, i.e. a fold does not contain an equal amount of positive and 
-negative examples. This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where 
+This function splits a dataset in k-fold in an unstratified way, i.e. a fold does not contain an equal amount of positive
+and negative examples. This function is used to perform k-fold cross-validation experiments in a hierarchical correction contest where
 splitting dataset in a stratified way is not needed.
 }
 \examples{

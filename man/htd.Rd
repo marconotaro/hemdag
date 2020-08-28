@@ -11,14 +11,14 @@ htd(S, g, root = "00")
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{root}{name of the class that it is the top-level (root) of the hierarchy (\code{def:00}).}
+\item{root}{name of the class that it is the top-level of the hierarchy (\code{def:00}).}
 }
 \value{
-a matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
 }
 \description{
-Implementation of a top-down procedure to correct the scores of the hierarchy according to the 
-constraints that the score of a node cannot be greater than a score of its parents.
+Implementation of the top-down procedure to correct the scores of the hierarchy according to the constraints that the score of a
+node cannot be greater than a score of its parents.
 }
 \details{
 The HTD-DAG algorithm modifies the flat scores according to the hierarchy of a DAG through a unique run across
@@ -40,7 +40,4 @@ data(graph);
 data(scores);
 root <- root.node(g);
 S.htd <- htd(S,g,root);
-}
-\seealso{
-\code{\link{graph.levels}}, \code{\link{hierarchical.checkers}}
 }

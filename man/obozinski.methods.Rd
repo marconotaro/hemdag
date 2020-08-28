@@ -11,33 +11,31 @@ obozinski.methods(S, g, heuristic = "and", norm = FALSE, norm.type = NULL)
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{heuristic}{can be one of the following three values:
+\item{heuristic}{a string character. It can be one of the following three values:
 \enumerate{
- \item "max": run the method \code{heuristic.max};
- \item "and": run the method \code{heuristic.and};
- \item "or": run the method \code{heuristic.or};
+ \item "max": run the method \code{obozinski.max};
+ \item "and": run the method \code{obozinski.and};
+ \item "or": run the method \code{obozinski.or};
 }}
 
-\item{norm}{boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.}
+\item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}
 
-\item{norm.type}{can be one of the following values: 
+\item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
 \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 \item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 }
 \value{
-a matrix with the scores of the classes corrected according to the chosen heuristic algorithm.
+A matrix with the scores of the classes corrected according to the chosen heuristic algorithm.
 }
 \description{
-Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}).
+Compute the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008}).
 }
 \examples{
 data(graph);
 data(scores);
 S.and <- obozinski.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
-}
-\seealso{
-\code{\link{Obozinski-heuristic-methods}}
 }

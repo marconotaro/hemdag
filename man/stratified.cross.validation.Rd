@@ -19,27 +19,27 @@ stratified.cv.data.over.classes(labels, examples, kk = 5, seed = NULL)
 
 \item{seed}{seed of the random generator (\code{def. seed=NULL}). If is set to \code{NULL} no initialization is performed.}
 
-\item{labels}{labels matrix. Rows are genes and columns are classes. Let's denote \eqn{M} the labels matrix. 
+\item{labels}{labels matrix. Rows are genes and columns are classes. Let's denote \eqn{M} the labels matrix.
 If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.}
 }
 \value{
 \code{stratified.cv.data.single.class} returns a list with 2 two component:
 \itemize{
- \item fold.non.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the non-positive elements. 
+ \item fold.non.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the non-positive elements.
     Indexes (or names) refer to row numbers (or names) of a data matrix;
-    \item fold.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the positive elements. 
+    \item fold.positives: a list with \eqn{k} components. Each component is a vector with the indices (or names) of the positive elements.
     Indexes (or names) refer to row numbers (or names) of a data matrix;
 }
 
-\code{stratified.cv.data.over.classes} returns a list with \eqn{n} components, where \eqn{n} is the number of classes of the labels matrix. 
-Each component \eqn{n} is in turn a list with \eqn{k} elements, where \eqn{k} is the number of folds. 
+\code{stratified.cv.data.over.classes} returns a list with \eqn{n} components, where \eqn{n} is the number of classes of the labels matrix.
+Each component \eqn{n} is in turn a list with \eqn{k} elements, where \eqn{k} is the number of folds.
 Each fold contains an equal amount of positives and negatives examples.
 }
 \description{
 Generate data for the stratified cross-validation.
 }
 \details{
-the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples.
+Folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples.
 }
 \examples{
 data(labels);

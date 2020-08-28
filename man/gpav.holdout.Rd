@@ -25,7 +25,7 @@ gpav.holdout(
 \item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).}
 
-\item{parallel}{boolean value. Should the parallel version \code{GPAV-DAG} be run?
+\item{parallel}{a boolean value. Should the parallel version \code{GPAV-DAG} be run?
 \itemize{
    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
@@ -33,17 +33,18 @@ gpav.holdout(
 
 \item{ncores}{number of cores to use for parallel execution (\code{def. 8}).}
 
-\item{norm}{boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.}
+\item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}
 
-\item{norm.type}{can be one of the following values: 
+\item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
 \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 \item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
+A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 }
 \description{
 Correct the computed scores in a hierarchy according to the \code{GPAV} algorithm by applying a classical holdout procedure.
@@ -53,7 +54,4 @@ data(graph);
 data(scores);
 data(test.index);
 S.gpav <- gpav.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL);
-}
-\seealso{
-\code{\link{gpav}}
 }

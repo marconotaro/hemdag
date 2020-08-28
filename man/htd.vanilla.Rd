@@ -11,20 +11,21 @@ htd.vanilla(S, g, norm = FALSE, norm.type = NULL)
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{norm}{boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.}
+\item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}
 
-\item{norm.type}{can be one of the following values: 
+\item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
 \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 \item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 }
 \value{
-a matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
 }
 \description{
-Function to correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
+Correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
 }
 \examples{
 data(graph);

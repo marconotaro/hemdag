@@ -17,7 +17,7 @@ correspond to classes' names, i.e. nodes of the graph \code{g} (root node includ
 equal to the length of \code{Y} and \code{W}.}
 }
 \value{
-a list of 3 elements:
+A list of 3 elements:
 \itemize{
    \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
    \code{NOTE}: the classes of \code{YFit} are topologically sorted, that is are in the same order of those of \code{adj}.
@@ -27,7 +27,7 @@ a list of 3 elements:
 }
 \description{
 Implementation of \code{GPAV} (Generalized Pool-Adjacent Violators) algorithm.
-(\cite{Burdakov et al., In: Di Pillo G, Roma M, editors. An O(n2) Algorithm for Isotonic Regression. Boston, MA: Springer US; 2006. 
+(\cite{Burdakov et al., In: Di Pillo G, Roma M, editors. An O(n2) Algorithm for Isotonic Regression. Boston, MA: Springer US; 2006.
 p. 25–33. Available from: \href{https://doi.org/10.1007/0-387-30065-1_3}{https://doi.org/10.1007/0-387-30065-1_3}}
 }
 \details{
@@ -50,7 +50,4 @@ data(scores);
 Y <- S[3,];
 adj <- adj.upper.tri(g);
 S.gpav <- gpav(Y,W=NULL,adj);
-}
-\seealso{
-\code{\link{adj.upper.tri}}
 }

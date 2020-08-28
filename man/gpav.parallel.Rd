@@ -17,10 +17,10 @@ gpav.parallel(S, g, W = NULL, ncores = 8)
 \item{ncores}{number of cores to use for parallel execution (\code{def. 8}).}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
+A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 }
 \description{
-Function to compute \code{GPAV} across all the examples (parallel implementation).
+Compute \code{GPAV} across all the examples (parallel implementation).
 }
 \examples{
 data(graph);

@@ -11,34 +11,34 @@ check.hierarchy.single.sample(y.hier, g, root = "00")
 check.hierarchy(S.hier, g, root = "00")
 }
 \arguments{
-\item{y.hier}{vector of scores relative to a single example. This must be a named numeric vector.}
+\item{y.hier}{vector of scores relative to a single example. It must be a named numeric vector (names are functional classes).}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
 \item{root}{name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).}
 
-\item{S.hier}{the matrix with the scores of the classes corrected in according to hierarchy. This must be a named matrix: rows are
-examples and columns are classes.}
+\item{S.hier}{the matrix with the scores of the classes corrected in according to hierarchy. It must be a named matrix: rows are examples and
+columns are functional classes.}
 }
 \value{
-return a list of 3 elements:
+A list of 3 elements:
 \itemize{
- \item Status: 
+ \item Status:
     \itemize{
-     \item OK if none hierarchical constraints have bee broken;
-     \item NOTOK if there is at least one hierarchical constraints broken;
+     \item \code{OK} if none hierarchical constraints have bee broken;
+     \item \code{NOTOK} if there is at least one hierarchical constraints broken;
   }
     \item hierarchy_constraints_broken:
     \itemize{
-     \item TRUE: example did not respect the hierarchical constraints; 
+     \item TRUE: example did not respect the hierarchical constraints;
      \item FALSE: example broke the hierarchical constraints;
   }
  \item hierarchy_constraints_satisfied: how many terms satisfied the hierarchical constraint;
 }
 }
 \description{
-Check if the true path rule is violated or not. In other words this function checks if the score of a 
-parent or an ancestor node is always larger or equal than that of its children or descendants nodes.
+Check if the true path rule is violated or not. In other words this function checks if the score of a parent or an ancestor node is
+always larger or equal than that of its children or descendants nodes.
 }
 \examples{
 data(graph);

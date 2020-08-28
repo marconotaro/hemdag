@@ -7,16 +7,13 @@
 normalize.max(S)
 }
 \arguments{
-\item{S}{matrix with the raw non normalized scores. Rows are examples and columns are classes.}
+\item{S}{a scores matrix. Rows are examples and columns are classes.}
 }
 \value{
-A score matrix with the same dimensions of \code{S}, but with scores normalized.
+A scores matrix with the scores normalized.
 }
 \description{
-Function to normalize the scores of the flat scores matrix \code{S} per class.
-}
-\details{
-the score of each class is normalized by dividing the score values for the maximum score of that class.
+Normalize the scores of a scores matrix by dividing the score values of each class for the maximum score of the class.
 }
 \examples{
 data(scores);

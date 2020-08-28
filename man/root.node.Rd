@@ -10,7 +10,7 @@ root.node(g)
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 }
 \value{
-name of the root node.
+Name of the root node.
 }
 \description{
 Find the root node of a directed graph.

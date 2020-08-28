@@ -7,14 +7,14 @@
 read.undirected.graph(file = "graph.txt.gz")
 }
 \arguments{
-\item{file}{name of the file to be read. The extension of the file can be or plain format (".txt") or compressed (".gz").}
+\item{file}{name of the file to be read. The extension of the file can be plain (".txt") or compressed (".gz").}
 }
 \value{
-a graph of class \code{graphNEL}.
+A graph of class \code{graphNEL}.
 }
 \description{
-The graph is read from a file and a \code{graphNEL} object is built. The format of the input file is a sequence of rows. 
-Each row corresponds to an edge represented through a pair of vertices separated by blanks, and the weight of the edge.
+Read a graph from a file and build a \code{graphNEL} object. The format of the input file is a sequence of rows.
+Each row corresponds to an edge represented through a pair of vertexes (blank separated) and the weight of the edge.
 }
 \examples{
 edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");

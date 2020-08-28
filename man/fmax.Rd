@@ -30,15 +30,15 @@ compute.fmax(
    \item \code{avF} corresponds to the per-example F-score averaged across all the examples;
 }}
 
-\item{verbose}{boolean. If \code{TRUE} (def.) the number of iterations are printed on stdout.}
+\item{verbose}{a boolean value. If \code{TRUE} (def.) the number of iterations are printed on stdout.}
 
-\item{b.per.example}{boolean. 
+\item{b.per.example}{a boolean value.
 \itemize{
    \item \code{TRUE}: results are returned for each example;
    \item \code{FALSE}: only the average results are returned;
 }}
 
-\item{folds}{number of folds on which computing the Fmax If \code{folds=NULL} (\code{def.}), the Fmax is computed one-shot, 
+\item{folds}{number of folds on which computing the Fmax If \code{folds=NULL} (\code{def.}), the Fmax is computed one-shot,
 otherwise the Fmax is computed averaged across folds.}
 
 \item{seed}{initialization seed for the random generator to create folds. Set \code{seed} only if \code{folds}\eqn{\neq}\code{NULL}.
@@ -47,22 +47,22 @@ If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the Fmax averaged acr
 \value{
 Two different outputs respect to the input parameter \code{b.per.example}:
 \itemize{
-   \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms 
-    of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T). 
-    F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across 
+   \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms
+    of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T).
+    F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across
 examples and T is the best selected threshold;
     \item \code{b.per.example==FALSE}: a list with two elements:
         \enumerate{
-            \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R), 
+            \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R),
            Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
             \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F),    av.F-measure (av.F)
-            and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively 
+            and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively
            to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
         }
 }
 }
 \description{
-Function to compute the best hierarchical Fmax either one-shot or averaged across folds
+Compute the best hierarchical Fmax either one-shot or averaged across folds
 }
 \details{
 Names of rows and columns of \code{target} and \code{predicted} matrix must be provided in the same order, otherwise a stop message is returned.
@@ -74,6 +74,6 @@ data(scores);
 root <- root.node(g);
 L <- L[,-which(colnames(L)==root)];
 S <- S[,-which(colnames(S)==root)];
-fmax <- compute.fmax(L, S, n.round=3, f.criterion="F", verbose=TRUE, 
+fmax <- compute.fmax(L, S, n.round=3, f.criterion="F", verbose=TRUE,
 b.per.example=TRUE, folds=5, seed=23);
 }

@@ -7,18 +7,17 @@
 lexicographical.topological.sort(g)
 }
 \arguments{
-\item{g}{an object of class \code{graphNEL}}
+\item{g}{an object of class \code{graphNEL}.}
 }
 \value{
-a vector in which the nodes of the graph \code{g} are sorted according to a lexicographical topological order.
+A vector in which the nodes of the graph \code{g} are sorted according to a lexicographical topological order.
 }
 \description{
 Nodes of a graph are sorted according to a lexicographical topological ordering.
 }
 \details{
-A topological sorting is a linear ordering of the nodes such that given an edge from 
-\code{u} to \code{v}, the node \code{u} comes before node \code{v} in the ordering. 
-Topological sorting is not possible if the graph \code{g} is not a dag.
+A topological sorting is a linear ordering of the nodes such that given an edge from \code{u} to \code{v}, the node \code{u} comes before
+node \code{v} in the ordering. Topological sorting is not possible if the graph \code{g} contains self-loop.
 To implement the topological sorting algorithm we applied the Kahn’s algorithm.
 }
 \examples{

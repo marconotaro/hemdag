@@ -7,18 +7,15 @@
 specific.annotation.list(ann)
 }
 \arguments{
-\item{ann}{annotation matrix (0/1). Rows are examples and columns are the most specific functional terms. It must be a named matrix.}
+\item{ann}{an annotation matrix (0/1). Rows are examples and columns are the most specific functional terms. It must be a named matrix.}
 }
 \value{
-a named list, where the names of each component correspond to an examples (genes) and the elements of each component are the associated functional terms/classes.
+A named list, where names of each component correspond to examples (genes) and elements of each component are the associated functional terms.
 }
 \description{
-Build the annotation list of starting from the matrix of the most specific annotations.
+Build the annotation list starting from the matrix of the most specific annotations.
 }
 \examples{
 data(labels);
 spec.list <- specific.annotation.list(L);
-}
-\seealso{
-\code{\link{specific.annotation.matrix}}
 }

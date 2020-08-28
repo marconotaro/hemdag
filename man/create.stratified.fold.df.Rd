@@ -17,7 +17,7 @@ create.stratified.fold.df(labels, scores, folds = 5, seed = 23)
 If \code{seed=NULL}, the stratified folds are generated without seed initialization.}
 }
 \value{
-a data frame with three columns: 
+A data frame with three columns:
 \itemize{
  \item \code{scores}: contains the predicted scores;
    \item \code{labels}: contains the labels as \code{pos} or \code{neg};
@@ -29,7 +29,7 @@ a data frame with three columns:
 Create a data frame for stratified cross-validation.
 }
 \details{
-the folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples.
+Folds are \emph{stratified}, i.e. contain the same amount of positive and negative examples.
 }
 \examples{
 data(labels);

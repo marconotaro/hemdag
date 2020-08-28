@@ -12,11 +12,11 @@ check.dag.integrity(g, root = "00")
 \item{root}{name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).}
 }
 \value{
-If all the nodes are accessible from the root "dag is ok" is printed,
-otherwise a message error and the list of the not accessible nodes is printed on the stdout.
+If all the nodes are accessible from the root "dag is ok" is printed, otherwise a message error and the list of
+the not accessible nodes is printed on the stdout.
 }
 \description{
-This function assess the integrity of a dag.
+Check the integrity of a dag.
 }
 \examples{
 data(graph);

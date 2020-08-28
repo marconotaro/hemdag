@@ -14,10 +14,10 @@ build.subgraph(nd, g, edgemode = "directed")
 \item{edgemode}{can be "directed" or "undirected".}
 }
 \value{
-a subgraph with only the supplied nodes.
+A subgraph with only the supplied nodes.
 }
 \description{
-This function returns a subgraph with only the supplied nodes and any edges between them.
+Build a subgraph with only the supplied nodes and any edges between them.
 }
 \examples{
 data(graph);

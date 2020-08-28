@@ -13,10 +13,10 @@ are functional terms, e.g. GO terms) or it can be a square named matrix \code{m 
 \item{output.file}{name of the file on which the matrix must be written.}
 
 \item{digits}{number of digits to be used to save scores of \code{m} (\code{def. digits=3}).
-The extension of the file can be or plain format (".txt") or compressed (".gz").}
+The extension of the file can be plain (".txt") or compressed (".gz").}
 }
 \value{
-tupla score matrix stored in output.file.
+A tupla score matrix stored in output.file.
 }
 \description{
 Transform a named score matrix in a tupla, i.e. in the form \code{nodeX nodeY score}.
@@ -28,5 +28,4 @@ Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactio
 data(wadj);
 tmpdir <- paste0(tempdir(),"/");
 tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"), digits=3);
-tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt", digits=3));
 }

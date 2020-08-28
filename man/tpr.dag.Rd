@@ -10,7 +10,7 @@ tpr.dag(
   root = "00",
   positive = "children",
   bottomup = "threshold.free",
-  topdown = "htd",
+  topdown = "gpav",
   t = 0,
   w = 0,
   W = NULL,
@@ -37,44 +37,44 @@ tpr.dag(
  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
- \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+ \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
 }}
 
-\item{topdown}{strategy to make the scores hierarchy-consistent. It can be one of the following values:
+\item{topdown}{strategy to make scores ``hierarchy-aware''. It can be one of the following values:
 \itemize{
- \item \code{htd} (\code{def.}): \code{HTD-DAG} strategy is applied (\code{\link{htd}});
- \item \code{gpav}: \code{GPAV} strategy is applied (\code{\link{gpav}});
+ \item \code{htd}: \code{HTD-DAG} strategy is applied (\code{\link{htd}});
+ \item \code{gpav} (\code{def.}): \code{GPAV} strategy is applied (\code{\link{gpav}});
 }}
 
-\item{t}{threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants requiring a threshold for the selection of the positive nodes, otherwise set \code{t=0}.}
+\item{t}{threshold for the choice of positive nodes (\code{def. t=0}). Set \code{t} only for the variants requiring a threshold for the
+selection of the positive nodes, otherwise set \code{t=0}.}
 
-\item{w}{weight to balance between the contribution of the node \eqn{i} and that of its positive nodes. Set \code{w} only for the \emph{weighted} variants, otherwise set \code{w=0}.}
+\item{w}{weight to balance between the contribution of the node \eqn{i} and that of its positive nodes. Set \code{w} only for
+the \emph{weighted} variants, otherwise set \code{w=0}.}
 
-\item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same length of the columns' number of the 
-matrix \code{S} (root node included). Set \code{W} only if \code{topdown=gpav}.}
+\item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the
+same length of the columns' number of the matrix \code{S} (root node included). Set \code{W} only if \code{topdown=gpav}.}
 
-\item{parallel}{boolean value:
+\item{parallel}{a boolean value:
 \itemize{
  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{gpav.parallel}});
  \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{gpav.over.examples}});
 }
 Use \code{parallel} only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.}
 
-\item{ncores}{number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores} to the desired number of cores.
-Set \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{ncores=1}.}
+\item{ncores}{number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores} to
+the desired number of cores. Set \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{ncores=1}.}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
+A named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
 }
 \description{
-Function gathering the true-path-rule-based hierarchical learning ensemble algorithms and its variants. 
+Collection of the true-path-rule-based hierarchical learning ensemble algorithms and its variants.
 In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 \enumerate{
- \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions 
- across the hierarchy;
- \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the hierarchical 
- consistency of the predictions;
+ \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions across the hierarchy;
+ \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the consistency of the predictions;
 }
 }
 \details{
@@ -85,12 +85,12 @@ The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the 
 where \eqn{\phi_i} are the positive children of \eqn{i}.
 Different strategies to select the positive children \eqn{\phi_i} can be applied:
 \enumerate{
- \item \strong{Threshold-Free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes 
+ \item \strong{threshold-free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes
  that achieve a score higher than that of their parents:
  \deqn{
      \phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
  }
- \item \strong{Threshold} strategy: the positive children are selected on the basis of a threshold that can be selected in two different ways:
+ \item \strong{threshold} strategy: the positive children are selected on the basis of a threshold that can be selected in two different ways:
  \enumerate{
      \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
      \deqn{
@@ -98,8 +98,8 @@ Different strategies to select the positive children \eqn{\phi_i} can be applied
      }
      For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
      \item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
-     the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions 
-     \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}. 
+     the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions
+     \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}.
      The corresponding set of positives \eqn{\forall i \in V} is:
      \deqn{
          \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
@@ -107,43 +107,44 @@ Different strategies to select the positive children \eqn{\phi_i} can be applied
      For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
  }
 }
-The weighted \code{TPR-DAG} version can be designed by adding a weight \eqn{w \in [0,1]} to balance between the 
+
+The weighted \code{TPR-DAG} version can be designed by adding a weight \eqn{w \in [0,1]} to balance between the
 contribution of the node \eqn{i} and that of its positive children \eqn{\phi}, through their convex combination:
 \deqn{
  \bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
 }
 If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
-way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors 
+way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors
 associated to the children nodes vote to predict node \eqn{i}. In the intermediate cases we attribute more importance to the predictor for the
 node \eqn{i} or to its children depending on the values of \eqn{w}.
 
-The contribution of the descendants of a given node decays exponentially with their distance from the node itself. To enhance the 
-contribution of the most specific nodes to the overall decision of the ensemble we designed a novel variant that we named \code{DESCENS}. 
-The novelty of \code{DESCENS} consists in strongly considering the contribution of all the descendants of each node instead of 
-only that of its children. Therefore \code{DESCENS} predictions are more influenced by the information embedded in the leaves nodes, 
-that are the classes containing the most informative and meaningful information from a biological and medical standpoint. 
-For the choice of the ``positive'' descendants we use the same strategies adopted for the selection of the ``positive'' 
+The contribution of the descendants of a given node decays exponentially with their distance from the node itself. To enhance the
+contribution of the most specific nodes to the overall decision of the ensemble we designed the ensemble variant \code{DESCENS}.
+The novelty of \code{DESCENS} consists in strongly considering the contribution of all the descendants of each node instead of
+only that of its children. Therefore \code{DESCENS} predictions are more influenced by the information embedded in the leaves nodes,
+that are the classes containing the most informative and meaningful information from a biological and medical standpoint.
+For the choice of the ``positive'' descendants we use the same strategies adopted for the selection of the ``positive''
 children shown above. Furthermore, we designed a variant specific only for \code{DESCENS}, that we named \code{DESCENS}-\eqn{\tau}.
-The \code{DESCENS}-\eqn{\tau} variants balances the contribution between the ``positives'' children of a node \eqn{i} 
+The \code{DESCENS}-\eqn{\tau} variants balances the contribution between the ``positives'' children of a node \eqn{i}
 and that of its ``positives'' descendants excluding its children by adding a weight \eqn{\tau \in [0,1]}:
 \deqn{
-\bar{y}_i := \frac{\tau}{ 1 +|\phi_i|} ( \hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j ) + \frac{1-\tau}{1+|\delta_i|} ( \hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j )
+\bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
 }
-where \eqn{\phi_i} are the ``positive'' children of \eqn{i} and \eqn{\delta_i=\Delta_i \setminus \phi_i} the descendants of \eqn{i} without its children. 
+where \eqn{\phi_i} are the ``positive'' children of \eqn{i} and \eqn{\delta_i=\Delta_i \setminus \phi_i} the descendants of \eqn{i} without its children.
 If \eqn{\tau=1} we consider only the contribution of the ``positive'' children of \eqn{i}; if \eqn{\tau=0} only the descendants that are not
-children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and 
+children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and
 \eqn{\delta_i} positive nodes.
 
-Simply by replacing the top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we can design the \code{ISO-TPR} variant. 
-The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and selects the closest solution (in the least square sense) 
-to the bottom-up predictions that obeys the true path rule.
+Simply by replacing the top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we design the \code{ISO-TPR} variant.
+The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and selects the closest
+solution (in the least square sense) to the bottom-up predictions that obeys the true path rule.
 }
 \examples{
 data(graph);
 data(scores);
 data(labels);
 root <- root.node(g);
-S.tpr <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", 
+S.tpr <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free",
 topdown="gpav", t=0, w=0, W=NULL, parallel=FALSE, ncores=1);
 }
 \seealso{

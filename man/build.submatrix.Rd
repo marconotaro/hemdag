@@ -9,10 +9,10 @@ build.submatrix(ann, n)
 \arguments{
 \item{ann}{the annotation matrix (0/1). Rows are examples and columns are functional terms.}
 
-\item{n}{integer number of annotations to be pruned.}
+\item{n}{an integer number representing the number of annotations to be pruned.}
 }
 \value{
-Matrix of annotations having only those terms with more than n annotations.
+An annotation matrix having only those terms with more than n annotations.
 }
 \description{
 Terms having less than n annotations are pruned. Terms having exactly n annotations are discarded as well.

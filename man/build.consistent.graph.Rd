@@ -12,13 +12,13 @@ build.consistent.graph(g = g, root = "00")
 \item{root}{name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).}
 }
 \value{
-a graph (as an object of class \code{graphNEL}) in which all nodes are accessible from root.
+A graph (as an object of class \code{graphNEL}) in which all nodes are accessible from root.
 }
 \description{
-build a graph in which all nodes are reachable from root.
+Build a graph in which all nodes are reachable from root.
 }
 \details{
-all nodes not accessible from the root (if any) are removed from the graph and printed on stdout.
+All nodes not accessible from root (if any) are removed from the graph and printed on stdout.
 }
 \examples{
 data(graph);

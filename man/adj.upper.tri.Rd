@@ -10,17 +10,17 @@ adj.upper.tri(g)
 \item{g}{a graph of class \code{graphNELL} representing the hierarchy of the class.}
 }
 \value{
-an adjacency matrix which is square, logical and upper triangular.
+An adjacency matrix which is square, logical and upper triangular.
 }
 \description{
-This function returns a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
+Compute a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
 }
 \details{
-The nodes of the matrix are topologically sorted (by using the \code{tsort} function of the \pkg{RBGL} package). 
-Let's denote with \code{adj} our adjacency matrix. Then \code{adj} represents a partial
-order data set in which the class \code{j} dominates the class \code{i}. In other words, \code{adj[i,j]=1} means that \code{j} dominates \code{i};
-\code{adj[i,j]=0} means that there is no edge between the class \code{i} and the class \code{j}. Moreover the nodes of \code{adj} are
-ordered such that \code{adj[i,j]=1} implies \eqn{i < j}, i.e. \code{adj} is upper triangular.
+The nodes of the matrix are topologically sorted (by using the \code{tsort} function of the \pkg{RBGL} package).
+Let's denote with \code{adj} our adjacency matrix. Then \code{adj} represents a partial order data set in which the class \code{j}
+dominates the class \code{i}. In other words, \code{adj[i,j]=1} means that \code{j} dominates \code{i}; \code{adj[i,j]=0} means that there
+is no edge between the class \code{i} and the class \code{j}. Moreover the nodes of \code{adj} are ordered such that \code{adj[i,j]=1}
+implies \eqn{i < j}, i.e. \code{adj} is upper triangular.
 }
 \examples{
 data(graph);

@@ -10,10 +10,10 @@ find.leaves(g)
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 }
 \value{
-a vector with the names of the leaves of g.
+A vector with the names of the leaves of g.
 }
 \description{
-Find the leaves of a directed graph.
+Find leaves of a directed graph.
 }
 \examples{
 data(graph);

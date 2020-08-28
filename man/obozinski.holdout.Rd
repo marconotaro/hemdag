@@ -20,27 +20,29 @@ obozinski.holdout(
 
 \item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.}
 
-\item{heuristic}{can be one of the following three values:
+\item{heuristic}{a string character. It can be one of the following three values:
 \enumerate{
  \item "max": run the method \code{heuristic.max};
  \item "and": run the method \code{heuristic.and};
  \item "or": run the method \code{heuristic.or};
 }}
 
-\item{norm}{boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.}
+\item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}
 
-\item{norm.type}{can be one of the following values: 
+\item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
 \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 \item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 }
 \value{
-a matrix with the scores of the classes corrected according to the chosen heuristic algorithm. Rows of the matrix are shrunk to \code{testIndex}.
+A matrix with the scores of the classes corrected according to the chosen heuristic algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 }
 \description{
-Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}) applying a classical holdout procedure.
+Compute the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008})
+applying a classical holdout procedure.
 }
 \examples{
 data(graph);

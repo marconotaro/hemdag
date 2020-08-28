@@ -7,17 +7,18 @@
 check.annotation.matrix.integrity(anc, ann.spec, ann)
 }
 \arguments{
-\item{anc}{ancestor list.}
+\item{anc}{the ancestor list.}
 
 \item{ann.spec}{the annotation matrix of the most specific annotations (0/1): rows are genes and columns are terms.}
 
-\item{ann}{the full annotation matrix (0/1), that is the matrix where the transitive closure of the annotation was performed. Rows are examples and columns are terms.}
+\item{ann}{the full annotation matrix (0/1), i.e. the matrix where the transitive closure of the annotation was performed.
+Rows are examples and columns are terms.}
 }
 \value{
-If the transitive closure of the annotations is well performed \code{OK} is returned, otherwise a message error is printed on the stdout.
+If the transitive closure of the annotations is performed correctly, \code{OK} is returned, otherwise an error message is printed on the stdout.
 }
 \description{
-This function assess the integrity of an annotation matrix where a transitive closure of annotations was performed.
+Assess the integrity of an annotation matrix where a transitive closure of annotations was performed.
 }
 \examples{
 data(graph);
@@ -25,7 +26,4 @@ data(labels);
 anc <- build.ancestors(g);
 tca <- transitive.closure.annotations(L, anc);
 check.annotation.matrix.integrity(anc, L, tca);
-}
-\seealso{
-\code{\link{build.ancestors}}, \code{\link{transitive.closure.annotations}}, \code{\link{full.annotation.matrix}}
 }

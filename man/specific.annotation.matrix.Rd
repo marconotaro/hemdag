@@ -7,12 +7,11 @@
 specific.annotation.matrix(file = "gene2pheno.txt.gz")
 }
 \arguments{
-\item{file}{text file representing the associations gene-OBO terms. The file must be written as sequence of rows. 
-Each row represents a gene/protein and all its associations with an ontology term pipe separated, \emph{e.g.: gene1 |obo1|...|oboN}.  
-The input example file used here (\code{def: "gene2pheno.txt"}) shows the gene and all its associations with a functional terms (such as GO or HPO).}
+\item{file}{text file representing the associations gene-OBO terms. The file must be written as sequence of rows.
+Each row represents a gene/protein and all its associations with an ontology term (pipe separated), i.e. in the form \emph{e.g.: gene1 |obo1|obo2|...|oboN}.}
 }
 \value{
-the annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms (such as GO or HPO).
+The annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms (such as GO or HPO).
 Let's denote \eqn{M} the labels matrix. If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
 }
 \description{
@@ -20,7 +19,7 @@ Build the annotation matrix of the most specific functional terms.
 }
 \details{
 The input plain text file (representing the associations gene-OBO terms) can be obtained by cloning the GitHub repository
-\href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and 
+\href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and
 their gene annotation file (gaf file).
 }
 \examples{

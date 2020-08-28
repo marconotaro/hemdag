@@ -29,7 +29,7 @@ The HEMDAG package implements the following Hierarchical Ensemble Methods for DA
 \item \bold{TPR-DAG}: True-Path Rule (\code{\link{tpr.dag}});
 \item \bold{DESCENS}: Descendants Ensemble Classifier (\code{\link{tpr.dag}});
 \item \bold{ISO-TPR}: Isotonic-True-Path Rule (\code{\link{tpr.dag}});
-\item \bold{MAX}, \bold{AND}, \bold{OR}: Heuristic Methods, \cite{Obozinski et al.} (\code{\link{Obozinski-heuristic-methods}});
+\item \bold{Max}, \bold{And}, \bold{Or}: Heuristic Methods, \cite{Obozinski et al.} (\code{\link{obozinski.heuristic.methods}});
 }}
 
 \author{

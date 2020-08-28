@@ -31,31 +31,34 @@ tpr.dag.holdout(
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{ann}{an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{ann[i,j]=0} otherwise.}
+\item{ann}{an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to
+class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric TPR-DAG ensemble
+variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.}
 
 \item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.}
 
-\item{norm}{boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.}
+\item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}
 
-\item{norm.type}{can be one of the following values: 
+\item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
 \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 \item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 
-\item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same length of the columns' number of the 
-matrix \code{S} (root node included). Set \code{W} only if \code{topdown=gpav}.}
+\item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same
+length of the columns' number of the matrix \code{S} (root node included). Set \code{W} only if \code{topdown=gpav}.}
 
-\item{parallel}{boolean value:
+\item{parallel}{a boolean value:
 \itemize{
  \item \code{TRUE}: execute the parallel implementation of GPAV (\code{\link{gpav.parallel}});
  \item \code{FALSE} (def.): execute the sequential implementation of GPAV (\code{\link{gpav.over.examples}});
 }
 Use \code{parallel} only if \code{topdown=gpav}; otherwise set \code{parallel=FALSE}.}
 
-\item{ncores}{number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores} to the desired number of cores.
-Set \code{ncores} if and only if \code{topdown=gpav}; otherwise set \code{ncores=1}.}
+\item{ncores}{number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores}
+to the desired number of cores. Set \code{ncores} if and only if \code{topdown=gpav}; otherwise set \code{ncores=1}.}
 
 \item{positive}{choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 \itemize{
@@ -69,7 +72,7 @@ Set \code{ncores} if and only if \code{topdown=gpav}; otherwise set \code{ncores
  \item \code{threshold} (\code{def.}): positive nodes are selected on the basis of the \code{threshold} strategy;
  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
- \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy. 
+ \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
 }}
 
@@ -80,26 +83,28 @@ Set \code{ncores} if and only if \code{topdown=gpav}; otherwise set \code{ncores
 }}
 
 \item{threshold}{range of threshold values to be tested in order to find the best threshold (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
-The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher. For the \emph{threshold-free} variants, set \code{threshold=0}.}
+The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher.
+For the \emph{threshold-free} variants, set \code{threshold=0}.}
 
 \item{weight}{range of weight values to be tested in order to find the best weight (\code{def:} \code{from:0.1}, \code{to:0.9}, \code{by:0.1}).
-The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher. For the \emph{weight-free} variants, set \code{weight=0}.}
+The denser the range is, the higher the probability to find the best threshold is, but the execution time will be higher.
+For the \emph{weight-free} variants, set \code{weight=0}.}
 
-\item{kk}{number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and \code{tau} of the parametric ensemble variants. 
-For the non-parametric variants (i.e. if \code{bottomup = threshold.free}), set \code{kk=NULL}.}
+\item{kk}{number of folds of the cross validation (\code{def: kk=5}) on which tuning the parameters \code{threshold}, \code{weight} and \code{tau}
+of the parametric ensemble variants. For the parametric-free variants (i.e. if \code{bottomup = threshold.free}), set \code{kk=NULL}.}
 
-\item{seed}{initialization seed for the random generator to create folds (\code{def. 23}). If \code{seed=NULL} folds are generated without seed initialization. 
-If \code{bottomup=threshold.free}, set \code{seed=NULL}.}
+\item{seed}{initialization seed for the random generator to create folds (\code{def. 23}). If \code{seed=NULL} folds are generated
+without seed initialization. If \code{bottomup=threshold.free}, set \code{seed=NULL}.}
 
 \item{metric}{a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 \enumerate{
 \item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
 \item \code{fmax} (def.): the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
-\item \code{NULL}: on the \code{threshold.free} variant none parameter optimization is needed, since the variant is non-parametric.
+\item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 }}
 
-\item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold on the basis of the best Fmax.
-If \code{bottomup==threshold.free}, set \code{n.round=NULL}.}
+\item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold
+on the basis of the best Fmax. If \code{bottomup==threshold.free}, set \code{n.round=NULL}.}
 
 \item{f.criterion}{character. Type of F-measure to be used to select the best F-measure. Two possibilities:
 \enumerate{
@@ -109,10 +114,11 @@ If \code{bottomup==threshold.free}, set \code{n.round=NULL}.}
 If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.}
 }
 \value{
-a named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm. Rows of the matrix are shrunk to \code{testIndex}.
+A named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
+Rows of the matrix are shrunk to \code{testIndex}.
 }
 \description{
-Correct the computed scores in a hierarchy according to the chosen TPR-DAG ensemble variant by applying a classical holdout procedure.
+Correct the computed scores in a hierarchy according to the selected TPR-DAG ensemble variant by applying a classical holdout procedure.
 }
 \details{
 The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric},
@@ -122,10 +128,7 @@ data(graph);
 data(scores);
 data(labels);
 data(test.index);
-S.tpr <- tpr.dag.holdout(S, g, ann, testIndex=test.index, norm=FALSE, norm.type=NULL, 
-positive="children", bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, 
+S.tpr <- tpr.dag.holdout(S, g, ann=NULL, testIndex=test.index, norm=FALSE, norm.type=NULL,
+positive="children", bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE,
 ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL);
-}
-\seealso{
-\code{\link{tpr.dag}}
 }
