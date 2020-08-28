@@ -3,14 +3,14 @@
 ##############
 
 #' @title Binary upper triangular adjacency matrix
-#' @description This function returns a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
-#' @details The nodes of the matrix are topologically sorted (by using the \code{tsort} function of the \pkg{RBGL} package). 
-#' Let's denote with \code{adj} our adjacency matrix. Then \code{adj} represents a partial
-#' order data set in which the class \code{j} dominates the class \code{i}. In other words, \code{adj[i,j]=1} means that \code{j} dominates \code{i};
-#' \code{adj[i,j]=0} means that there is no edge between the class \code{i} and the class \code{j}. Moreover the nodes of \code{adj} are
-#' ordered such that \code{adj[i,j]=1} implies \eqn{i < j}, i.e. \code{adj} is upper triangular.
+#' @description Compute a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
+#' @details The nodes of the matrix are topologically sorted (by using the \code{tsort} function of the \pkg{RBGL} package).
+#' Let's denote with \code{adj} our adjacency matrix. Then \code{adj} represents a partial order data set in which the class \code{j}
+#' dominates the class \code{i}. In other words, \code{adj[i,j]=1} means that \code{j} dominates \code{i}; \code{adj[i,j]=0} means that there
+#' is no edge between the class \code{i} and the class \code{j}. Moreover the nodes of \code{adj} are ordered such that \code{adj[i,j]=1}
+#' implies \eqn{i < j}, i.e. \code{adj} is upper triangular.
 #' @param g a graph of class \code{graphNELL} representing the hierarchy of the class.
-#' @return an adjacency matrix which is square, logical and upper triangular.
+#' @return An adjacency matrix which is square, logical and upper triangular.
 #' @export
 #' @examples
 #' data(graph);
@@ -33,14 +33,11 @@ adj.upper.tri <- function(g){
             }
         }
     }
-
     ## 1. topological sorting: nodes are ordering in a linear way such as vertex u comes before v.
     tsort.nd <- tsort(g);
-
     ## 2. map each node of the graph to a integer number (in a decreasing order)
     source <- mapvalues(m[,1], from=tsort.nd[1:length(tsort.nd)], to=length(tsort.nd):1, warn_missing=F);
     destination  <- mapvalues(m[,2], from=tsort.nd[1:length(tsort.nd)], to=length(tsort.nd):1, warn_missing=F);
-
     ## 3. build upper triangular logical adjacency constraints matrix. this matrix should be sparse
     eM <- cbind(from=as.numeric(destination), to=as.numeric(source));
     adj <- matrix(0, nrow=num.nd, ncol=num.nd);
@@ -52,8 +49,8 @@ adj.upper.tri <- function(g){
 
 #' @title Generalized Pool-Adjacent Violators (GPAV)
 #' @description Implementation of \code{GPAV} (Generalized Pool-Adjacent Violators) algorithm.
-#' (\cite{Burdakov et al., In: Di Pillo G, Roma M, editors. An O(n2) Algorithm for Isotonic Regression. Boston, MA: Springer US; 2006. 
-#' p. 25–33. Available from: \href{https://doi.org/10.1007/0-387-30065-1_3}{https://doi.org/10.1007/0-387-30065-1_3}} 
+#' (\cite{Burdakov et al., In: Di Pillo G, Roma M, editors. An O(n2) Algorithm for Isotonic Regression. Boston, MA: Springer US; 2006.
+#' p. 25–33. Available from: \href{https://doi.org/10.1007/0-387-30065-1_3}{https://doi.org/10.1007/0-387-30065-1_3}}
 #' @details Given the constraints adjacency matrix of the graph, a vector of scores \eqn{\hat{y} \in R^n} and a vector of strictly positive
 #' weights \eqn{w \in R^n}, the \code{GPAV} algorithm returns a vector \eqn{\bar{y}} which is as close as possible, in the least-squares sense,
 #' to the response vector \eqn{\hat{y}} and whose components are partially ordered in accordance with the constraints matrix \code{adj}.
@@ -66,14 +63,13 @@ adj.upper.tri <- function(g){
 #'    \end{array}
 #' \right.
 #'}
-#' @seealso \code{\link{adj.upper.tri}}
 #' @param Y vector of scores relative to a single example. \code{Y} must be a numeric named vector, where names
 #' correspond to classes' names, i.e. nodes of the graph \code{g} (root node included).
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @param adj adjacency matrix of the graph which must be sparse, logical and upper triangular. Number of columns of \code{adj} must be
 #' equal to the length of \code{Y} and \code{W}.
-#' @return a list of 3 elements:
+#' @return A list of 3 elements:
 #' \itemize{
 #'    \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
 #'    \code{NOTE}: the classes of \code{YFit} are topologically sorted, that is are in the same order of those of \code{adj}.
@@ -94,9 +90,9 @@ gpav <- function(Y, W=NULL, adj){
     nY <- length(Y);
     nadj <- ncol(adj);
     if(nY!=nadj)
-        stop("gpav: mismatch between the number of classes between 'Y' and 'adj'", call.=FALSE);
+        stop("mismatch between the number of classes between Y and adj");
     if(nW!=nadj)
-        stop("gpav: mismatch between the number of classes between 'Y' and 'adj'", call.=FALSE);
+        stop("mismatch between the number of classes between Y and adj");
     ## sort nodes in the same order of adj matrix (i.e. in a topologically ordered)
     Y <- Y[colnames(adj)];
     ## just for clearnnes: we play with index and not with name...
@@ -114,13 +110,13 @@ gpav <- function(Y, W=NULL, adj){
 }
 
 #' @title GPAV over examples
-#' @description Function to compute \code{GPAV} across all the examples.
+#' @description Compute \code{GPAV} across all the examples.
 #' @seealso \code{\link{gpav.parallel}}
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
-#' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
+#' @return A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -130,7 +126,7 @@ gpav.over.examples <- function(S, g, W=NULL){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("gpav.over.examples: mismatch between the number of nodes of the graph and the number of classes of the scores matrix", call.=FALSE);
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
     adj <- adj.upper.tri(g);
     M <- c();
     for(i in 1:nrow(S))
@@ -140,15 +136,14 @@ gpav.over.examples <- function(S, g, W=NULL){
     S <- M; rm(M);
     return(S);
 }
-
 #' @title GPAV over examples -- parallel implementation
-#' @description Function to compute \code{GPAV} across all the examples (parallel implementation).
+#' @description Compute \code{GPAV} across all the examples (parallel implementation).
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}).
-#' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
+#' @return A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -160,7 +155,7 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("gpav.parallel: mismatch between the number of nodes of the graph and the number of classes of the scores matrix", call.=FALSE);
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
     prnames <- rownames(S);
     clnames <- colnames(S);
     adj <- adj.upper.tri(g);
@@ -184,26 +179,26 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
 }
 
 #' @title GPAV-DAG vanilla
-#' @description Function to correct the computed scores in a hierarchy according to the \code{GPAV} algorithm.
+#' @description Correct the computed scores in a hierarchy according to the \code{GPAV} algorithm.
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
-#' @param parallel boolean value. Should the parallel version \code{GPAV-DAG} be run?
+#' @param parallel a boolean value. Should the parallel version \code{GPAV-DAG} be run?
 #' \itemize{
 #'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
 #'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 #' }
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}).
-#' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
-#' @param norm.type can be one of the following values: 
+#' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+#' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
+#' @param norm.type a string character. It can be one of the following values:
 #'  \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
-#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 #'  }
-#' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
-#' @seealso \code{\link{gpav}}
+#' @return A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -212,20 +207,18 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
 gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, norm.type=NULL){
     ## parameters check
     if(norm==TRUE && is.null(norm.type))
-        stop("gpav.vanilla: choose a normalization methods among those available", call.=FALSE);
+        stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning("gpav.vanilla: ", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+        warning("", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
     if(parallel==TRUE && ncores<2)
-        warning("gpav.vanilla: set ncores greater than 2 to exploit the gpav parallel version", call.=FALSE);
+        warning("set ncores greater than 2 to exploit the gpav parallel version");
     if(parallel==FALSE && ncores>=2)
-        warning("gpav.vanilla: set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version", call.=FALSE);
-    
+        warning("set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version");
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done", "\n");
     }
-
     ## check root scores before running gpav
     root <- root.node(g);
     if(!(root %in% colnames(S))){
@@ -234,7 +227,6 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
         S <- cbind(z,S);
         colnames(S)[1] <- root;
     }
-
     ## gpav correction
     if(parallel){
         S <- gpav.parallel(S, g, W=W, ncores=ncores);
@@ -252,21 +244,21 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 #' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
-#' @param parallel boolean value. Should the parallel version \code{GPAV-DAG} be run?
+#' @param parallel a boolean value. Should the parallel version \code{GPAV-DAG} be run?
 #' \itemize{
 #'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
 #'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 #' }
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}).
-#' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
-#' @param norm.type can be one of the following values: 
+#' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+#' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
+#' @param norm.type a string character. It can be one of the following values:
 #'  \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
-#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 #'  }
-#' @return a named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
-#' @seealso \code{\link{gpav}}
+#' @return A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples
 #' data(graph);
@@ -276,20 +268,18 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm=TRUE, norm.type=NULL){
     ## parameters check
     if(norm==TRUE && is.null(norm.type))
-        stop("gpav.holdout: choose a normalization methods among those available", call.=FALSE);
+        stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning("gpav.holdout: ", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
+        warning("", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
     if(parallel==TRUE && ncores<2)
-        warning("gpav.holdout: set ncores greater than 2 to exploit the gpav parallel version", call.=FALSE);
+        warning("set ncores greater than 2 to exploit the gpav parallel version");
     if(parallel==FALSE && ncores>=2)
-        warning("gpav.holdout: set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version", call.=FALSE);
-
+        warning("set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version");
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done", "\n");
     }
-   
     ## check root scores before running gpav
     root <- root.node(g);
     if(!(root %in% colnames(S))){
@@ -298,10 +288,8 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
         S <- cbind(z,S);
         colnames(S)[1] <- root;
     }
-
     ## shrink flat scores matrix to test test
     S <- S[testIndex,];
-
     ## gpav correction
     if(parallel){
         S <- gpav.parallel(S, g, W=W, ncores=ncores);
@@ -311,4 +299,3 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
     cat("gpav-dag correction: done", "\n");
     return(S);
 }
-

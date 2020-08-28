@@ -1,16 +1,15 @@
 ################################################################
-## Utility functions to process and analyze annotation tables ##
+## Utility functions to process and analyze annotation matrix ##
 ################################################################
 
 #' @title Specific annotation matrix
 #' @description Build the annotation matrix of the most specific functional terms.
 #' @details The input plain text file (representing the associations gene-OBO terms) can be obtained by cloning the GitHub repository
-#' \href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and 
-#' their gene annotation file (gaf file). 
-#' @param file text file representing the associations gene-OBO terms. The file must be written as sequence of rows. 
-#' Each row represents a gene/protein and all its associations with an ontology term pipe separated, \emph{e.g.: gene1 |obo1|...|oboN}.  
-#' The input example file used here (\code{def: "gene2pheno.txt"}) shows the gene and all its associations with a functional terms (such as GO or HPO).
-#' @return the annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms (such as GO or HPO).
+#' \href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and
+#' their gene annotation file (gaf file).
+#' @param file text file representing the associations gene-OBO terms. The file must be written as sequence of rows.
+#' Each row represents a gene/protein and all its associations with an ontology term (pipe separated), i.e. in the form \emph{e.g.: gene1 |obo1|obo2|...|oboN}.
+#' @return The annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms (such as GO or HPO).
 #' Let's denote \eqn{M} the labels matrix. If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
 #' @export
 #' @examples
@@ -38,8 +37,8 @@ specific.annotation.matrix <- function(file="gene2pheno.txt.gz"){
     rownames(m) <- genenames;
     colnames(m) <- oboID;
     for (i in genenames){
-        spec.ann <- ann.list[[i]]; 
-        m[i, spec.ann] <- 1;  
+        spec.ann <- ann.list[[i]];
+        m[i, spec.ann] <- 1;
     }
     charcheck <- any(suppressWarnings(is.na(as.numeric(genenames))));
     if(charcheck){
@@ -52,10 +51,9 @@ specific.annotation.matrix <- function(file="gene2pheno.txt.gz"){
 }
 
 #' @title Specific annotations list
-#' @description Build the annotation list of starting from the matrix of the most specific annotations.
-#' @param ann annotation matrix (0/1). Rows are examples and columns are the most specific functional terms. It must be a named matrix. 
-#' @return a named list, where the names of each component correspond to an examples (genes) and the elements of each component are the associated functional terms/classes.
-#' @seealso \code{\link{specific.annotation.matrix}}
+#' @description Build the annotation list starting from the matrix of the most specific annotations.
+#' @param ann an annotation matrix (0/1). Rows are examples and columns are the most specific functional terms. It must be a named matrix.
+#' @return A named list, where names of each component correspond to examples (genes) and elements of each component are the associated functional terms.
 #' @export
 #' @examples
 #' data(labels);
@@ -68,15 +66,13 @@ specific.annotation.list <- function(ann){
     return(ann.list);
 }
 
-#' @title Transitive closure of annotations 
-#' @description Performs the transitive closure of the annotations using ancestors and the most specific annotation table.
-#' The annotations are propagated from bottom to top, enriching the most specific annotations table.
-#' The rows of the matrix correspond to genes and the columns to the functional terms/classes.
+#' @title Transitive closure of annotations
+#' @description Perform the transitive closure of the annotations using ancestors and the most specific annotation matrix.
+#' The annotations are propagated from bottom to top, enriching the most specific annotations table. Rows correspond to genes and columns to functional terms.
 #' @param ann.spec the annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms.
-#' @param anc ancestor list. 
-#' @return an annotation table T: rows correspond to genes and columns to OBO terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
+#' @param anc the ancestor list.
+#' @return The annotation table T: rows correspond to genes and columns to OBO terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
 #' \eqn{T[i,j]=0} means that gene \eqn{i} is not annotated for the term \eqn{j}.
-#' @seealso \code{\link{specific.annotation.matrix}}, \code{\link{build.ancestors}}
 #' @export
 #' @examples
 #' data(graph);
@@ -84,20 +80,20 @@ specific.annotation.list <- function(ann){
 #' anc <- build.ancestors(g);
 #' tca <- transitive.closure.annotations(L, anc);
 transitive.closure.annotations <- function(ann.spec, anc){
-    ## costructiion of annotation list
+    ## build annotation list
     ann.list <- specific.annotation.list(ann.spec);
-    ## cotruction the full empty annotation matrix
+    ## construct the full empty annotation matrix
     genes <- rownames(ann.spec);
     n.genes <- length(genes);
     oboIDs <- names(anc);
     n.oboID <- length(anc);
     obo.ann <- matrix(numeric(n.oboID * n.genes), nrow=n.genes, ncol=n.oboID);    #empty label matrix
     dimnames(obo.ann) <- list(genes,oboIDs);
-    ## fill the full empty annotation matrix with the most specific annotation     
-    obo.spec.term <- colnames(ann.spec); # the most specific OBO terms
-    # might happen that there are same OBO IDs that are classified as "obsolete" in obo file, but that still exist in the annotation file 
-    obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete OBO terms...
-    obo.ann[genes,obo.spec.term.sel] <- ann.spec[,obo.spec.term.sel];    
+    ## fill the full empty annotation matrix with the most specific annotation
+    obo.spec.term <- colnames(ann.spec); # the most specific obo terms
+    # might happen that there are same obo IDs that are classified as "obsolete" in obo file, but that still exist in the annotation file
+    obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete obo terms...
+    obo.ann[genes,obo.spec.term.sel] <- ann.spec[,obo.spec.term.sel];
     ## transitive closure: annotation propagation from the most specific nodes to all its ancestors
     for (i in genes){
         spec.ann <- ann.list[[i]];
@@ -105,24 +101,22 @@ transitive.closure.annotations <- function(ann.spec, anc){
         all.anc <- unique(unlist(all.anc));
         obo.ann[i, all.anc] <- 1;  # setting the annotations derived by transitive closure
     }
-    ## remove OBO empty terms 
+    ## remove obo empty terms
     obo.ann <- obo.ann[,colSums(obo.ann)!=0];
     return(obo.ann);
 }
 
 #' @title Full annotation matrix
-#' @description Build a full annotations matrix using the ancestor list and the most specific annotations matrix w.r.t. a given weighted adjacency matrix (wadj). 
+#' @description Build a full annotations matrix using the ancestor list and the most specific annotations matrix w.r.t. a given weighted adjacency matrix (wadj).
 #' The rows of the full annotation matrix correspond to all the examples of the given weighted adjacency matrix and the columns to the class/terms.
-#' The transitive closure of the annotations is performed. 
+#' The transitive closure of the annotations is performed.
 #' @details The examples present in the annotation matrix (\code{ann.spec}) but not in the adjacency weighted matrix (\code{W}) are purged.
-#' @param W symmetric adjacency weighted matrix of the graph. 
-#' @param anc ancestor list. 
+#' @param W a symmetric adjacency weighted matrix of the graph.
+#' @param anc the ancestor list.
 #' @param ann.spec the annotation matrix of the most specific annotations (0/1): rows are genes and columns are terms.
-#' @return a full annotation table T, that is a matrix in which the transitive closure of annotations was performed. 
-#' Rows correspond to genes of the weighted adjacency matrix and columns to terms. 
+#' @return A full annotation table T, that is a matrix where the transitive closure of annotations is performed.
+#' Rows correspond to genes of the weighted adjacency matrix and columns to terms.
 #' \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j}, \eqn{T[i,j]=0} means that gene \eqn{i} is not annotated for the term \eqn{j}.
-#' @seealso \code{\link{weighted.adjacency.matrix}}, \code{\link{build.ancestors}}, \cr
-#' \code{\link{specific.annotation.matrix}}, \code{\link{transitive.closure.annotations}}
 #' @export
 #' @examples
 #' data(wadj);
@@ -140,12 +134,12 @@ full.annotation.matrix <- function(W, anc, ann.spec){
     n.oboID <- length(anc);
     obo.ann <- matrix(numeric(n.oboID * n.genes), nrow=n.genes, ncol=n.oboID);    #empty label matrix
     dimnames(obo.ann) <- list(genes,oboIDs);
-    ## fill the full empty annotation matrix with the most specific annotation 
-    genes2obo <- rownames(ann.spec);              # all genes that are associated with OBO terms
-    genes.sel <- genes[genes %in% genes2obo];     # genes 2 OBO terms 2 entrez id of wadj
-    obo.spec.term <- colnames(ann.spec);          # the most specific OBO terms
+    ## fill the full empty annotation matrix with the most specific annotation
+    genes2obo <- rownames(ann.spec);              # all genes that are associated with obo terms
+    genes.sel <- genes[genes %in% genes2obo];     # genes 2 obo terms 2 entrez id of wadj
+    obo.spec.term <- colnames(ann.spec);          # the most specific obo terms
     #might happen that there are same obo IDs that are classified as "obsolete" in obo file, but that still exist in the annotation file (e.g. build 1233)
-    obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete OBO terms...
+    obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete obo terms...
     obo.ann[genes.sel,obo.spec.term.sel] <- ann.spec[genes.sel,obo.spec.term.sel];    # setting the most specific annotations
     ## transitive closure: annotation propagation from the most specific nodes to all its ancestors
     for (i in genes){
@@ -154,7 +148,7 @@ full.annotation.matrix <- function(W, anc, ann.spec){
         all.anc <- unique(unlist(all.anc));
         obo.ann[i, all.anc] <- 1;  # setting the annotations derived by transitive closure
     }
-    ## remove OBO empty terms 
+    ## remove obo empty terms
     obo.ann <- obo.ann[,colSums(obo.ann)!=0];
     return(obo.ann);
 }
@@ -162,9 +156,9 @@ full.annotation.matrix <- function(W, anc, ann.spec){
 #' @title Build submatrix
 #' @title Build an annotation matrix containing only those terms having more than n annotations.
 #' @description Terms having less than n annotations are pruned. Terms having exactly n annotations are discarded as well.
-#' @param ann the annotation matrix (0/1). Rows are examples and columns are functional terms. 
-#' @param n integer number of annotations to be pruned.
-#' @return Matrix of annotations having only those terms with more than n annotations.
+#' @param ann the annotation matrix (0/1). Rows are examples and columns are functional terms.
+#' @param n an integer number representing the number of annotations to be pruned.
+#' @return An annotation matrix having only those terms with more than n annotations.
 #' @export
 #' @examples
 #' data(labels);
@@ -175,12 +169,12 @@ build.submatrix <- function(ann,n){
 }
 
 #' @title Annotation matrix checker
-#' @description This function assess the integrity of an annotation matrix where a transitive closure of annotations was performed.
-#' @param anc ancestor list. 
-#' @param ann.spec the annotation matrix of the most specific annotations (0/1): rows are genes and columns are terms. 
-#' @param ann the full annotation matrix (0/1), that is the matrix where the transitive closure of the annotation was performed. Rows are examples and columns are terms. 
-#' @return If the transitive closure of the annotations is well performed \code{OK} is returned, otherwise a message error is printed on the stdout.
-#' @seealso \code{\link{build.ancestors}}, \code{\link{transitive.closure.annotations}}, \code{\link{full.annotation.matrix}}
+#' @description Assess the integrity of an annotation matrix where a transitive closure of annotations was performed.
+#' @param anc the ancestor list.
+#' @param ann.spec the annotation matrix of the most specific annotations (0/1): rows are genes and columns are terms.
+#' @param ann the full annotation matrix (0/1), i.e. the matrix where the transitive closure of the annotation was performed.
+#' Rows are examples and columns are terms.
+#' @return If the transitive closure of the annotations is performed correctly, \code{OK} is returned, otherwise an error message is printed on the stdout.
 #' @export
 #' @examples
 #' data(graph);
@@ -212,6 +206,6 @@ check.annotation.matrix.integrity <- function(anc, ann.spec, ann){
         n <- names(check)[check=="NOTOK"];
         cat("check.annotation.matrix: NOT_OK. Transitive closure NOT RESPECTED", "\n");
     }else{
-        cat("check.annotation.matrix: OK", "\n");    
+        cat("check.annotation.matrix: OK", "\n");
     }
 }

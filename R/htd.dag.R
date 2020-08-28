@@ -3,8 +3,8 @@
 #############
 
 #' @title HTD-DAG
-#' @description Implementation of a top-down procedure to correct the scores of the hierarchy according to the 
-#' constraints that the score of a node cannot be greater than a score of its parents.
+#' @description Implementation of the top-down procedure to correct the scores of the hierarchy according to the constraints that the score of a
+#' node cannot be greater than a score of its parents.
 #' @details The HTD-DAG algorithm modifies the flat scores according to the hierarchy of a DAG through a unique run across
 #' the nodes of the graph. For a given example \eqn{x \in X}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
 #' \eqn{\bar{y}}, by per-level visiting the nodes of the DAG from top to bottom according to the following simple rule:
@@ -18,11 +18,10 @@
 #'   \right.
 #' }
 #' The node levels correspond to their maximum path length from the root.
-#' @seealso \code{\link{graph.levels}}, \code{\link{hierarchical.checkers}}
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param root name of the class that it is the top-level (root) of the hierarchy (\code{def:00}).
-#' @return a matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+#' @param root name of the class that it is the top-level of the hierarchy (\code{def:00}).
+#' @return A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -31,7 +30,6 @@
 #' S.htd <- htd(S,g,root);
 htd <- function(S, g, root="00"){
     levels <- graph.levels(g,root);
-
     # a dummy root is added if it does not exist
     if(!(root %in% colnames(S))){
         max.score <- max(S);
@@ -42,36 +40,36 @@ htd <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("htd: the number of nodes of the graph and the number of classes of the scores matrix does not match", call.=FALSE);
-        
-    # nodes are scanned from top to bottom: a list par.tod with the parents for each node (ordered from top to bottom) is obtained  
-    par.tod <- get.parents.top.down(g,levels,root)
-    for(i in 1:length(par.tod)){                                    
-        child <- S[,names(par.tod[i])];                     
-        parents <- as.matrix(S[,par.tod[[i]]]); 
-        # Note: the version with an apply and an ifelse statement is slower ...                         
-        for(j in 1:length(child)){                              
-            x <- min(parents[j,]);                                  
-            if(x < child[j])                                        
-                child[j] <- x;                                      
-        }                                                       
-        S[,names(par.tod[i])] <- child;                         
-    }                                                       
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+    # nodes are scanned from top to bottom: a list par.tod with the parents for each node (ordered from top to bottom) is obtained
+    par.tod <- build.parents.top.down(g,levels,root)
+    for(i in 1:length(par.tod)){
+        child <- S[,names(par.tod[i])];
+        parents <- as.matrix(S[,par.tod[[i]]]);
+        # Note: the version with an apply and an ifelse statement is slower ...
+        for(j in 1:length(child)){
+            x <- min(parents[j,]);
+            if(x < child[j])
+                child[j] <- x;
+        }
+        S[,names(par.tod[i])] <- child;
+    }
     return(S);
 }
 
 #' @title HTD-DAG vanilla
-#' @description Function to correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
+#' @description Correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
-#' @param norm.type can be one of the following values: 
+#' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+#' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
+#' @param norm.type a string character. It can be one of the following values:
 #'  \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
-#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 #'  }
-#' @return a matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+#' @return A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -80,17 +78,15 @@ htd <- function(S, g, root="00"){
 htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
     ## check
     if(norm==TRUE && is.null(norm.type))
-        stop("htd.vanilla: choose a normalization methods among those available", call.=FALSE);
+        stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning("htd.vanilla: ", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-    
+        warning(paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done", "\n");
     }
-
-    ## htd correction 
+    ## htd correction
     root <- root.node(g);
     S <- htd(S, g, root);
     cat("htd-dag correction: done", "\n");
@@ -98,18 +94,19 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 }
 
 #' @title HTD-DAG holdout
-#' @description Function to correct the computed scores in a hierarchy according to the HTD-DAG algorithm applying a classical holdout procedure.
+#' @description Correct the computed scores in a hierarchy according to the HTD-DAG algorithm applying a classical holdout procedure.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
-#' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
-#' @param norm.type can be one of the following values: 
+#' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+#' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
+#' @param norm.type a string character. It can be one of the following values:
 #'  \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
-#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 #'  }
-#' @return a matrix with the scores of the classes corrected according to the HTD-DAG algorithm. Rows of the matrix are shrunk to \code{testIndex}.
+#' @return A matrix with the scores of the classes corrected according to the HTD-DAG algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples
 #' data(graph);
@@ -119,21 +116,18 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 htd.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL){
     ## check
     if(norm==TRUE && is.null(norm.type))
-        stop("htd.dag: choose a normalization methods among those available", call.=FALSE);
+        stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning("htd.dag: ", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-    
+        warning(paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done", "\n");
     }
-
     ## shrinking scores matrix to test test
     S <- S[testIndex,];
-
     ## hierarchical top-down
-    root <- root.node(g); 
+    root <- root.node(g);
     S <- htd(S, g, root);
     cat("htd-dag correction: done", "\n");
     return(S);

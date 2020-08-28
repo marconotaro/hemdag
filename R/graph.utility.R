@@ -2,22 +2,22 @@
 ## Utility functions to process and analyze graphs ##
 #####################################################
 
-#' @title Build graph levels 
-#' @description This function groups a set of nodes in according to their maximum depth in the graph. It first inverts the weights 
-#' of the graph and then applies the Bellman Ford algorithm to find the shortest path, achieving in this way the longest path.
-#' @param g an object of class \code{graphNEL} 
-#' @param root name of the root node (\code{def. root="00"}) 
-#' @return a list of the nodes grouped w.r.t. the distance from the root: the first element of the list corresponds to the root node (level 0),
+#' @title Build graph levels
+#' @description Group a set of nodes in according to their maximum depth in the graph. Firstly, it inverts the weights
+#' of the graph and then it applies the Bellman Ford algorithm to find the shortest path, achieving in this way the longest path.
+#' @param g an object of class \code{graphNEL}.
+#' @param root name of the class that it is on the top-level of the hierarchy (\code{def. root="00"}).
+#' @return A list of the nodes grouped w.r.t. the distance from the root: the first element of the list corresponds to the root node (level 0),
 #' the second to nodes at maximum distance 1 (level 1), the third to the node at maximum distance 3 (level 2) and so on.
-#' @export 
+#' @export
 #' @examples
 #' data(graph);
 #' root <- root.node(g);
 #' lev <- graph.levels(g, root=root);
 graph.levels <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0) 
+    if(sum(nodes(g) %in% root)==0)
         stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root) 
+    if(root.node(g)!=root)
         stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
     ed <- edges(g);
     ew <- edgeWeights(g);
@@ -31,9 +31,9 @@ graph.levels <- function(g, root="00"){
     for(i in 1:length(ed)){
         edL[[i]] <- list(edges=ed[[i]], weights=ew[[i]]);
     }
-    G <- graphNEL(nodes=nodes(g), edgeL=edL, edgemode="directed");  
+    G <- graphNEL(nodes=nodes(g), edgeL=edL, edgemode="directed");
     depth.G <- bellman.ford.sp(G,root)$distance;
-    depth.G <- -depth.G  
+    depth.G <- -depth.G
     levels <- vector(mode="list", length=max(depth.G)+1);
     names(levels) <- paste(rep("level", max(depth.G)+1), 0:max(depth.G), sep="_");
     for(i in 1:(max(depth.G)+1))
@@ -44,7 +44,7 @@ graph.levels <- function(g, root="00"){
 #' @title Flip graph
 #' @description Compute a directed graph with edges in the opposite direction.
 #' @param g a \code{graphNEL} directed graph
-#' @return a graph (as an object of class \code{graphNEL}) with edges in the opposite direction w.r.t. g.
+#' @return A graph (as an object of class \code{graphNEL}) with edges in the opposite direction w.r.t. \code{g}.
 #' @export
 #' @examples
 #' data(graph);
@@ -58,7 +58,7 @@ compute.flipped.graph <- function(g){
         parent   <- names(ed[i]);
         if(length(children)!=0){
             for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent); 
+                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
         }
     }
     for (i in 1:length(ndL))
@@ -67,35 +67,29 @@ compute.flipped.graph <- function(g){
     return(og);
 }
 
-#' @name parents
-#' @aliases get.parents
-#' @aliases get.parents.top.down
-#' @aliases get.parents.bottom.up
-#' @aliases get.parents.topological.sorting
-#' @title Build parents 
-#' @description Compute the parents for each node of a graph.
+#' @name build.parents
+#' @title Build parents
+#' @description Build parents for each node of a graph.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param root name of the root node (\code{def. root="00"}).
-#' @param levels a list of character vectors. Each component represents a graph level and the elements of any.
-#' component correspond to nodes. The level 0 coincides with the root node.
-#' @seealso \code{\link{graph.levels}}
+#' @param root name of the class that it is on the top-level of the hierarchy (\code{def. root="00"}).
+#' @param levels a list of character vectors. Each component represents a graph level and the elements of any component correspond to nodes.
+#' The level 0 represents the root node.
 #' @examples
 #' data(graph);
 #' root <- root.node(g)
-#' parents <- get.parents(g, root=root);
+#' parents <- build.parents(g, root=root);
 #' lev <- graph.levels(g, root=root);
-#' parents.tod <- get.parents.top.down(g, lev, root=root);
-#' parents.bup <- get.parents.bottom.up(g, lev, root=root);
-#' parents.tsort <- get.parents.topological.sorting(g, root=root);
-
-#' @rdname parents
-#' @return \code{get.parents} returns a named list of character vectors. Each component corresponds to a node \eqn{x} of the graph (i.e. child node) 
+#' parents.tod <- build.parents.top.down(g, lev, root=root);
+#' parents.bup <- build.parents.bottom.up(g, lev, root=root);
+#' parents.tsort <- build.parents.topological.sorting(g, root=root);
+#' @rdname build.parents
+#' @return \code{build.parents} returns a named list of character vectors. Each component corresponds to a node \eqn{x} of the graph (i.e. child node)
 #' and its vector is the set of its parents (the root node is not included).
 #' @export
-get.parents <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0) 
+build.parents <- function(g, root="00"){
+    if(sum(nodes(g) %in% root)==0)
         stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root) 
+    if(root.node(g)!=root)
         stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
     nd <- nodes(g)
     ndL <- vector(mode="list", length=length(nd));
@@ -106,24 +100,23 @@ get.parents <- function(g, root="00"){
         parent   <- names(ed[i]);
         if(length(children)!=0){
             for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent); 
+                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
         }
     }
-    ndL <- ndL[-which(names(ndL)==root)]; 
+    ndL <- ndL[-which(names(ndL)==root)];
     return(ndL);
 }
 
-#' @rdname parents
-#' @return \code{get.parents.top.down} returns a named list of character vectors. Each component corresponds to a node 
-#' \eqn{x} of the graph (i.e. child node) and its vector is the set of its parents. 
-#' The nodes order follows the levels of the graph from root (excluded) to leaves.
+#' @rdname build.parents
+#' @return \code{build.parents.top.down} returns a named list of character vectors. Each component corresponds to a node \eqn{x} of the graph (i.e. child node)
+#' and its vector is the set of its parents. The order of nodes follows the levels of the graph from root (excluded) to leaves.
 #' @export
-get.parents.top.down <- function(g,levels, root="00"){
-    if(sum(nodes(g) %in% root)==0) 
+build.parents.top.down <- function(g,levels, root="00"){
+    if(sum(nodes(g) %in% root)==0)
         stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root) 
-        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");    
-    ord.nd <- unlist(levels); 
+    if(root.node(g)!=root)
+        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
+    ord.nd <- unlist(levels);
     ndL <- vector(mode="list", length=length(ord.nd));
     names(ndL) <- ord.nd;
     ed <- edges(g);
@@ -132,23 +125,23 @@ get.parents.top.down <- function(g,levels, root="00"){
         parent   <- names(ed[i]);
         if(length(children)!=0){
             for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent); 
+                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
         }
     }
-    ndL <- ndL[-which(names(ndL)==root)]; 
+    ndL <- ndL[-which(names(ndL)==root)];
     return(ndL);
 }
 
-#' @rdname parents
-#' @return \code{get.parents.bottom.up} returns a named list of character vectors. Each component corresponds to a node \eqn{x} of the 
+#' @rdname build.parents
+#' @return \code{build.parents.bottom.up} returns a named list of character vectors. Each component corresponds to a node \eqn{x} of the
 #' graph (i.e. child node) and its vector is the set of its parents. The nodes are ordered from leaves to root (excluded).
 #' @export
-get.parents.bottom.up <- function(g,levels, root="00"){
-    if(sum(nodes(g) %in% root)==0) 
+build.parents.bottom.up <- function(g,levels, root="00"){
+    if(sum(nodes(g) %in% root)==0)
         stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root) 
+    if(root.node(g)!=root)
         stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
-    flip.ord.nd <- rev(unlist(levels)); 
+    flip.ord.nd <- rev(unlist(levels));
     ndL <- vector(mode="list", length=length(flip.ord.nd));
     names(ndL) <- flip.ord.nd;
     ed <- edges(g);
@@ -157,24 +150,23 @@ get.parents.bottom.up <- function(g,levels, root="00"){
         parent   <- names(ed[i]);
         if(length(children)!=0){
             for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent); 
+                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
         }
     }
-    ndL <- ndL[-which(names(ndL)==root)]; 
+    ndL <- ndL[-which(names(ndL)==root)];
     return(ndL);
 }
 
-#' @rdname parents
-#' @return \code{get.parents.topological.sorting} a named list of character vectors. Each component corresponds to a 
-#' node \eqn{x} of the graph (i.e. child node) and its vector is the set of its parents. The nodes are ordered according to a 
-#' topological sorting, i.e. parents node come before children node.
+#' @rdname build.parents
+#' @return \code{build.parents.topological.sorting} a named list of character vectors. Each component corresponds to a node \eqn{x} of the graph (i.e. child node)
+#' and its vector is the set of its parents. The nodes are ordered according to a topological sorting, i.e. parents node come before children node.
 #' @export
-get.parents.topological.sorting <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0) 
+build.parents.topological.sorting <- function(g, root="00"){
+    if(sum(nodes(g) %in% root)==0)
         stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root) 
-        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");    
-    ord.nd <- tsort(g); 
+    if(root.node(g)!=root)
+        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
+    ord.nd <- tsort(g);
     ndL <- vector(mode="list", length=length(ord.nd));
     names(ndL) <- ord.nd;
     ed <- edges(g);
@@ -183,23 +175,19 @@ get.parents.topological.sorting <- function(g, root="00"){
         parent   <- names(ed[i]);
         if(length(children)!=0){
             for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent); 
+                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
         }
     }
-    ndL <- ndL[-which(names(ndL)==root)]; 
+    ndL <- ndL[-which(names(ndL)==root)];
     return(ndL);
 }
 
-#' @name descendants
-#' @aliases build.descendants
-#' @aliases build.descendants.per.level 
-#' @aliases build.descendants.bottom.up
-#' @title Build descendants 
-#' @description Compute the descendants for each node of a graph.
+#' @name build.descendants
+#' @title Build descendants
+#' @description Build descendants for each node of a graph.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param levels a list of character vectors. Each component represents a graph level and the elements of any 
-#' component correspond to nodes. The level 0 coincides with the root node.
-#' @seealso \code{\link{graph.levels}}
+#' @param levels a list of character vectors. Each component represents a graph level and the elements of any component correspond to nodes.
+#' The level 0 coincides with the root node.
 #' @examples
 #' data(graph);
 #' root <- root.node(g);
@@ -207,10 +195,9 @@ get.parents.topological.sorting <- function(g, root="00"){
 #' lev <- graph.levels(g, root=root);
 #' desc.tod <- build.descendants.per.level(g,lev);
 #' desc.bup <- build.descendants.bottom.up(g,lev);
-
-#' @rdname descendants
-#' @return \code{build.descendants} returns a named list of vectors. 
-#' Each component corresponds to a node \eqn{x} of the graph, and its vector is the set of its descendants including also \eqn{x}.
+#' @rdname build.descendants
+#' @return \code{build.descendants} returns a named list of vectors. Each component corresponds to a node \eqn{x} of the graph, and its vector
+#' is the set of its descendants including also \eqn{x}.
 #' @export
 build.descendants <- function(g){
     name.nodes <- nodes(g);
@@ -221,8 +208,8 @@ build.descendants <- function(g){
     return(desc);
 }
 
-#' @rdname descendants
-#' @return \code{build.descendants.per.level} returns a named list of vectors. 
+#' @rdname build.descendants
+#' @return \code{build.descendants.per.level} returns a named list of vectors.
 #' Each component corresponds to a node \eqn{x} of the graph and its vector is the set of its descendants including also \eqn{x}.
 #' The nodes are ordered from root (included) to leaves.
 #' @export
@@ -235,10 +222,9 @@ build.descendants.per.level <- function(g,levels){
     return(desc);
 }
 
-#' @rdname descendants
-#' @return \code{build.descendants.bottom.up} returns a named list of vectors. 
-#' Each component corresponds to a node \eqn{x} of the graph and its vector is the set of its descendants including also \eqn{x}.
-#' The nodes are ordered from leaves to root (included).
+#' @rdname build.descendants
+#' @return \code{build.descendants.bottom.up} returns a named list of vectors. Each component corresponds to a node \eqn{x} of
+#' the graph and its vector is the set of its descendants including also \eqn{x}. The nodes are ordered from leaves to root (included).
 #' @export
 build.descendants.bottom.up <- function(g,levels) {
     flip.ord.nd <- rev(unlist(levels));
@@ -249,37 +235,32 @@ build.descendants.bottom.up <- function(g,levels) {
     return(desc);
 }
 
-#' @name children
-#' @aliases build.children
-#' @aliases get.children.top.down
-#' @aliases get.children.top.down
-#' @title Build children 
-#' @description Compute the children for each node of a graph.
+#' @name build.children
+#' @title Build children
+#' @description Build children for each node of a graph.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param levels a list of character vectors. Each component represents a graph level and the elements of any 
+#' @param levels a list of character vectors. Each component represents a graph level and the elements of any
 #' component correspond to nodes. The level 0 coincides with the root node.
-#' @seealso \code{\link{graph.levels}}
 #' @examples
 #' data(graph);
 #' root <- root.node(g);
 #' children <- build.children(g);
 #' lev <- graph.levels(g, root=root);
-#' children.tod <- get.children.top.down(g,lev);
-#' children.bup <- get.children.bottom.up(g,lev);
-
-#' @rdname children
-#' @return \code{build.children} returns a named list of vectors. Each component corresponds to a node \eqn{x} of the graph and its 
-#' vector is the set of its children.
+#' children.tod <- build.children.top.down(g,lev);
+#' children.bup <- build.children.bottom.up(g,lev);
+#' @rdname build.children
+#' @return \code{build.children} returns a named list of vectors. Each component corresponds to a node \eqn{x} of the graph and its vector
+#' is the set of its children.
 #' @export
 build.children <- function(g){
     return(edges(g));
 }
 
-#' @rdname children
-#' @return \code{get.children.top.down} returns a named list of character vectors. Each component corresponds to a node \eqn{x} 
+#' @rdname build.children
+#' @return \code{build.children.top.down} returns a named list of character vectors. Each component corresponds to a node \eqn{x}
 #' of the graph (i.e. parent node) and its vector is the set of its children. The nodes are ordered from root (included) to leaves.
 #' @export
-get.children.top.down <- function(g,levels){
+build.children.top.down <- function(g,levels){
     child <- build.children(g)
     nd <- c();
     for(i in 1:length(levels)){
@@ -289,27 +270,23 @@ get.children.top.down <- function(g,levels){
     return(nd);
 }
 
-#' @rdname children
-#' @return \code{get.children.bottom.up} returns a named list of character vectors. Each component corresponds to a node \eqn{x} 
+#' @rdname build.children
+#' @return \code{build.children.bottom.up} returns a named list of character vectors. Each component corresponds to a node \eqn{x}
 #' of the graph (i.e. parent node) and its vector is the set of its children. The nodes are ordered from leaves (included) to root.
 #' @export
-get.children.bottom.up <- function(g,levels){
+build.children.bottom.up <- function(g,levels){
     flip.ord.nd <- rev(unlist(levels));
-    ed <- edges(g);  
+    ed <- edges(g);
     nd <- ed[flip.ord.nd];
     return(nd);
 }
 
-#' @name ancestors
-#' @aliases build.ancestors
-#' @aliases build.ancestors.per.level
-#' @aliases build.ancestors.bottom.up
-#' @title Build ancestors 
-#' @description Compute the ancestors for each node of a graph.
+#' @name build.ancestors
+#' @title Build ancestors
+#' @description Build ancestors for each node of a graph.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param levels a list of character vectors. Each component represents a graph level and the elements of any 
-#' component correspond to nodes. The level 0 coincides with the root node.
-#' @seealso \code{\link{graph.levels}}
+#' @param levels a list of character vectors. Each component represents a graph level and the elements of any component correspond to nodes.
+#' The level 0 coincides with the root node.
 #' @examples
 #' data(graph);
 #' root <- root.node(g);
@@ -317,9 +294,8 @@ get.children.bottom.up <- function(g,levels){
 #' lev <- graph.levels(g, root=root);
 #' anc.tod <-build.ancestors.per.level(g,lev);
 #' anc.bup <- build.ancestors.bottom.up(g,lev);
-
-#' @rdname ancestors
-#' @return \code{build.ancestos} returns a named list of vectors. Each component corresponds to a node \eqn{x} of the graph and its vector 
+#' @rdname build.ancestors
+#' @return \code{build.ancestos} returns a named list of vectors. Each component corresponds to a node \eqn{x} of the graph and its vector
 #' is the set of its ancestors including also \eqn{x}.
 #' @export
 build.ancestors <- function(g){
@@ -332,8 +308,8 @@ build.ancestors <- function(g){
     return(anc);
 }
 
-#' @rdname ancestors
-#' @return \code{build.ancestors.per.level} returns a named list of vectors. Each component corresponds to a node \eqn{x} 
+#' @rdname build.ancestors
+#' @return \code{build.ancestors.per.level} returns a named list of vectors. Each component corresponds to a node \eqn{x}
 #' of the graph and its vector is the set of its ancestors including also \eqn{x}. The nodes are ordered from root (included) to leaves.
 #' @export
 build.ancestors.per.level <- function(g,levels){
@@ -346,8 +322,8 @@ build.ancestors.per.level <- function(g,levels){
     return(anc);
 }
 
-#' @rdname ancestors
-#' @return \code{build.ancestors.bottom.up} a named list of vectors. Each component corresponds to a node \eqn{x} of the 
+#' @rdname build.ancestors
+#' @return \code{build.ancestors.bottom.up} a named list of vectors. Each component corresponds to a node \eqn{x} of the
 #' graph and its vector is the set of its ancestors including also \eqn{x}. The nodes are ordered from leaves to root (included).
 #' @export
 build.ancestors.bottom.up <- function(g,levels){
@@ -363,7 +339,7 @@ build.ancestors.bottom.up <- function(g,levels){
 #' @title Root node
 #' @description Find the root node of a directed graph.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @return name of the root node.
+#' @return Name of the root node.
 #' @export
 #' @examples
 #' data(graph);
@@ -375,9 +351,9 @@ root.node <- function(g){
 }
 
 #' @title Leaves
-#' @description Find the leaves of a directed graph.
+#' @description Find leaves of a directed graph.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @return a vector with the names of the leaves of g.
+#' @return A vector with the names of the leaves of g.
 #' @export
 #' @examples
 #' data(graph);
@@ -389,9 +365,9 @@ find.leaves <- function(g){
 }
 
 #' @title Distances from leaves
-#' @description This function returns the minimum distance of each node from one of the leaves of the graph.
+#' @description Compute the minimum distance of each node from one of the leaves of the graph.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @return a named vector. The names are the names of the nodes of the graph \code{g}, and their values represent the distance from the leaves.
+#' @return A named vector. The names are the names of the nodes of the graph \code{g}, and their values represent the distance from the leaves.
 #' A value equal to 0 is assigned to the leaves, 1 to nodes with distance 1 from a leaf and so on.
 #' @export
 #' @examples
@@ -408,12 +384,11 @@ distances.from.leaves <- function(g){
 }
 
 #' @title Constraints matrix
-#' @description This function returns a matrix with two columns and as many rows as there are edges.
-#' The entries of the first columns are the index of the node the edge comes from (i.e. children nodes), 
-#' the entries of the second columns indicate the index of node the edge is to (i.e. parents nodes). 
+#' @description Return a matrix with two columns and as many rows as there are edges. The entries of the first columns are the index of the node the edge
+#' comes from (i.e. children nodes), the entries of the second columns indicate the index of node the edge is to (i.e. parents nodes).
 #' Referring to a dag this matrix defines a partial order.
 #' @param g a graph of class \code{graphNELL}. It represents the hierarchy of the classes.
-#' @return a constraints matrix w.r.t the graph \code{g}.
+#' @return A constraints matrix w.r.t the graph \code{g}.
 #' @export
 #' @examples
 #' data(graph);
@@ -426,12 +401,12 @@ constraints.matrix <- function(g){
     return(eM);
 }
 
-#' @title Build subgraph 
-#' @description This function returns a subgraph with only the supplied nodes and any edges between them.
+#' @title Build subgraph
+#' @description Build a subgraph with only the supplied nodes and any edges between them.
 #' @param nd a vector with the nodes for which the subgraph must be built.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param edgemode can be "directed" or "undirected".
-#' @return a subgraph with only the supplied nodes. 
+#' @return A subgraph with only the supplied nodes.
 #' @export
 #' @examples
 #' data(graph);
@@ -443,13 +418,13 @@ build.subgraph <- function(nd, g, edgemode="directed"){
     ed.sel <- ed[nd];
     ndL <- vector(mode="list", length=length(ed.sel));
     names(ndL) <- names(ed.sel);
-    for(i in 1:length(ed.sel)){ 
+    for(i in 1:length(ed.sel)){
         parent   <- names(ed.sel[i]);
         children <- ed.sel[[i]];
-        if(length(children!=0)){ 
+        if(length(children!=0)){
             children.map <- children[children %in% nd]
             ndL[[i]] <- append(ndL[[i]],children.map);
-        } 
+        }
     }
     for (i in 1:length(ndL))
         ndL[[i]] <- list(edges=ndL[[i]]);
@@ -458,44 +433,57 @@ build.subgraph <- function(nd, g, edgemode="directed"){
 }
 
 #' @title dag checker
-#' @description This function assess the integrity of a dag.
+#' @description Check the integrity of a dag.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).
-#' @return If all the nodes are accessible from the root "dag is ok" is printed,
-#' otherwise a message error and the list of the not accessible nodes is printed on the stdout.
+#' @return If all the nodes are accessible from the root "dag is ok" is printed, otherwise a message error and the list of
+#' the not accessible nodes is printed on the stdout.
 #' @export
 #' @examples
 #' data(graph);
 #' root <- root.node(g);
 #' check.dag.integrity(g, root=root);
 check.dag.integrity <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0) 
+    if(sum(nodes(g) %in% root)==0)
         stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root) 
+    if(root.node(g)!=root)
         stop("the supplied root node is not the right root node of g. Use the function root.node(g) to find the root node of g");
   all.nodes <- nodes(g);
   acc.nodes <- names(acc(g,root)[[1]]);
   if((length(all.nodes) - length(acc.nodes)) > 1) {
         n <- setdiff(all.nodes,c(acc.nodes,root));
-        cat("check.dag.integrity: not all nodes accessible from root\n");
-        cat("Nodes not accessible from root:\n");
+        cat("not all nodes accessible from root\n");
+        cat("nodes not accessible from root:\n");
         cat(n,"\n");
-    }else{ 
+    }else{
         cat("dag is ok\n")
     };
 }
 
 #' @name hierarchical.checkers
-#' @aliases check.hierarchy
-#' @aliases check.hierarchy.single.sample
 #' @title Hierarchical constraints checker
-#' @description Check if the true path rule is violated or not. In other words this function checks if the score of a 
-#' parent or an ancestor node is always larger or equal than that of its children or descendants nodes.
-#' @param y.hier vector of scores relative to a single example. This must be a named numeric vector.
-#' @param S.hier the matrix with the scores of the classes corrected in according to hierarchy. This must be a named matrix: rows are
-#' examples and columns are classes.
+#' @description Check if the true path rule is violated or not. In other words this function checks if the score of a parent or an ancestor node is
+#' always larger or equal than that of its children or descendants nodes.
+#' @param y.hier vector of scores relative to a single example. It must be a named numeric vector (names are functional classes).
+#' @param S.hier the matrix with the scores of the classes corrected in according to hierarchy. It must be a named matrix: rows are examples and
+#' columns are functional classes.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).
+#' @return A list of 3 elements:
+#' \itemize{
+#'  \item Status:
+#'     \itemize{
+#'      \item \code{OK} if none hierarchical constraints have bee broken;
+#'      \item \code{NOTOK} if there is at least one hierarchical constraints broken;
+#'   }
+#'     \item hierarchy_constraints_broken:
+#'     \itemize{
+#'      \item TRUE: example did not respect the hierarchical constraints;
+#'      \item FALSE: example broke the hierarchical constraints;
+#'   }
+#'  \item hierarchy_constraints_satisfied: how many terms satisfied the hierarchical constraint;
+#' }
+#' @export
 #' @examples
 #' data(graph);
 #' data(scores);
@@ -504,35 +492,19 @@ check.dag.integrity <- function(g, root="00"){
 #' S.hier.single.example <- S.hier[sample(ncol(S.hier),1),];
 #' check.hierarchy.single.sample(S.hier.single.example, g, root=root);
 #' check.hierarchy(S.hier, g, root);
-
-#' @return return a list of 3 elements:
-#' \itemize{
-#'  \item Status: 
-#'     \itemize{
-#'      \item OK if none hierarchical constraints have bee broken;
-#'      \item NOTOK if there is at least one hierarchical constraints broken;
-#'   }
-#'     \item hierarchy_constraints_broken:
-#'     \itemize{
-#'      \item TRUE: example did not respect the hierarchical constraints; 
-#'      \item FALSE: example broke the hierarchical constraints;
-#'   }
-#'  \item hierarchy_constraints_satisfied: how many terms satisfied the hierarchical constraint;
-#' }
-#' @export
 check.hierarchy.single.sample <- function(y.hier,g, root="00"){
     if(!(root %in% names(y.hier))){
         max.score <- max(y.hier);
         y.hier <- c(max.score,y.hier);
         names(y.hier)[1] <- root;
     }
-    par <- get.parents(g,root);
+    par <- build.parents(g,root);
     v <- c()
     for(i in 1:length(par)){
         child <- y.hier[names(par[i])];
         parents <- y.hier[par[[i]]]
-        x <- parents >= child   
-        y <- any(x==0)  
+        x <- parents >= child
+        y <- any(x==0)
         v <- append(v,y)
     }
     names(v) <- names(par)
@@ -556,13 +528,13 @@ check.hierarchy <- function(S.hier,g, root="00"){
         S.hier <- cbind(z,S.hier);
         colnames(S.hier)[1] <- root;
     }
-    par <- get.parents(g,root);
+    par <- build.parents(g,root);
     v <- c()
     for(i in 1:length(par)){
         child <- S.hier[,names(par[i])];
         parents <- S.hier[,par[[i]]]
-        x <- parents >= child   
-        y <- any(x==0)   
+        x <- parents >= child
+        y <- any(x==0)
         v <- append(v,y)
     }
     names(v) <- names(par)
@@ -579,12 +551,11 @@ check.hierarchy <- function(S.hier,g, root="00"){
 
 #' @title Lexicographical topological sorting
 #' @description Nodes of a graph are sorted according to a lexicographical topological ordering.
-#' @details A topological sorting is a linear ordering of the nodes such that given an edge from 
-#' \code{u} to \code{v}, the node \code{u} comes before node \code{v} in the ordering. 
-#' Topological sorting is not possible if the graph \code{g} is not a dag.
+#' @details A topological sorting is a linear ordering of the nodes such that given an edge from \code{u} to \code{v}, the node \code{u} comes before
+#' node \code{v} in the ordering. Topological sorting is not possible if the graph \code{g} contains self-loop.
 #' To implement the topological sorting algorithm we applied the Kahn’s algorithm.
-#' @param g an object of class \code{graphNEL} 
-#' @return a vector in which the nodes of the graph \code{g} are sorted according to a lexicographical topological order.
+#' @param g an object of class \code{graphNEL}.
+#' @return A vector in which the nodes of the graph \code{g} are sorted according to a lexicographical topological order.
 #' @export
 #' @examples
 #' data(graph);
@@ -593,14 +564,14 @@ lexicographical.topological.sort <- function(g){
     ## check self-loop: graph with self-loop cannot be processed
     indegree <- degree(g)$inDegree;
     if(!(any(indegree==0))){
-        stop("input graph g is not a dag"); ## self-loop detect
+        stop("input graph g contains self-loop"); ## self-loop detect
     }
     T <- c();
     indegree <- degree(g)$inDegree;
     while(length(indegree)!=0){
         queue <- names(which(indegree==0));
         if(length(queue)==0)
-            stop("input graph g is not a dag"); ## check self-loop
+            stop("input graph g contains self-loop"); ## check self-loop
         queue <- queue[order(queue, decreasing=FALSE)];
         T <- append(T, queue[1]);
         indegree <- indegree[-which(names(indegree)==queue[1])];
@@ -612,11 +583,11 @@ lexicographical.topological.sort <- function(g){
 }
 
 #' @title Build consistent graph
-#' @description build a graph in which all nodes are reachable from root.
-#' @details all nodes not accessible from the root (if any) are removed from the graph and printed on stdout.
+#' @description Build a graph in which all nodes are reachable from root.
+#' @details All nodes not accessible from root (if any) are removed from the graph and printed on stdout.
 #' @param g an object of class \code{graphNEL}.
 #' @param root name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).
-#' @return a graph (as an object of class \code{graphNEL}) in which all nodes are accessible from root.
+#' @return A graph (as an object of class \code{graphNEL}) in which all nodes are accessible from root.
 #' @export
 #' @examples
 #' data(graph);
@@ -637,12 +608,11 @@ build.consistent.graph <- function(g=g, root="00"){
 }
 
 #' @title Weighted adjacency matrix
-#' @description Construct a Weighted Adjacency Matrix (wadj matrix) of a graph.
-#' @param file name of the plain text file to be read (\code{def. edges}). The format of the file is a sequence of rows. 
-#' Each row corresponds to an edge represented through a pair of vertices separated by blanks and the weight of the edges.
-#' For instance: \code{nodeX nodeY score}.
-#' The file extension can be or plain format (".txt") or compressed (".gz").
-#' @return a named symmetric weighted adjacency matrix of the graph.
+#' @description Build a symmetric weighted adjacency matrix (wadj matrix) of a graph.
+#' @param file name of the plain text file to be read (\code{def. edges}). The format of the file is a sequence of rows.
+#' Each row corresponds to an edge represented through a pair of vertexes (blank separated) and the weight of the edges.
+#' For instance: \code{nodeX nodeY score}. The file extension can be plain (".txt") or compressed (".gz").
+#' @return A named symmetric weighted adjacency matrix of the graph.
 #' @export
 #' @examples
 #' edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");
@@ -659,7 +629,7 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
     if(charcheck){
         nodes <- sort(unique(as.vector(as.matrix(m[,1:2])))); ##NB:df must be converted as matrix to make as.vector working..
     }else{
-        nodes <- as.character(sort(as.numeric(unique(as.vector(m[,1:2]))))); 
+        nodes <- as.character(sort(as.numeric(unique(as.vector(m[,1:2])))));
     }
     n.nodes <- length(nodes);
     # building the adjacency matrix
@@ -677,14 +647,13 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 #' are functional terms, e.g. GO terms) or it can be a square named matrix \code{m x m}, where \code{m} are examples.
 #' @param output.file name of the file on which the matrix must be written.
 #' @param digits number of digits to be used to save scores of \code{m} (\code{def. digits=3}).
-#' The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @return tupla score matrix stored in output.file.
+#' The extension of the file can be plain (".txt") or compressed (".gz").
+#' @return A tupla score matrix stored in output.file.
 #' @export
 #' @examples
 #' data(wadj);
 #' tmpdir <- paste0(tempdir(),"/");
 #' tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"), digits=3);
-#' tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt", digits=3));
 tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
     im <- which(m!=0, arr.ind=TRUE);
     rows <- rownames(im);
@@ -706,14 +675,12 @@ tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
 }
 
 #' @title Parse an HPO obo file
-#' @description Read an HPO obo file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write
-#' the edges of the dag on a plain text file. The format of the file is a sequence of
-#' rows and each row corresponds to an edge represented through a pair of vertices separated by blanks.
-#' @details a faster and more flexible parser to handle \emph{obo} file can be found \href{https://github.com/marconotaro/obogaf-parser}{here}.
-#' @param obofile an HPO obo file. The extension of the obofile can be or plain format (".txt") or compressed (".gz").
-#' @param file name of the file of the edges to be written.
-#' The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @return a text file representing the edges in the format: source  destination (i.e. one row for each edge).
+#' @description Read an HPO obo file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write the edges of the dag on a plain text file.
+#' The format of the file is a sequence of rows and each row corresponds to an edge represented through a pair of vertexes separated by blank.
+#' @details A faster and more flexible parser to handle \emph{obo} file can be found \href{https://github.com/marconotaro/obogaf-parser}{here}.
+#' @param obofile an HPO obo file. The extension of the obofile can be plain (".txt") or compressed (".gz").
+#' @param file name of the file of the edges to be written. The extension of the file can be plain (".txt") or compressed (".gz").
+#' @return A text file representing the edges in the format: source  destination (i.e. one row for each edge).
 #' @export
 #' @examples
 #' \dontrun{
@@ -723,8 +690,8 @@ build.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
     tmp <- strsplit(obofile, "[.,/,_]")[[1]];
     if(any(tmp %in% "gz")){
         con <- gzfile(obofile);
-        line <- readLines(con);    
-        close(con);        
+        line <- readLines(con);
+        close(con);
     }else{
         line <- readLines(obofile);
     }
@@ -765,17 +732,17 @@ build.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
 }
 
 #' @title Write a directed graph on file
-#' @description An object of class \code{graphNEL} is read and the graph is written on a plain text file as sequence of rows. 
+#' @description Read an object of class \code{graphNEL} and write the graph as sequence of rows on a plain text file.
 #' @param g a graph of class \code{graphNEL}.
-#' @param file name of the file to be written. The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @return a plain text file representing the graph. Each row corresponds to an edge represented through a pair of vertices separated by blanks.
+#' @param file name of the file to be written. The extension of the file can be plain (".txt") or compressed (".gz").
+#' @return A plain text file representing the graph. Each row corresponds to an edge represented through a pair of vertexes separated by blank.
 #' @export
 #' @examples
 #' data(graph);
 #' tmpdir <- paste0(tempdir(),"/");
 #' file <- paste0(tmpdir,"graph.edges.txt.gz");
 #' write.graph(g, file=file);
-write.graph <- function(g, file="graph.txt.gz"){  
+write.graph <- function(g, file="graph.txt.gz"){
     num.edges <- length(unlist(edges(g)));
     num.v <- numNodes(g);
     m <- matrix(character(num.edges*2), ncol=2);
@@ -800,16 +767,15 @@ write.graph <- function(g, file="graph.txt.gz"){
 }
 
 #' @title Read a directed graph from a file
-#' @description A directed graph is read from a file and a \code{graphNEL} object is built.
-#' @param file name of the file to be read. The format of the file is a sequence of rows and each row corresponds 
-#' to an edge represented through a pair of vertices separated by blanks. 
-#' The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @return an object of class \code{graphNEL}.
+#' @description Read a directed graph from a file and build a \code{graphNEL} object.
+#' @param file name of the file to be read. The format of the file is a sequence of rows and each row corresponds to an edge represented
+#' through a pair of vertexes separated by blanks. The extension of the file can be plain (".txt") or compressed (".gz").
+#' @return An object of class \code{graphNEL}.
 #' @export
 #' @examples
 #' ed <- system.file("extdata/graph.edges.txt.gz", package= "HEMDAG");
 #' g <- read.graph(file=ed);
-read.graph <- function(file="graph.txt.gz"){ 
+read.graph <- function(file="graph.txt.gz"){
     tmp <- strsplit(file, "[.,/,_]")[[1]];
     if(any(tmp %in% "gz")){
         m <- as.matrix(read.table(gzfile(file), colClasses="character"));
@@ -830,15 +796,15 @@ read.graph <- function(file="graph.txt.gz"){
 }
 
 #' @title Read an undirected graph from a file
-#' @description The graph is read from a file and a \code{graphNEL} object is built. The format of the input file is a sequence of rows. 
-#' Each row corresponds to an edge represented through a pair of vertices separated by blanks, and the weight of the edge.
-#' @param file name of the file to be read. The extension of the file can be or plain format (".txt") or compressed (".gz").
-#' @return a graph of class \code{graphNEL}.
+#' @description Read a graph from a file and build a \code{graphNEL} object. The format of the input file is a sequence of rows.
+#' Each row corresponds to an edge represented through a pair of vertexes (blank separated) and the weight of the edge.
+#' @param file name of the file to be read. The extension of the file can be plain (".txt") or compressed (".gz").
+#' @return A graph of class \code{graphNEL}.
 #' @export
 #' @examples
 #' edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");
 #' g <- read.undirected.graph(file=edges);
-read.undirected.graph <- function(file="graph.txt.gz") {  
+read.undirected.graph <- function(file="graph.txt.gz"){
     tmp <- strsplit(file, "[.,/,_]")[[1]];
     if(any(tmp %in% "gz")){
         m <- as.matrix(read.table(gzfile(file), colClasses="character"));

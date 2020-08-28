@@ -2,25 +2,25 @@
 ##  Obozinski Heuristic Methods  ##
 ###################################
 
-#' @name obozinski-heuristic-methods
-#' @aliases heuristic.max
-#' @aliases heuristic.and
-#' @aliases heuristic.or
-#' @title Obozinski heuristic methods 
-#' @description Implementation of the Obozinski's heuristic methods \code{MAX}, \code{AND}, \code{OR} (\cite{Obozinski et al., Genome Biology, 2008, 
+#' @name obozinski.heuristic.methods
+#' @aliases obozinski.max
+#' @aliases obozinski.and
+#' @aliases obozinski.or
+#' @title Obozinski heuristic methods
+#' @description Implementation of the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008,
 #' \href{https://genomebiology.biomedcentral.com/articles/10.1186/gb-2008-9-s1-s6}{doi:10.1186/gb-2008-9-s1-s6}}).
-#' @details Heuristic Methods:
+#' @details Obozinski's heuristic methods:
 #' \enumerate{
-#'  \item \bold{MAX}: reports the largest logistic regression (LR) value of self and all descendants: \eqn{p_i = max_{j \in descendants(i)} \hat{p_j}};
-#'  \item \bold{AND}: reports the product of LR values of all ancestors and self. This is equivalent to computing the probability that all 
-#' ancestral terms are "on" assuming that, conditional on the data, all predictions are independent: \eqn{p_i = \prod_{j \in ancestors(i)} \hat{p_j}};
-#'  \item \bold{OR}: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data, 
-#' all predictions are independent: \eqn{1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})};
+#' \item \bold{Max}: reports the largest logistic regression (LR) value of self and all descendants: \eqn{p_i = max_{j \in descendants(i)} \hat{p_j}};
+#' \item \bold{And}: reports the product of LR values of all ancestors and self. This is equivalent to computing the probability that all
+#'  ancestral terms are "on" assuming that, conditional on the data, all predictions are independent: \eqn{p_i = \prod_{j \in ancestors(i)} \hat{p_j}};
+#' \item \bold{Or}: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data,
+#'  all predictions are independent: \eqn{1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})};
 #' }
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param root name of the class that it is the top-level (root) of the hierarchy (\code{def:00}).
-#' @return a matrix with the scores of the classes corrected according to the chosen heuristic algorithm.
+#' @param root name of the class that it is the top-level of the hierarchy (\code{def:00}).
+#' @return A matrix with the scores of the classes corrected according to the chosen Obozinski's heuristic algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -39,8 +39,7 @@ obozinski.max <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("obozinski.max: the number of nodes of the graph g and the number of classes of the flat scores matrix S does not match", call.=FALSE);
-
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
     desc <- build.descendants(g);
     for(i in 1:length(desc)){
         m <- as.matrix(S[,desc[[i]]]);
@@ -49,8 +48,8 @@ obozinski.max <- function(S, g, root="00"){
     return(S);
 }
 
-#' @rdname obozinski-heuristic-methods
-#' @export 
+#' @rdname obozinski.heuristic.methods
+#' @export
 obozinski.and <- function(S, g, root="00"){
     if(!(root %in% colnames(S))) {
         max.score <- max(S);
@@ -61,8 +60,7 @@ obozinski.and <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("obozinski.and: the number of nodes of the graph g and the number of classes of the flat scores matrix S does not match", call.=FALSE);
-
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
     S.hier <- S;
     anc <- build.ancestors(g);
     for(i in 1:length(anc)){
@@ -75,8 +73,8 @@ obozinski.and <- function(S, g, root="00"){
     return(S.hier);
 }
 
-#' @rdname obozinski-heuristic-methods
-#' @export 
+#' @rdname obozinski.heuristic.methods
+#' @export
 obozinski.or <- function(S, g, root="00"){
     if(!(root %in% colnames(S))) {
         max.score <- max(S);
@@ -87,8 +85,7 @@ obozinski.or <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("obozinski.or: the number of nodes of the graph g and the number of classes of the flat scores matrix S does not match", call.=FALSE);
-
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
     S.hier <- S;
     desc <- build.descendants(g);
     for(i in 1:length(desc)){
@@ -102,24 +99,24 @@ obozinski.or <- function(S, g, root="00"){
 }
 
 #' @title Obozinski's heuristic methods calling
-#' @seealso \code{\link{Obozinski-heuristic-methods}}
-#' @description Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}).
+#' @description Compute the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008}).
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param heuristic can be one of the following three values:
+#' @param heuristic a string character. It can be one of the following three values:
 #' \enumerate{
-#'  \item "max": run the method \code{heuristic.max};
-#'  \item "and": run the method \code{heuristic.and};
-#'  \item "or": run the method \code{heuristic.or};
+#'  \item "max": run the method \code{obozinski.max};
+#'  \item "and": run the method \code{obozinski.and};
+#'  \item "or": run the method \code{obozinski.or};
 #' }
-#' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
-#' @param norm.type can be one of the following values: 
+#' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+#' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
+#' @param norm.type a string character. It can be one of the following values:
 #'  \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
-#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
+#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 #'  }
-#' @return a matrix with the scores of the classes corrected according to the chosen heuristic algorithm.
+#' @return A matrix with the scores of the classes corrected according to the chosen heuristic algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -128,79 +125,18 @@ obozinski.or <- function(S, g, root="00"){
 obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL){
     ## check
     if(heuristic!="max" && heuristic!="and" && heuristic!="or")
-        stop("heuristic.methods: the chosen heuristic method is not among those available or it has been misspelled", call.=FALSE);
+        stop("the chosen heuristic method is not among those available or it has been misspelled");
     if(norm==TRUE && is.null(norm.type))
-        stop("heuristic.methods: choose a normalization methods among those available", call.=FALSE);
+        stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning("heuristic.methods: ", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-   
+        warning(paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done", "\n");
     }
-
-    ## root node 
+    ## Obozinski's hierarchical heuristic methods
     root <- root.node(g);
-
-    ## Obozinski's hierarchical heuristic methods 
-    if(heuristic=="and")
-        S <- obozinski.and(S, g, root);
-    if(heuristic=="max")
-        S <- obozinski.max(S, g, root);
-    if(heuristic=="or")
-        S <- obozinski.or(S, g, root);  
-    cat("Obozinski's heuristic", toupper(heuristic), "correction: done", "\n");
-    return(S);
-}
-
-#' @title Obozinski's heuristic methods -- holdout
-#' @description Function to compute the Obozinski's heuristic methods MAX, AND, OR (\cite{Obozinski et al., Genome Biology, 2008}) applying a classical holdout procedure.
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
-#' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
-#' @param heuristic can be one of the following three values:
-#' \enumerate{
-#'  \item "max": run the method \code{heuristic.max};
-#'  \item "and": run the method \code{heuristic.and};
-#'  \item "or": run the method \code{heuristic.or};
-#' }
-#' @param norm boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S} is normalized according to \code{norm.type}.
-#' @param norm.type can be one of the following values: 
-#'  \enumerate{
-#'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
-#'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
-#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used; 
-#'  }
-#' @return a matrix with the scores of the classes corrected according to the chosen heuristic algorithm. Rows of the matrix are shrunk to \code{testIndex}.
-#' @export
-#' @examples
-#' data(graph);
-#' data(scores);
-#' data(test.index);
-#' S.and <- obozinski.holdout(S, g, testIndex=test.index, heuristic="and", norm=FALSE, norm.type=NULL);
-obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm.type=NULL){
-    ## check
-    if(heuristic!="max" && heuristic!="and" && heuristic!="or")
-        stop("heuristic.methods: the chosen heuristic method is not among those available or it has been misspelled", call.=FALSE);
-    if(norm==TRUE && is.null(norm.type))
-        stop("heuristic.methods: choose a normalization methods among those available", call.=FALSE);
-    if(norm==FALSE && !is.null(norm.type))
-        warning("heuristic.methods: ", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"), call.=FALSE);
-
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done", "\n");
-    }
-
-    ## root node 
-    root <- root.node(g);
-
-    ## shrinking scores matrix to test test
-    S <- S[testIndex,];
-   
-    ## Obozinski's hierarchical heuristic methods 
     if(heuristic=="and")
         S <- obozinski.and(S, g, root);
     if(heuristic=="max")
@@ -211,4 +147,56 @@ obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm
     return(S);
 }
 
-
+#' @title Obozinski's heuristic methods -- holdout
+#' @description Compute the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008})
+#' applying a classical holdout procedure.
+#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
+#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
+#' @param heuristic a string character. It can be one of the following three values:
+#' \enumerate{
+#'  \item "max": run the method \code{heuristic.max};
+#'  \item "and": run the method \code{heuristic.and};
+#'  \item "or": run the method \code{heuristic.or};
+#' }
+#' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
+#' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
+#' @param norm.type a string character. It can be one of the following values:
+#'  \enumerate{
+#'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
+#'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
+#'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
+#'  }
+#' @return A matrix with the scores of the classes corrected according to the chosen heuristic algorithm. Rows of the matrix are shrunk to \code{testIndex}.
+#' @export
+#' @examples
+#' data(graph);
+#' data(scores);
+#' data(test.index);
+#' S.and <- obozinski.holdout(S, g, testIndex=test.index, heuristic="and", norm=FALSE, norm.type=NULL);
+obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm.type=NULL){
+    ## check
+    if(heuristic!="max" && heuristic!="and" && heuristic!="or")
+        stop("the chosen heuristic method is not among those available or it has been misspelled");
+    if(norm==TRUE && is.null(norm.type))
+        stop("choose a normalization methods among those available");
+    if(norm==FALSE && !is.null(norm.type))
+        warning(paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
+    ## normalization
+    if(norm){
+        S <- scores.normalization(norm.type=norm.type, S);
+        cat(norm.type, "normalization: done", "\n");
+    }
+    ## shrinking scores matrix to test test
+    S <- S[testIndex,];
+    ## Obozinski's hierarchical heuristic methods
+    root <- root.node(g);
+    if(heuristic=="and")
+        S <- obozinski.and(S, g, root);
+    if(heuristic=="max")
+        S <- obozinski.max(S, g, root);
+    if(heuristic=="or")
+        S <- obozinski.or(S, g, root);
+    cat("Obozinski's heuristic", toupper(heuristic), "correction: done", "\n");
+    return(S);
+}
