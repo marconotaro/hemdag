@@ -674,6 +674,103 @@ tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
     }
 }
 
+#' @name build.scores.matrix
+#' @title Build scores matrix
+#' @description Build a scores matrix from file
+#' @param file name of the text file to be read. The matrix of the input file can be either a list (e.g in the form \code{example nodeX|score}),
+#' or a tupla (i.e. in the form \code{example nodeX score}).The file extension can be plain (".txt") or compressed (".gz").
+#' @param split character vector containing a regular expression use for splitting.
+#' @return A named scores matrix.
+#' @export
+#' @examples
+#' file.list  <- system.file("extdata/scores.list.txt.gz", package="HEMDAG");
+#' file.tupla <- system.file("extdata/scores.tupla.txt.gz", package="HEMDAG");
+#' S <- build.scores.matrix.from.list(file.list, split="[(\t,|)]");
+#' S <- build.scores.matrix.from.tupla(file.tupla);
+build.scores.matrix.from.list <- function(file="scores.list.txt", split="[(\t,|)]"){ ## split=[(,=)]
+    ## read scores file and build a matrix with 3 columns: gene/annotations/scores
+    tmp <- strsplit(file, "[.,/,_]")[[1]];
+    if(any(tmp %in% "gz")){
+        con <- gzfile(file);
+        line <- readLines(con);
+        close(con);
+    }else{
+        line <- readLines(file);
+    }
+    tmp  <- strsplit(line, split=split, perl=TRUE);
+    gene.names <- sapply(tmp, `[[`, 1);
+    ## scores and ontology terms list
+    scores.list <- ann.list <- vector(mode="list", length=length(gene.names));
+    names(scores.list) <- gene.names;
+    names(ann.list) <- gene.names;
+    for(i in 1:length(tmp)){
+        x <- suppressWarnings(as.numeric(tmp[[i]][-1])); ## NA by coercion -> first element is the gene/protein name
+        y <- x[!is.na(x=x)];
+        scores.list[[i]] <- y;
+        z <- is.na(x);
+        ann.list[[i]] <- tmp[[i]][-1][z]
+    }
+    num.edges <-  length(unlist(ann.list)); ## check: num.score <- length(unlist(scores.list)); num.edges==num.score; ## TRUE
+    num.v <- length(ann.list);
+    m <- matrix(character(num.edges*3), ncol=3);
+    count <- 0;
+    node1 <- names(ann.list);
+    for (i in 1:num.v) {
+        x <- ann.list[[i]];
+        y <- scores.list[[i]]
+        len.x <- length(x);
+        if (len.x!=0){
+            for (j in 1:len.x) {
+                count <- count + 1;
+                m[count,] <- c(node1[i], x[j], y[j]);
+            }
+        }
+    }
+    ## build the hierarchical scores matrix in R
+    samplename <- m[,1];
+    charcheck <- any(suppressWarnings(is.na(as.numeric(samplename))));
+    if(charcheck){
+        genes <- sort(unique(samplename));
+    }else{
+        genes <- as.character(sort(as.numeric(unique(samplename))));
+    }
+    ngene <- length(genes);
+    feat  <- sort(unique(m[,2]));
+    nfeat <- length(feat);
+    ## return scores matrix
+    S <- matrix(0, nrow=ngene, ncol=nfeat);
+    dimnames(S) <- list(genes, feat);
+    S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
+    return(S);
+}
+
+#' @rdname build.scores.matrix
+#' @export
+build.scores.matrix.from.tupla <- function(file="scores.tupla.txt"){
+    tmp <- strsplit(file, "[.,/,_]")[[1]];
+    if(any(tmp %in% "gz")){
+        m <- read.table(gzfile(file), colClasses="character", stringsAsFactors=FALSE);
+    }else{
+        m <- as.matrix(read.table(file, colClasses="character", stringsAsFactors=FALSE));
+    }
+    prsname <- as.vector(as.matrix((m[,1])));
+    charcheck <- any(suppressWarnings(is.na(as.numeric(prsname))));
+    if(charcheck){
+        prs <- sort(unique(as.vector(as.matrix(m[,1])))); ##NB:df must be converted as matrix to make as.vector working..
+    }else{
+        prs <- as.character(sort(as.numeric(unique(as.vector(m[,1])))));
+    }
+    terms <- sort(unique(as.vector(as.matrix(m[,2]))));
+    n.prs <- length(prs);
+    n.obo <- length(terms);
+    # building scores matrix
+    S <- matrix(0, nrow=n.prs, ncol=n.obo);
+    dimnames(S) <- list(prs,terms);
+    S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
+    return(S);
+}
+
+
 #' @title Parse an HPO obo file
 #' @description Read an HPO obo file (\href{http://human-phenotype-ontology.github.io/}{HPO}) and write the edges of the dag on a plain text file.
 #' The format of the file is a sequence of rows and each row corresponds to an edge represented through a pair of vertexes separated by blank.
