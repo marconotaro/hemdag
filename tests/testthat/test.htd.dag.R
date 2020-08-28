@@ -75,8 +75,7 @@ test_that("htd works", {
 
     ## test class mismatch
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(htd(S.error, g, root),
-        "htd: the number of nodes of the graph and the number of classes of the scores matrix does not match");
+    expect_error(htd(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
 })
 
 

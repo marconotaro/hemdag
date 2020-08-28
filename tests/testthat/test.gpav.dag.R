@@ -88,8 +88,8 @@ test_that("gpav works", {
 
     expect_equal(S.gpav,  S.check, tolerance=1e-8);
     expect_equal(S.gpav2, S.check, tolerance=1e-8);
-    expect_error(gpav(Y.trim,W=NULL,adj), "gpav: mismatch between the number of classes between 'Y' and 'adj'", fixed=TRUE);
-    expect_error(gpav(Y,W=W.trim,adj), "gpav: mismatch between the number of classes between 'Y' and 'adj'", fixed=TRUE);
+    expect_error(gpav(Y.trim,W=NULL,adj), "mismatch between the number of classes between Y and adj", fixed=TRUE);
+    expect_error(gpav(Y,W=W.trim,adj), "mismatch between the number of classes between Y and adj", fixed=TRUE);
 })
 
 test_that("gpav.over.examples works", {
@@ -107,8 +107,7 @@ test_that("gpav.over.examples works", {
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
 
     expect_equal(S.gpav, S.check, tolerance=1e-8);
-    expect_error(gpav.over.examples(S.error, g, W=NULL),
-        "gpav.over.examples: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
+    expect_error(gpav.over.examples(S.error, g, W=NULL), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
 })
 
 test_that("gpav.parallel works", {
@@ -130,8 +129,7 @@ test_that("gpav.parallel works", {
 
     expect_equal(S.gpav2core, S.check, tolerance=1e-8);
     expect_equal(S.gpav1core, S.check, tolerance=1e-8);
-    expect_error(gpav.parallel(S.error, g, W=NULL),
-        "gpav.parallel: mismatch between the number of nodes of the graph and the number of classes of the scores matrix");
+    expect_error(gpav.parallel(S.error, g, W=NULL), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
 })    
 
 test_that("gpav.parallel works with ncores>2", {

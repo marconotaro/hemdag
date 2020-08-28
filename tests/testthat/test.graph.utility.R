@@ -73,15 +73,15 @@ test_that("graph.levels works", {
     expect_error(graph.levels(g, root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
 })
 
-test_that("get.parents works", {
+test_that("build.parents works", {
     g <- make.graph();
     nd <- nodes(g);
     root <- root.node(g)
-    parents <- get.parents(g, root=root);
+    parents <- build.parents(g, root=root);
     lev <- graph.levels(g, root=root);
-    parents.tod <- get.parents.top.down(g, lev, root=root);
-    parents.bup <- get.parents.bottom.up(g, lev, root=root);
-    parents.tsort <- get.parents.topological.sorting(g, root=root);
+    parents.tod <- build.parents.top.down(g, lev, root=root);
+    parents.bup <- build.parents.bottom.up(g, lev, root=root);
+    parents.tsort <- build.parents.topological.sorting(g, root=root);
 
     expect_equal(length(parents), 9);
     expect_equal(length(parents.tod), 9);
@@ -100,25 +100,25 @@ test_that("get.parents works", {
     expect_equal(parents[["I"]], c("D","F"));
     expect_equal(parents[["J"]], "F");
 
-    expect_error(get.parents(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
-    expect_error(get.parents(g, root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
-    expect_error(get.parents.top.down(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
-    expect_error(get.parents.top.down(g, root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
-    expect_error(get.parents.bottom.up(g,root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
-    expect_error(get.parents.bottom.up(g,root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
-    expect_error(get.parents.topological.sorting(g,root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
-    expect_error(get.parents.topological.sorting(g,root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g",
+    expect_error(build.parents(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
+    expect_error(build.parents(g, root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
+    expect_error(build.parents.top.down(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
+    expect_error(build.parents.top.down(g, root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
+    expect_error(build.parents.bottom.up(g,root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
+    expect_error(build.parents.bottom.up(g,root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
+    expect_error(build.parents.topological.sorting(g,root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
+    expect_error(build.parents.topological.sorting(g,root="B"), "root is not the right root node of g. Use the function root.node(g) to find the root node of g",
         fixed=TRUE);
 })
 
-test_that("get.children works", {
+test_that("build.children works", {
     g <- make.graph();
     nd <- nodes(g);
     root <- root.node(g)
     children <- build.children(g);
     lev <- graph.levels(g, root=root);
-    children.tod <- get.children.top.down(g,lev);
-    children.bup <- get.children.bottom.up(g,lev);
+    children.tod <- build.children.top.down(g,lev);
+    children.bup <- build.children.bottom.up(g,lev);
 
     expect_equal(length(children), 10);
     expect_equal(length(children.tod), 10);
@@ -212,8 +212,8 @@ test_that("lexicographical.topological.sort works", {
     gL2 <- graph::addEdge(from="C",to="C",g);
     
     expect_equal(lexicographical.topological.sort(g), c("A","B","C","D","F","G","E","H","I","J"));
-    expect_error(lexicographical.topological.sort(gL1), "input graph g is not a dag", fixed=TRUE);
-    expect_error(lexicographical.topological.sort(gL2), "input graph g is not a dag", fixed=TRUE);
+    expect_error(lexicographical.topological.sort(gL1), "input graph g contains self-loop", fixed=TRUE);
+    expect_error(lexicographical.topological.sort(gL2), "input graph g contains self-loop", fixed=TRUE);
 })
 
 test_that("build.consistent.graph works", {
@@ -237,8 +237,7 @@ test_that("check.dag.integrity works", {
     G <- graph::addEdge(from="Z",to="Z",G); 
 
     expect_output(check.dag.integrity(g, root=root), "dag is ok");
-    expect_output(check.dag.integrity(G, root=root), 
-        "check.dag.integrity: not all nodes accessible from root\nNodes not accessible from root:\nZ", fixed=TRUE);
+    expect_output(check.dag.integrity(G, root=root), "not all nodes accessible from root\nnodes not accessible from root:\nZ", fixed=TRUE);
     expect_error(check.dag.integrity(g, root="R"), "root node not found in g. Insert the root node", fixed=TRUE);
     expect_error(check.dag.integrity(g, root="B"), "the supplied root node is not the right root node of g. Use the function root.node(g) to find the root node of g", fixed=TRUE);
 })
