@@ -694,8 +694,8 @@ compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=
 #' The first column is the precision, the second the recall;
 #' \code{precision.at.given.recall.levels.over.classes} returns a list with two elements:
 #' \enumerate{
-#' \item avgpxr: a vector with the average precision at different recall levels across classes;
-#' \item pxr: a matrix with the precision at different recall levels: rows are classes, columns precision at different recall levels;
+#' \item average: a vector with the average precision at different recall levels across classes;
+#' \item fixed.recall: a matrix with the precision at different recall levels: rows are classes, columns precision at different recall levels;
 #' }
 #' @export
 #' @examples
@@ -723,15 +723,15 @@ precision.at.all.recall.levels.single.class <- function(labels, scores){
     if(all(labels==0) || all(labels==1)){
         recall <- seq(from=0.0, to=1, by=0.25);
         precision <- rep(0, length(recall));
-        PXR <- cbind(precision=precision, recall=recall);
-        return(PXR);
+        pxr <- cbind(precision=precision, recall=recall);
+        return(pxr);
     }else{
         res <- evalmod(mode="basic", labels=labels, scores=scores);
         df <- data.frame(res, stringsAsFactors=TRUE);
         precision <- subset(df, df$type=="precision")$y;
         recall <- subset(df, df$type=="sensitivity")$y;
-        PXR <- cbind(precision=precision, recall=recall);
-        return(PXR);
+        pxr <- cbind(precision=precision, recall=recall);
+        return(pxr);
     }
 }
 
@@ -755,7 +755,7 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
     n.classes <- ncol(predicted);
     classes.names <- colnames(predicted);
     len.level <- length(recall.levels);
-    PXR <- c();
+    pxr <- c();
     ## PXR cross-validated
     if(!is.null(folds)){
         for(i in 1:n.classes){
@@ -793,12 +793,12 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
                     }
                 }
             }
-            PXR <- rbind(PXR, prec2rec);
+            pxr <- rbind(pxr, prec2rec);
         }
-        dimnames(PXR) <- list(classes.names, recall.levels);
-        avgPXR <- apply(PXR, 2, mean);
-        names(avgPXR) <- recall.levels;
-        res <- list(avgpxr=avgPXR, pxr=PXR);
+        dimnames(pxr) <- list(classes.names, recall.levels);
+        avgpxr <- apply(pxr, 2, mean);
+        names(avgpxr) <- recall.levels;
+        res <- list(average=avgpxr, fixed.recall=pxr);
         return(res);
     }
     # PXR one-shot
@@ -818,12 +818,12 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
                 prec2rec[j] <- precision[which(recall - recall.levels[j]>=0)[1]];
             }
         }
-        PXR <- rbind(PXR, prec2rec);
+        pxr <- rbind(pxr, prec2rec);
     }
-    dimnames(PXR) <- list(classes.names, recall.levels);
-    avgPXR <- apply(PXR, 2, mean);
-    names(avgPXR) <- recall.levels;
-    res <- list(avgpxr=avgPXR, pxr=PXR);
+    dimnames(pxr) <- list(classes.names, recall.levels);
+    avgpxr <- apply(pxr, 2, mean);
+    names(avgpxr) <- recall.levels;
+    res <- list(average=avgpxr, fixed.recall=pxr);
     return(res);
 }
 
