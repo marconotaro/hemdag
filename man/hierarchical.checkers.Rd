@@ -23,7 +23,7 @@ columns are functional classes.}
 \value{
 A list of 3 elements:
 \itemize{
- \item Status:
+ \item status:
     \itemize{
      \item \code{OK} if none hierarchical constraints have bee broken;
      \item \code{NOTOK} if there is at least one hierarchical constraints broken;

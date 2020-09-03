@@ -150,7 +150,7 @@ test_that("check.annotation.matrix.integrity works", {
     ann <- make.notca.ann();
     tca <- transitive.closure.annotations(spec.ann, anc);
 
-    expect_output(check.annotation.matrix.integrity(anc, spec.ann, ann), "check.annotation.matrix: NOT_OK. Transitive closure NOT RESPECTED");
+    expect_output(check.annotation.matrix.integrity(anc, spec.ann, ann), "check.annotation.matrix: NOTOK. Transitive closure NOT RESPECTED");
     expect_output(check.annotation.matrix.integrity(anc, spec.ann, tca), "check.annotation.matrix: OK ");
 })
 

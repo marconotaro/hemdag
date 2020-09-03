@@ -471,7 +471,7 @@ check.dag.integrity <- function(g, root="00"){
 #' @param root name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).
 #' @return A list of 3 elements:
 #' \itemize{
-#'  \item Status:
+#'  \item status:
 #'     \itemize{
 #'      \item \code{OK} if none hierarchical constraints have bee broken;
 #'      \item \code{NOTOK} if there is at least one hierarchical constraints broken;
@@ -510,12 +510,12 @@ check.hierarchy.single.sample <- function(y.hier,g, root="00"){
     names(v) <- names(par)
     violated <- any(v==TRUE);
     if(violated)
-        Status = "NOTOK"
+        status = "NOTOK"
     else
-        Status = "OK";
+        status = "OK";
     h <- as.factor(v);
     k <- summary(h);
-    l <- list(Status=Status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
+    l <- list(status=status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
     return(l);
 }
 
@@ -540,12 +540,12 @@ check.hierarchy <- function(S.hier,g, root="00"){
     names(v) <- names(par)
     violated <- any(v==TRUE);
     if(violated)
-        Status = "NOTOK"
+        status = "NOTOK"
     else
-        Status = "OK";
+        status = "OK";
     h <- as.factor(v);
     k <- summary(h);
-    l <- list(Status=Status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
+    l <- list(status=status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
     return(l);
 }
 

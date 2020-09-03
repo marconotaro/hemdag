@@ -204,7 +204,7 @@ check.annotation.matrix.integrity <- function(anc, ann.spec, ann){
     violated <- any(check!="OK");
     if(violated){
         n <- names(check)[check=="NOTOK"];
-        cat("check.annotation.matrix: NOT_OK. Transitive closure NOT RESPECTED", "\n");
+        cat("check.annotation.matrix: NOTOK. Transitive closure NOT RESPECTED", "\n");
     }else{
         cat("check.annotation.matrix: OK", "\n");
     }
