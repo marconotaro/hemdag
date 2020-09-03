@@ -28,7 +28,8 @@ gpav.vanilla(
    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 }}
 
-\item{ncores}{number of cores to use for parallel execution (\code{def. 8}).}
+\item{ncores}{number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE},
+otherwise set \code{ncores} to the desired number of cores.}
 
 \item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}

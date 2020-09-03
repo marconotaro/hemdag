@@ -189,7 +189,8 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
 #'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
 #'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 #' }
-#' @param ncores number of cores to use for parallel execution (\code{def. 8}).
+#' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE},
+#' otherwise set \code{ncores} to the desired number of cores.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
@@ -249,7 +250,8 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 #'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
 #'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 #' }
-#' @param ncores number of cores to use for parallel execution (\code{def. 8}).
+#' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE},
+#' otherwise set \code{ncores} to the desired number of cores.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
