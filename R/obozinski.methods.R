@@ -66,7 +66,7 @@ obozinski.and <- function(S, g, root="00"){
     for(i in 1:length(anc)){
         m <- as.matrix(S[,anc[[i]]]);
         idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
-        m.idx <- as.matrix(m[idx,]); ## handle with one descendant -> apply needs a matrix
+        m.idx <- as.matrix(m[idx,]); ## handle case with one descendant -> apply needs a matrix
         S.hier[idx,names(anc[i])] <- apply(m.idx, 1, prod);
     }
     rm(S); gc();
@@ -91,7 +91,7 @@ obozinski.or <- function(S, g, root="00"){
     for(i in 1:length(desc)){
         m <- as.matrix(S[,desc[[i]]]);
         idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
-        m.idx <- as.matrix(m[idx,]); ## handle with one descendant -> apply needs a matrix
+        m.idx <- as.matrix(m[idx,]); ## handle case with one descendant -> apply needs a matrix
         S.hier[idx,names(desc[i])] <- 1-(apply(1-m.idx,1,prod));
     }
     rm(S); gc();
@@ -143,7 +143,7 @@ obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
         S <- obozinski.max(S, g, root);
     if(heuristic=="or")
         S <- obozinski.or(S, g, root);
-    cat("Obozinski's heuristic", toupper(heuristic), "correction: done", "\n");
+    cat("Obozinski's heuristic", heuristic, "correction: done", "\n");
     return(S);
 }
 
@@ -197,6 +197,6 @@ obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm
         S <- obozinski.max(S, g, root);
     if(heuristic=="or")
         S <- obozinski.or(S, g, root);
-    cat("Obozinski's heuristic", toupper(heuristic), "correction: done", "\n");
+    cat("Obozinski's heuristic", heuristic, "correction: done", "\n");
     return(S);
 }
