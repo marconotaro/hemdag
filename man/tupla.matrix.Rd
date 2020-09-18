@@ -26,6 +26,6 @@ Only the \emph{non-zero} interactions are kept, while the \emph{zero} interactio
 }
 \examples{
 data(wadj);
-tmpdir <- paste0(tempdir(),"/");
-tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"), digits=3);
+file <- tempfile();
+tupla.matrix(W, output.file=file, digits=3);
 }

@@ -76,9 +76,12 @@ In their more general form the \code{TPR-DAG} algorithms adopt a two step learni
  \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions across the hierarchy;
  \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the consistency of the predictions;
 }
+It is worth noting that levels (both in the first and second step) are defined in terms of the maximum distance from 
+the root node (see \code{\link{graph.levels}}).
 }
 \details{
-The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions \eqn{\hat{y}_i}:
+The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions 
+\eqn{\hat{y}_i} according to the following formula:
 \deqn{
  \bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
 }
@@ -116,16 +119,17 @@ contribution of the node \eqn{i} and that of its positive children \eqn{\phi}, t
 If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
 way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors
 associated to the children nodes vote to predict node \eqn{i}. In the intermediate cases we attribute more importance to the predictor for the
-node \eqn{i} or to its children depending on the values of \eqn{w}.
+node \eqn{i} or to its children depending on the values of \eqn{w}. 
+By combining the weighted and the threshold variant, we design the weighted-threshold variant.
 
-The contribution of the descendants of a given node decays exponentially with their distance from the node itself. To enhance the
-contribution of the most specific nodes to the overall decision of the ensemble we designed the ensemble variant \code{DESCENS}.
+Since the contribution of the descendants of a given node decays exponentially with their distance from the node itself, to enhance the
+contribution of the most specific nodes to the overall decision of the ensemble we design the ensemble variant \code{DESCENS}.
 The novelty of \code{DESCENS} consists in strongly considering the contribution of all the descendants of each node instead of
 only that of its children. Therefore \code{DESCENS} predictions are more influenced by the information embedded in the leaves nodes,
 that are the classes containing the most informative and meaningful information from a biological and medical standpoint.
 For the choice of the ``positive'' descendants we use the same strategies adopted for the selection of the ``positive''
 children shown above. Furthermore, we designed a variant specific only for \code{DESCENS}, that we named \code{DESCENS}-\eqn{\tau}.
-The \code{DESCENS}-\eqn{\tau} variants balances the contribution between the ``positives'' children of a node \eqn{i}
+The \code{DESCENS}-\eqn{\tau} variant balances the contribution between the ``positives'' children of a node \eqn{i}
 and that of its ``positives'' descendants excluding its children by adding a weight \eqn{\tau \in [0,1]}:
 \deqn{
 \bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
@@ -136,7 +140,7 @@ children contribute to the score, while for intermediate values of \eqn{\tau} we
 \eqn{\delta_i} positive nodes.
 
 Simply by replacing the top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we design the \code{ISO-TPR} variant.
-The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and selects the closest
+The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and it selects the closest
 solution (in the least square sense) to the bottom-up predictions that obeys the true path rule.
 }
 \examples{

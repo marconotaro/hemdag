@@ -19,7 +19,6 @@ Read an object of class \code{graphNEL} and write the graph as sequence of rows 
 }
 \examples{
 data(graph);
-tmpdir <- paste0(tempdir(),"/");
-file <- paste0(tmpdir,"graph.edges.txt.gz");
+file <- tempfile();
 write.graph(g, file=file);
 }

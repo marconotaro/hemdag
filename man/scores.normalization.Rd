@@ -28,6 +28,6 @@ To apply the quantile normalization the \pkg{preprocessCore} package must be pro
 data(scores);
 norm.types <- c("maxnorm","qnorm");
 for(norm.type in norm.types){
-    scores.normalization(norm.type=norm.type, S=S)
+    scores.normalization(norm.type=norm.type, S=S);
 }
 }

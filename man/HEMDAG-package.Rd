@@ -5,7 +5,7 @@
 \title{HEMDAG: Hierarchical Ensemble Methods for Directed Acyclic Graphs}
 
 \description{
-The HEMDAG package: 
+The HEMDAG package:
 \itemize{
 \item provides an implementation of several Hierarchical Ensemble Methods (HEMs) for Directed Acyclic Graphs (DAGs);
 \item reconciles flat predictions with the topology of the ontology;
@@ -37,14 +37,14 @@ The HEMDAG package implements the following Hierarchical Ensemble Methods for DA
 \emph{Alessandro Petrini}\eqn{^1} (\href{https://orcid.org/0000-0002-0587-1484}{https://orcid.org/0000-0002-0587-1484});\cr
 \emph{Giorgio Valentini}\eqn{^1} (\href{https://orcid.org/0000-0002-5694-3919}{https://orcid.org/0000-0002-5694-3919});\cr
 
-Maintainer: 
-\emph{Marco Notaro} 
+Maintainer:
+\emph{Marco Notaro}
 \email{marco.notaro@unimi.it}\cr
 
 \eqn{^1} \href{https://sites.google.com/site/anacletolaboratory/}{AnacletoLab}, Computational Biology and Bioinformatics Laboratory, Computer Science Department, University of Milan, Italy}
 
 \references{
-Marco Notaro, Max Schubach, Peter N. Robinson and Giorgio Valentini, 
+Marco Notaro, Max Schubach, Peter N. Robinson and Giorgio Valentini,
 \emph{Prediction of Human Phenotype Ontology terms by means of Hierarchical Ensemble methods},
 BMC Bioinformatics 2017, 18(1):449, doi:\href{https://doi.org/10.1186/s12859-017-1854-y}{10.1186/s12859-017-1854-y}
 }
