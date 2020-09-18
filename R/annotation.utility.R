@@ -63,6 +63,9 @@ specific.annotation.list <- function(ann){
         terms <- which(gene==1);
         return(names(gene[terms]));
     });
+    ## when ann has one positive per row ann.list is a vector -> force to list
+    if(sum(ann) == nrow(ann))
+        ann.list <- as.list(ann.list);
     return(ann.list);
 }
 
@@ -204,8 +207,8 @@ check.annotation.matrix.integrity <- function(anc, ann.spec, ann){
     violated <- any(check!="OK");
     if(violated){
         n <- names(check)[check=="NOTOK"];
-        cat("check.annotation.matrix: NOTOK. Transitive closure NOT RESPECTED", "\n");
+        cat("check.annotation.matrix: NOTOK. Transitive closure NOT RESPECTED\n");
     }else{
-        cat("check.annotation.matrix: OK", "\n");
+        cat("check.annotation.matrix: OK\n");
     }
 }

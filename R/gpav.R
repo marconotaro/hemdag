@@ -1,6 +1,6 @@
-##############
-## GPAV-DAG ##
-##############
+##########
+## GPAV ##
+##########
 
 #' @title Binary upper triangular adjacency matrix
 #' @description Compute a binary square upper triangular matrix where rows and columns correspond to the nodes' name of the graph \code{g}.
@@ -82,13 +82,14 @@ adj.upper.tri <- function(g){
 #' data(scores);
 #' Y <- S[3,];
 #' adj <- adj.upper.tri(g);
-#' S.gpav <- gpav(Y,W=NULL,adj);
+#' Y.gpav <- gpav(Y,W=NULL,adj);
 gpav <- function(Y, W=NULL, adj){
     if(is.null(W))
         W <- rep(1,ncol(adj));
     nW <- length(W);
     nY <- length(Y);
     nadj <- ncol(adj);
+    Ynames <- names(Y);
     if(nY!=nadj)
         stop("mismatch between the number of classes between Y and adj");
     if(nW!=nadj)
@@ -106,6 +107,7 @@ gpav <- function(Y, W=NULL, adj){
     corr <- gpavres[[5]];
     YFit <- YFit[corr];
     names(YFit) <- colnames(adj);
+    YFit <- YFit[Ynames];
     return(YFit);
 }
 
@@ -132,7 +134,6 @@ gpav.over.examples <- function(S, g, W=NULL){
     for(i in 1:nrow(S))
         M <- rbind(M, gpav(S[i,], W=W, adj));
     rownames(M) <- rownames(S);
-    M <- M[,colnames(S)];
     S <- M; rm(M);
     return(S);
 }
@@ -149,7 +150,7 @@ gpav.over.examples <- function(S, g, W=NULL){
 #' data(graph);
 #' data(scores);
 #' if (Sys.info()['sysname']!="Windows"){
-#'    s.gpav <- gpav.parallel(S,W=NULL,g,ncores=2);
+#'    S.gpav <- gpav.parallel(S,W=NULL,g,ncores=2);
 #' }
 gpav.parallel <- function(S, g, W=NULL, ncores=8){
     ## check consistency between nodes of g and classes of S
@@ -157,7 +158,6 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
     if(class.check)
         stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
     prnames <- rownames(S);
-    clnames <- colnames(S);
     adj <- adj.upper.tri(g);
     if(ncores == 0){
         n.cores <- detectCores();
@@ -173,18 +173,17 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
     hierscores <- lapply(res.list, '[[', 2);
     S <- do.call(rbind, hierscores);
     rownames(S) <- prnames;
-    S <- S[,clnames];
     rm(res.list);
     return(S);
 }
 
-#' @title GPAV-DAG vanilla
+#' @title GPAV vanilla
 #' @description Correct the computed scores in a hierarchy according to the \code{GPAV} algorithm.
 #' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
-#' @param parallel a boolean value. Should the parallel version \code{GPAV-DAG} be run?
+#' @param parallel a boolean value. Should the parallel version \code{GPAV} be run?
 #' \itemize{
 #'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
 #'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
@@ -210,15 +209,15 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
     if(norm==TRUE && is.null(norm.type))
         stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning("", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
+        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
     if(parallel==TRUE && ncores<2)
-        warning("set ncores greater than 2 to exploit the gpav parallel version");
+        warning("increase number of cores to exploit the gpav parallel version");
     if(parallel==FALSE && ncores>=2)
-        warning("set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version");
+        warning("set parallel to TRUE to exploit the gpav parallel version");
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done", "\n");
+        cat(norm.type, "normalization: done\n");
     }
     ## check root scores before running gpav
     root <- root.node(g);
@@ -234,7 +233,7 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
     }else{
         S <- gpav.over.examples(S, g, W=W);
     }
-    cat("gpav-dag correction: done", "\n");
+    cat("gpav correction: done\n");
     return(S);
 }
 
@@ -245,7 +244,7 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 #' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
-#' @param parallel a boolean value. Should the parallel version \code{GPAV-DAG} be run?
+#' @param parallel a boolean value. Should the parallel version \code{GPAV} be run?
 #' \itemize{
 #'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
 #'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
@@ -272,15 +271,15 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
     if(norm==TRUE && is.null(norm.type))
         stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning("", paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
+        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
     if(parallel==TRUE && ncores<2)
-        warning("set ncores greater than 2 to exploit the gpav parallel version");
+        warning("increase number of cores to exploit the gpav parallel version");
     if(parallel==FALSE && ncores>=2)
-        warning("set 'ncores' to 1 to run the sequential version or set 'parallel' to TRUE to run the parallel version");
+        warning("set parallel to TRUE to exploit the gpav parallel version");
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done", "\n");
+        cat(norm.type, "normalization: done\n");
     }
     ## check root scores before running gpav
     root <- root.node(g);
@@ -298,6 +297,6 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
     }else{
         S <- gpav.over.examples(S, g, W=W);
     }
-    cat("gpav-dag correction: done", "\n");
+    cat("gpav correction: done\n");
     return(S);
 }

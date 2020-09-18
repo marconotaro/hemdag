@@ -129,11 +129,11 @@ obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
     if(norm==TRUE && is.null(norm.type))
         stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning(paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
+        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done", "\n");
+        cat(norm.type, "normalization: done\n");
     }
     ## Obozinski's hierarchical heuristic methods
     root <- root.node(g);
@@ -143,7 +143,7 @@ obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
         S <- obozinski.max(S, g, root);
     if(heuristic=="or")
         S <- obozinski.or(S, g, root);
-    cat("Obozinski's heuristic", heuristic, "correction: done", "\n");
+    cat("Obozinski's heuristic", heuristic, "correction: done\n");
     return(S);
 }
 
@@ -181,11 +181,11 @@ obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm
     if(norm==TRUE && is.null(norm.type))
         stop("choose a normalization methods among those available");
     if(norm==FALSE && !is.null(norm.type))
-        warning(paste0("set norm.type to NULL and not to '", norm.type, "' to avoid this warning message"));
+        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
     ## normalization
     if(norm){
         S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done", "\n");
+        cat(norm.type, "normalization: done\n");
     }
     ## shrinking scores matrix to test test
     S <- S[testIndex,];
@@ -197,6 +197,6 @@ obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm
         S <- obozinski.max(S, g, root);
     if(heuristic=="or")
         S <- obozinski.or(S, g, root);
-    cat("Obozinski's heuristic", heuristic, "correction: done", "\n");
+    cat("Obozinski's heuristic", heuristic, "correction: done\n");
     return(S);
 }

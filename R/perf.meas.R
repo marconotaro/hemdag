@@ -44,11 +44,13 @@ auprc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
     if(length(scores)!=length(labels))
         stop("length of true and predicted labels does not match");
     if(any(names(labels)!=names(scores)))
-        stop("auprc.single.classes: names of labels and scores are not in the same order");
+        stop("names of labels and scores are not in the same order");
     if(any((labels!=0) & (labels!=1)))
         stop("labels variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed))
+    if(is.null(folds) && !is.null(seed)){
         seed <- NULL;
+        warning("seed auto-set to NULL");
+    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     ## degenerate case when all labels are equals
@@ -63,8 +65,6 @@ auprc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
         }
         return(prc);
     }
-    if(is.null(folds) && !is.null(seed))
-        seed <- NULL;
     ## compute PRC averaged across folds
     if(!is.null(folds)){
         indices <- 1:length(labels);
@@ -79,7 +79,7 @@ auprc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
             labels.test <- labels[testIndex[[k]]];
             scores.test <- scores[testIndex[[k]]];
             if(sum(labels.test) > 0){
-                if(all(labels.test==0) || all(labels.test==1)){ ## degenerate case when all labels in the k fold are equals
+                if(all(labels.test==1)){ ## degenerate case when all labels in the k fold are equals to 1
                     prc.fold[k] <- 0;
                 }else{
                     res <- evalmod(scores=scores.test, labels=labels.test);
@@ -122,9 +122,11 @@ auprc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
         stop("target variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed))
+    if(is.null(folds) && !is.null(seed)){
         seed <- NULL;
-    ## AUPRC averaged across folds over classes
+        warning("seed auto-set to NULL");
+    }
+    ## AUPRC averaged across folds and classes
     if(!is.null(folds)){
         prc.class <- rep(0,ncol(predicted));
         names(prc.class) <- colnames(predicted);
@@ -144,6 +146,7 @@ auprc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
     ## AUPRC one-shot over classes
     ## if there are classes with zero annotations, we remove them..
     target.names <- colnames(target);
+    sample.names <- rownames(target);
     class.ann <- apply(target,2,sum);
     class.noann <- which(class.ann==0);
     check <- length(class.noann)!=0;
@@ -152,16 +155,14 @@ auprc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
         target <- target[,-class.noann];
         predicted <- predicted[,-class.noann];
     }
-    ## degenerate case when target and predicted are vector: just one class has an annotation. Might happen in cross validation..
+    ## degenerate case when target and predicted are vectors: just one class has an annotation. Might happen in cross validation..
     if(!is.matrix(target)){
-        target <- as.matrix(target);
-        selected <- which(class.ann==1);
-        colnames(target) <- names(selected);
+        selected <- which(class.ann!=0);
+        target <- matrix(target, nrow=n.examples, dimnames=list(sample.names, names(selected)));
     }
     if(!is.matrix(predicted)){
-        predicted <- as.matrix(predicted);
-        selected <- which(class.ann==1)
-        colnames(predicted) <- names(selected);
+        selected <- which(class.ann!=0);
+        predicted <- matrix(predicted, nrow=n.examples, dimnames=list(sample.names, names(selected)));
     }
     ## compute PRC considering only those class with non-zero annotations
     prc.class <- rep(0,ncol(predicted));
@@ -232,8 +233,10 @@ auroc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
         stop("names of labels and scores are not in the same order");
     if(any((labels!=0) & (labels!=1)))
         stop("labels variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed))
+    if(is.null(folds) && !is.null(seed)){
         seed <- NULL;
+        warning("seed auto-set to NULL");
+    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     ## degenerate case when all labels are equals
@@ -248,8 +251,6 @@ auroc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
         }
         return(auc);
     }
-    if(is.null(folds) && !is.null(seed))
-        seed <- NULL;
     ## compute AUC averaged across folds
     if(!is.null(folds)){
         indices <- 1:length(labels);
@@ -258,13 +259,13 @@ auroc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
         testIndex <- mapply(c, foldIndex$fold.positives, foldIndex$fold.negatives, SIMPLIFY=FALSE); ## index of examples used for test set..
         fold.check <- unlist(lapply(testIndex,length));
         if(any(fold.check==0))
-            stop("number of folds selected too high: some folds have no examples. please reduce the number of folds");
+            stop("number of folds selected too high: some folds have no examples. Please reduce the number of folds");
         auc.fold <- numeric(folds);
         for(k in 1:folds){
             labels.test <- labels[testIndex[[k]]];
             scores.test <- scores[testIndex[[k]]];
             if(sum(labels.test) > 0){
-                if(all(labels.test==0) || all(labels.test==1)){ ## degenerate case when all labels in the k fold are equals
+                if(all(labels.test==1)){ ## degenerate case when all labels in the k fold are equals to 1
                     auc.fold[k] <- 0.5;
                 }else{
                     res <- evalmod(scores=scores.test, labels=labels.test);
@@ -301,9 +302,11 @@ auroc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
         stop("target variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed))
+    if(is.null(folds) && !is.null(seed)){
         seed <- NULL;
-    ## AUROC averaged across folds over classes
+        warning("seed auto-set to NULL");
+    }
+    ## AUROC averaged across folds and classes
     if(!is.null(folds)){
         auc.class <- rep(0,ncol(predicted));
         names(auc.class) <- colnames(predicted);
@@ -316,6 +319,7 @@ auroc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
     }
     ## if there are classes with zero annotations, we remove them..
     target.names <- colnames(target);
+    sample.names <- rownames(target);
     class.ann <- apply(target,2,sum);
     class.noann <- which(class.ann==0);
     check <- length(class.noann)!=0;
@@ -324,16 +328,14 @@ auroc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
         target <- target[,-class.noann];
         predicted <- predicted[,-class.noann];
     }
-    ## degenerate case when target and predicted are vector: just one class have an annotation. May happen in cross validation..
+    ## degenerate case when target and predicted are vectors: just one class has an annotation. Might happen in cross validation..
     if(!is.matrix(target)){
-        target <- as.matrix(target);
-        selected <- which(class.ann==1)
-        colnames(target) <- names(selected);
+        selected <- which(class.ann!=0);
+        target <- matrix(target, nrow=n.examples, dimnames=list(sample.names, names(selected)));
     }
     if(!is.matrix(predicted)){
-        predicted <- as.matrix(predicted);
-        selected <- which(class.ann==1)
-        colnames(predicted) <- names(selected);
+        selected <- which(class.ann!=0);
+        predicted <- matrix(predicted, nrow=n.examples, dimnames=list(sample.names, names(selected)));
     }
     ## compute AUC considering only those class with non-zero annotations
     auc.class <- rep(0,ncol(predicted));
@@ -347,7 +349,6 @@ auroc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
         auc.class[is.na(auc.class)] <- 0.5;
         names(auc.class) <- target.names;
     }
-    ## saving AUC result in the same format of package PerfMeas
     auc.avg <- mean(auc.class);
     auc.res <- list(average=auc.avg, per.class=auc.class);
     return(auc.res);
@@ -421,12 +422,13 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
             return(sum(x== -1));
         });
         rm(z);
-        n <- sum(TP)+sum(TN)+sum(FN)+sum(FP);
-        if( n != (n.examples*n.classes)){
-            cat("n = ", n, "\n n.examples = ", n.examples, "\n n.classes = ", n.classes, "\n");
-            cat (" sum(TP) = ", sum(TP), "\n sum(TN) = ", sum(TN), "\n sum(FN) = ", sum(FN), "\n sum(FP) = ", sum(FP), "\n");
-            warning("something went wrong in F-measure");
-        }
+        ## lines below were useful in debugging :)
+        # n <- sum(TP)+sum(TN)+sum(FN)+sum(FP);
+        # if(n != (n.examples*n.classes)){
+        #     cat("n = ", n, "\n n.examples = ", n.examples, "\n n.classes = ", n.classes, "\n");
+        #     cat (" sum(TP) = ", sum(TP), "\n sum(TN) = ", sum(TN), "\n sum(FN) = ", sum(FN), "\n sum(FP) = ", sum(FP), "\n");
+        #     warning("something went wrong in F-measure");
+        # }
         P <- TP+FP;
         P[which(P==0)] <- 1;  # to avoid division by 0 in precision
         sum.TP.FN <- TP+FN;
@@ -632,9 +634,11 @@ compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=
     if(any(colnames(target)!=colnames(predicted)) || any(rownames(target)!=rownames(predicted)))
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
-        stop("labels variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed))
+        stop("target variable must take values 0 or 1");
+    if(is.null(folds) && !is.null(seed)){
         seed <- NULL;
+        warning("seed auto-set to NULL");
+    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     ## Fmax averaged across folds
@@ -644,18 +648,18 @@ compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=
         res.per.example <- c();
         for(k in 1:folds){
             fold.res <- find.best.f(target[testIndex[[k]],], predicted[testIndex[[k]],], n.round=n.round, f.criterion=f.criterion,
-                verbose=verbose, b.per.example=b.per.example);
+                verbose=verbose, b.per.example=TRUE);
             avg.res.list[[k]] <- fold.res$average;
             res.per.example <- rbind(res.per.example, fold.res$per.example);
         }
-        Fcv<- Reduce("+", avg.res.list)/folds;
-        Fmeas <-  apply(res.per.example,2,mean);
+        Fcv <- Reduce("+", avg.res.list)/folds;
+        Fmeas <- apply(res.per.example,2,mean);
         names(Fmeas)[4] <- "avF";
         ## degenerate case when both precision and recall are zero..
         if((Fmeas[["P"]] && Fmeas[["R"]]) == 0){     ## sum(res.per.example[,"F"])==0
             Fmax <- 0;
         }else{
-            Fmax <- 2*(Fmeas[["P"]] * Fmeas[["R"]])/((Fmeas[["P"]] + Fmeas[["R"]]));
+            Fmax <- 2 * (Fmeas[["P"]] * Fmeas[["R"]])/((Fmeas[["P"]] + Fmeas[["R"]]));
         }
         names(Fmax) <- "F";
         Fmax.avg <- append(Fmeas, Fmax, after=3);
@@ -748,8 +752,10 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
         stop("target variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed))
+    if(is.null(folds) && !is.null(seed)){
         seed <- NULL;
+        warning("seed auto-set to NULL");
+    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     n.classes <- ncol(predicted);
@@ -948,7 +954,7 @@ create.stratified.fold.df <- function(labels, scores, folds=5, seed=23){
         stop("length of true and predicted labels does not match");
     if(any((labels!=0) & (labels!=1)))
         stop("labels variable must take values 0 or 1");
-    if(is.null(folds))
+    if(!(abs(folds - round(folds)) < .Machine$double.eps^0.5))
         stop("folds must be an integer number");
     if(is.null(seed))
         warning("folds are generated without seed initialization");

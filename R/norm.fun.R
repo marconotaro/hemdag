@@ -36,7 +36,7 @@ normalize.max <- function(S){
 #' data(scores);
 #' norm.types <- c("maxnorm","qnorm");
 #' for(norm.type in norm.types){
-#'     scores.normalization(norm.type=norm.type, S=S)
+#'     scores.normalization(norm.type=norm.type, S=S);
 #' }
 scores.normalization <- function(norm.type="maxnorm", S){
     if(norm.type=="maxnorm"){
@@ -50,7 +50,7 @@ scores.normalization <- function(norm.type="maxnorm", S){
         S <- S.norm;
         rm(S.norm);
     }else{
-        stop("scores.normalization: the chosen normalization method is not among those available or it has been misspelled");
+        stop("the chosen normalization method is not among those available or it was misspelled");
     }
     return(S);
 }

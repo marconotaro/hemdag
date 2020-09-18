@@ -627,7 +627,7 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
     nodesname <- as.vector(as.matrix((m[,1:2])));
     charcheck <- any(suppressWarnings(is.na(as.numeric(nodesname))));
     if(charcheck){
-        nodes <- sort(unique(as.vector(as.matrix(m[,1:2])))); ##NB:df must be converted as matrix to make as.vector working..
+        nodes <- sort(unique(as.vector(as.matrix(m[,1:2])))); ##NB: df must be converted as matrix to make as.vector working..
     }else{
         nodes <- as.character(sort(as.numeric(unique(as.vector(m[,1:2])))));
     }
@@ -652,8 +652,8 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 #' @export
 #' @examples
 #' data(wadj);
-#' tmpdir <- paste0(tempdir(),"/");
-#' tupla.matrix(W, output.file=paste0(tmpdir,"graph.edges.txt.gz"), digits=3);
+#' file <- tempfile();
+#' tupla.matrix(W, output.file=file, digits=3);
 tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
     im <- which(m!=0, arr.ind=TRUE);
     rows <- rownames(im);
@@ -803,17 +803,17 @@ build.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
         }
         if(i>=n.lines){break();}
         i <- i + 1; # id
-        destination <- strsplit(line[i], split="[\\s+\t]")[[1]][2];
-        while( (line[i]!="") && (strsplit(line[i], split="[\\s+\t]")[[1]][1]!="is_a:") ){ # checking first is_a entry
+        destination <- strsplit(line[i], split="[ ]")[[1]][2];
+        while( (line[i]!="") && (strsplit(line[i], split="[ ]")[[1]][1]!="is_a:") ){ # checking first is_a entry
             i <- i + 1;
         }
         if (line[i] == ""){next();}  # we are at the end of the record and is_a has been found
-        source <- strsplit(line[i], split="[\\s+\t]")[[1]][2];
+        source <- strsplit(line[i], split="[ ]")[[1]][2];
         j <- j + 1;
         i <- i + 1;
         m[j,]<-c(source,destination);
-        while( (line[i]!="") && (strsplit(line[i], split="[ +\t]")[[1]][1]=="is_a:") ){# checking successive is_a entry
-            source <- strsplit(line[i], split="[\\s+\t]")[[1]][2];
+        while( (line[i]!="") && (strsplit(line[i], split="[ ]")[[1]][1]=="is_a:") ){# checking successive is_a entry
+            source <- strsplit(line[i], split="[ ]")[[1]][2];
             i <- i + 1;
             j <- j + 1;
             m[j,]<-c(source,destination);
@@ -836,15 +836,14 @@ build.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
 #' @export
 #' @examples
 #' data(graph);
-#' tmpdir <- paste0(tempdir(),"/");
-#' file <- paste0(tmpdir,"graph.edges.txt.gz");
+#' file <- tempfile();
 #' write.graph(g, file=file);
 write.graph <- function(g, file="graph.txt.gz"){
     num.edges <- length(unlist(edges(g)));
     num.v <- numNodes(g);
     m <- matrix(character(num.edges*2), ncol=2);
     res <- edges(g);
-    count=0;
+    count <- 0;
     node1 <- names(res);
     for (i in 1:num.v) {
         x <- res[[i]];
