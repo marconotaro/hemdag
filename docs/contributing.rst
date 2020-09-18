@@ -17,7 +17,7 @@ Types of Contributions
 Report Bugs
 ===========
 
-Report bugs at https://github.com/marconotaro/HEMDAG/issues
+Report bugs at https://github.com/marconotaro/hemdag/issues
 
 If you are reporting a bug, please include:
 
@@ -127,7 +127,7 @@ Use the following steps for installing Sphinx and the dependencies for building 
 
 .. code-block:: console
 
-    $ cd HEMDAG/docs
+    $ cd hemdag/docs
     $ conda create --name sphinx --file environment.yml
     $ source activate sphinx
 
@@ -137,7 +137,7 @@ Afterwards, you can always use ``make html`` for building.
 
 .. code-block:: console
 
-    (sphinx) $ cd HEMDAG/docs
+    (sphinx) $ cd hemdag/docs
     (sphinx) $ make html  # rebuild for changed files only
     (sphinx) $ make clean && make html  # force rebuild
 
@@ -148,12 +148,12 @@ Get Started!
 
 Ready to contribute?
 
-1. Fork the `HEMDAG` repo on GitHub.
+1. Fork the `hemdag` repo on GitHub.
 2. Clone your fork locally:
 
   .. code-block:: console
 
-      $ git clone git@github.com:your_name_here/HEMDAG.git
+      $ git clone git@github.com:your_name_here/hemdag.git
 
 3. Create a branch for local development:
 
@@ -188,4 +188,4 @@ Before you submit a pull request, check that it meets these guidelines:
 
 1. The pull request should include tests.
 2. If the pull request adds functionality, the docs should be updated.
-3. Describe your changes in the ``CHANGELOG`` file.
+3. Describe your changes in the ``NEWS.md`` file.

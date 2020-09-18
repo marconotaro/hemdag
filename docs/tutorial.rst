@@ -6,54 +6,68 @@
 ================================
 Tutorial
 ================================
-
-The hierarchical ensemble methods proposed in ``HEMDAG`` package can be run by using any ontology listed in OBO foundry (`link <http://www.obofoundry.org>`__). In this tutorial we perform experiments by using the Human Phenotype Ontology (``HPO``, `link <https://hpo.jax.org/>`__) and the Gene Ontology (``GO``, `link <http://geneontology.org/>`__).
-
-.. note::
-    The experiments run on this tutorial were executed by using the ``HEMDAG`` version ``2.6.0``, the ``R`` version ``3.6.1`` and on a machine having Ubuntu ``16.04`` as operative system. 
-
-Hierarchical Prediction of HPO terms
-====================================
-Here we show a step-by-step application of ``HEMDAG`` to the hierarchical prediction of associations between human gene and abnormal phenotype. To this end we will use the small pre-built dataset available in the ``HEMDAG`` library. Nevertheless, you can perform the examples shown below by using the full dataset available at the following `link <https://homes.di.unimi.it/notaro/DATA/DATA_BMC/>`__.
+In this tutorial we show a step-by-step application of HEMDAG to the hierarchical prediction of associations between human gene and abnormal phenotype. To this end we will use the small pre-built dataset available in the HEMDAG library. However, all the hierarchical ensemble methods encompassed in HEMDAG library can be run by using any ontology listed in OBO foundry (`link <http://www.obofoundry.org>`__), any flat scores matrix (obtained by using any flat classifier ranging from linear, to probabilistic methods, to neural networks, to gradient boosting and many others) and the corresponding annotation matrix. Of course, the number of terms among the graph, the flat scores matrix and the annotation matrix must match.
 
 .. note::
-    By using the full dataset the running time of the parametric ensemble variants is quite higher due to the tuning of the hyper-parameters...
 
-Reminder. To load the ``HEMDAG`` library in the ``R`` environment, just type:
+    For the experiments shown below, we used the latest version of HEMDAG package, the R version ``3.6.3`` and on a machine having Ubuntu ``18.04`` as operative system.
 
-.. code-block:: R
-
-    library(HEMDAG);
-
-and to load an ``rda`` file in the ``R`` environment just type:
+Load the HEMDAG Library
+==============================
+To load the HEMDAG library, open the R environment and type:
 
 .. code-block:: R
 
-    load("file_name.rda");
+    > library(HEMDAG);
 
-Loading the Flat Scores Matrix
-===============================
-In their more general form, the hierarchical ensemble methods adopt a two-step learning strategy: the first step consists in the flat learning of the ontology terms, while the second step *reconciles* the flat predictions by considering the topology of the ontology. Hence, the first *ingredient* that we need is the flat scores matrix. For the sake of simplicity, in the examples shown below we make use of the pre-built dataset available in the ``HEMDAG`` library. To load the flat scores matrix, open the ``R`` environment and type:
-
-.. code-block:: R
-
-    data(scores);
-
-with the above command we loaded the flat scores matrix ``S``, that is a named ``100 X 23`` matrix. Rows correspond to genes (``Entrez GeneID``) and columns to ``HPO`` terms/classes. The scores representing the likelihood that a given gene belongs to a given class: the higher the value, the higher the likelihood that a gene belongs to a given class. This flat scores matrix was obtained by running the ``RANKS`` package (`link <https://cran.rstudio.com/web/packages/RANKS/>`__).
-
-Loading the DAG
-==================
-In order to know the hierarchical structure of the ``HPO`` terms, we must load the graph:
+Load the Flat Scores Matrix
+================================
+In their more general form, the hierarchical ensemble methods adopt a two-step learning strategy: the first step consists in the flat learning of the ontology terms, while the second step *reconciles* the flat predictions by considering the topology of the underlying ontology. Consequently, the first *ingredient* that we need in an ensemble classification is the flat scores matrix. For the sake of simplicity, in the examples shown below we use the pre-built dataset available in the HEMDAG library. To load the flat scores matrix, type in the the R environment:
 
 .. code-block:: R
 
-    data(graph);
+    > data(scores);
 
-with the above command we loaded the graph ``g``, an object of class ``graphNEL``. The graph ``g`` has ``23`` nodes and ``30`` edges and represents the *ancestors view* of the ``HPO`` term ``Camptodactyly of finger`` (`HP:0100490 <http://compbio.charite.de/hpoweb/showterm?id=HP:0100490#id=HP_0100490>`_). Nodes of the graph ``g`` must correspond to classes of the flat scores matrix ``S``.
+with the above command we loaded the flat scores matrix ``S``, that is a named 100 X 23 matrix. Rows correspond to genes (Entrez GeneID) and columns to HPO terms/classes. The scores representing the likelihood that a given gene belongs to a given class: the higher the value, the higher the likelihood that a gene belongs to a given class. This flat scores matrix was obtained by running the RANKS package (`link <https://cran.rstudio.com/web/packages/RANKS/>`__).
 
-Optional step: plotting the graph ``g``
--------------------------------------------
+Normalization
+----------------
+Since RANKS, the flat classifier used as base learner in HEMDAG library, **returns a score and not a probability**, we must normalize the scores of the flat matrix to make the flat scores comparable with the hierarchical ones. If the flat classifier returns directly a probability there is no needed to normalize the flat scores matrix. HEMDAG allows to normalize the flat scores according to two different procedures:
 
+1. **maxnorm**: Normalization in the sense of the maximum: the score of each class is normalized by dividing the score values for the maximum score of that class:
+
+.. code-block:: R
+
+    > S.maxnorm <- scores.normalization(norm.type="maxnorm", S);
+
+2. **qnorm**: Quantile normalization: quantile normalization of the *preprocessCore* package is used:
+
+.. code-block:: R
+
+    > S.qnorm <- scores.normalization(norm.type="qnorm", S);
+
+Be sure to install the *preprocessCore* package before running the above command. Yo can install it by conda (``conda install -c bioconda bioconductor-preprocesscore``) or by Bioconductor (`link <https://bioconductor.org/packages/release/bioc/html/preprocessCore.html>`_)
+
+.. note::
+
+    For the sake of simplicity, in all the examples shown in :ref:`hem`, the input flat scores matrix was normalized according to the ``maxnorm`` normalization:
+
+    .. code-block:: R
+
+        S.norm <- scores.normalization(norm.type="maxnorm", S);
+
+Load the Graph
+=================
+In order to know the hierarchical structure of the HPO terms, we must load the graph:
+
+.. code-block:: R
+
+    > data(graph);
+
+with the above command we loaded the graph ``g``, an object of class ``graphNEL``. The graph ``g`` has 23 nodes and 30 edges and represents the *ancestors view* of the HPO term ``Camptodactyly of finger`` (`HP:0100490 <http://compbio.charite.de/hpoweb/showterm?id=HP:0100490#id=HP_0100490>`_). Nodes of the graph ``g`` must correspond to classes of the flat scores matrix ``S``.
+
+Plot the Graph (optional)
+-----------------------------
 .. note::
     To plot the graph you need to install before the `Rgraphviz` package. Yo can install this library for example by conda (``conda install -c bioconda bioconductor-rgraphviz``) or by Bioconductor (`link <https://www.bioconductor.org/packages/release/bioc/html/Rgraphviz.html>`__).
 
@@ -61,886 +75,428 @@ If you want to visualize the *ancestors view* of the term ``HP:0100490``, just t
 
 .. code-block:: R
 
-    library(Rgraphviz);
-    plot(g);
+    > library(Rgraphviz);
+    > plot(g);
 
 .. figure:: pictures/graph.png
    :scale: 75 %
    :alt: The DAG of graph g
    :align: center
 
-Scores Normalization
-======================
-If the flat classifier used as base learner in ``HEMDAG`` library returns a score and not a probability, we must normalize the scores of the flat matrix to make the flat scores comparable with the hierarchical ones. ``HEMDAG`` allows to normalize the flat scores according to two different procedures:
+Utility Functions for Graphs (optional)
+------------------------------------------
+HEMDAG library includes several utility functions to process and analyze graphs as well as I/O functions to import/export graphs as R object of class ``graphNEL`` or in a plain text file (in the classical tupla format). To know much more details on these functions, please have a look to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_.
 
-1. **MaxNorm**: Normalization in the sense of the maximum: the score of each class is normalized by dividing the score values for the maximum score of that class:
+.. _hem:
 
-.. code-block:: R
-
-    maxnorm <- normalize.max(S);
-
-2. **Qnorm**: Quantile normalization: quantile normalization of the ``preprocessCore`` package is used:
+Hierarchical Ensemble Methods
+================================
+First of all, we need to find the root node (i.e. node that is at the top-level of the hierarchy) of the HPO graph ``g``. To do that just type:
 
 .. code-block:: R
 
-    library(preprocessCore);
-    qnrom <- normalize.quantiles(S);
-
-Be sure to install the ``preprocessCore`` package before running the above command. Yo can install it by conda (``conda install -c bioconda bioconductor-preprocesscore``) or by Bioconductor (`link <https://bioconductor.org/packages/release/bioc/html/preprocessCore.html>`_)
-
-For the examples shown below, we normalize the flat scores matrix by applying the **MaxNorm**:
-
-.. code-block:: R
-
-    S <- normalize.max(S);
-
-Running Hierarchical Ensemble Methods
-=========================================
-First of all, we need to find the root node (i.e. node that is at the top-level of the hierarchy) of the ``HPO`` graph ``g``. To do that just type:
-
-.. code-block:: R
-
-    root <- root.node(g);
+    > root <- root.node(g);
 
 in this way we store in the variable ``root`` the root node of the graph ``g``.
 
-Now, we are ready to run any ensemble algorithms implemented in the ``HEMDAG`` package. Depending on which ensemble variant you want to call, you must execute one of the command listed below:
+Now, we are ready to run any ensemble algorithms implemented in the HEMDAG package. Depending on which hierarchical ensemble variant you want to call, you must execute one of the command listed below:
+
+.. _htd:
 
 HTD-DAG: Hierarchical Top Down for DAG
 -----------------------------------------
+The HTD-DAG algorithm modifies the flat scores according to the hierarchy of a DAG through a unique run across the nodes of the graph. For a given example :math:`x \in X`, the flat predictions :math:`f(x) = \hat{y}` are hierarchically corrected to :math:`\bar{y}`, by per-level visiting the nodes of the DAG from top to bottom according to the following simple rule:
+
+.. math::
+
+    \bar{y}_i := \left\{
+       \begin{array}{lll}
+         \hat{y}_i  & {\rm if} \quad i \in root(G) \\
+         \min_{j \in par(i)} \bar{y}_j & {\rm if} \quad \min_{j \in par(i)} \bar{y}_j < \hat{y}_i \\
+         \hat{y}_i & {\rm otherwise}
+       \end{array}
+      \right.
+
+The node levels correspond to their maximum path length from the root. To call the HTD-DAG algorithm just type:
 
 .. code-block:: R
 
-    S.htd <- htd(S,g,root);
+    > S.htd <- htd(S.norm, g, root);
 
-GPAV-DAG: Generalized Pool-Adjacent-Violators for DAG
---------------------------------------------------------
+It is worth noting that instead of using ``htd``, we can execute ``htd.vanilla``, which it allows to normalize the flat scores matrix ``S`` (according to **maxnorm** or **qnorm**) *on the fly*:
 
-.. code-block:: R
-
-    S.gpav <- GPAV.over.examples(S, W=NULL, g);
-
-TPR-DAG: True Path Rule for DAG
---------------------------------------
-``TPR-DAG`` is a family of algorithms according to the bottom-up approach adopted for the choice of the *positive* **children**. In the top-down step (that guarantees coherent predictions with the ontology ones) ``TPR-DAG`` strategy uses the ``HTD-DAG`` algorithm. 
+run a normalization method (between **maxnorm** and **qnrom**) *on the fly*:
 
 .. code-block:: R
 
-    S.tprTF    <- TPR.DAG(S, g, root, positive="children", bottomup="threshold.free", topdown="HTD");
-    S.tprT     <- TPR.DAG(S, g, root, positive="children", bottomup="threshold", topdown="HTD", t=0.5);
-    S.tprW     <- TPR.DAG(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="HTD", w=0.5);
-    S.tprWT    <- TPR.DAG(S, g, root, positive="children", bottomup="weighted.threshold", topdown="HTD", t=0.5, w=0.5);
-
-ISO-TPR: Isotonic Regression for DAG
---------------------------------------
-``TPR-DAG`` is a family of algorithms according to the bottom-up approach adopted for the choice of the *positive* **children**. To make scores consistent with the ontology predictions ``ISO-TPR`` employs in the top-down step the ``GPAV-DAG`` algorithm.
-
-.. code-block:: R
-
-    S.ISOtprTF <- TPR.DAG(S, g, root, positive="children", bottomup="threshold.free", topdown="GPAV");
-    S.ISOtprT  <- TPR.DAG(S, g, root, positive="children", bottomup="threshold", topdown="GPAV", t=0.5);
-    S.ISOtprW  <- TPR.DAG(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="GPAV", w=0.5);
-    S.ISOtprWT <- TPR.DAG(S, g, root, positive="children", bottomup="weighted.threshold", topdown="GPAV", t=0.5, w=0.5);
-
-DESCENS: Descendants Ensemble Classifier
-------------------------------------------------
-``DESCENS`` is a family of algorithms according to the bottom-up approach adopted for the choice of the *positive* **descendants**. In the top-down step ``DESCENS`` uses the ``HTD-DAG`` algorithm.
-
-.. code-block:: R
-
-    S.descensTF     <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold.free", topdown="HTD");
-    S.descensT      <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold", topdown="HTD", t=0.5);
-    S.descensW      <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="HTD", w=0.5);
-    S.descensWT     <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="HTD", t=0.5, w=05);
-    S.descensTAU    <- TPR.DAG(S, g, root, positive="descendants", bottomup="tau", topdown="HTD", t=0.5);
-
-ISO-DESCENS: Isotonic Regression with Descendants Ensemble Classifier
-------------------------------------------------------------------------
-``ISO-DESCENS`` is a family of algorithms according to the bottom-up approach adopted for the choice of the *positive* **descendants**. For the top-down step ``ISO-DESCENS`` employs the ``GPAV-DAG`` algorithm.
-
-.. code-block:: R
-
-    S.ISOdescensTF  <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold.free", topdown="GPAV");
-    S.ISOdescensT   <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold", topdown="GPAV", t=0.5);
-    S.ISOdescensW   <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="GPAV", w=0.5);
-    S.ISOdescensWT  <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="HTD", t=0.5, w=05);
-    S.ISOdescensTAU <- TPR.DAG(S, g, root, positive="descendants", bottomup="tau", topdown="GPAV", t=0.5);
-
-Obozinski Heuristic Methods
-------------------------------------------------
-
-.. code-block:: R
-
-    S.max <- heuristic.max(S,g,root);
-    S.and <- heuristic.and(S,g,root);
-    S.or  <- heuristic.or(S,g,root);
-
-Hierarchical Constraints Check
------------------------------------
-The predictions returned by our ensemble methods always obey to the **True Path Rule**: positive instance for a class implies positive instance for all the ancestors of that class. To check this fact we can apply the function ``check.hierarchy``:
-
-.. code-block:: R
-
-    check.hierarchy(S,g,root)$Status
-    [1] "NOTOK"
-
-    check.hierarchy(S.htd,g,root)$Status
-    [1] "OK"
-
-Obviously, all the ensemble variants hold this property, for instance:
-
-.. code-block:: R
-
-    check.hierarchy(S.tprTF,g,root)$Status
-    [1] "OK"
-
-    check.hierarchy(S.descensW,g,root)$Status
-    [1] "OK"
-
-Performance Evaluation
-----------------------------------
-To know the ensemble methods behavior, the ``HEMDAG`` library, by using ``precrec`` package, provides several performance metrics:
-
-- ``AUROC``: area under the ``ROC`` curve;
-- ``AUPRC``: area under the precision-recall curve;
-- ``F-max``: maximum hierarchical ``F-score`` [Jiang2016]_;
-- ``PXR``  : precision at different recall levels;
+    > S.htd <- htd.vanilla(S, g, norm=TRUE, norm.type="max.norm");
 
 .. note::
-    ``HEMDAG`` allows to compute all the aforementioned performance metrics either **one-shot** or **averaged** across ``k`` fold. 
-    Depending on the size of your dataset, the metrics ``F-max`` and ``PXR`` could take a while to finish. 
-    Please refer to ``HEMDAG`` `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_  for further information about what these functions receive in input and return in output.
 
-.. [Jiang2016] Y. Jiang et al., An expanded evaluation of protein function prediction methods shows an improvement in accuracy, Genome Biology, vol. 17, p. 184, 2016
+    if ``norm=FALSE`` and ``norm.type=NULL`` the flat scores matrix ``S`` is not normalized.
 
-Loading the Annotation Matrix
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-To compare the hierarchical ensemble methods against the flat approach, we need of the annotation matrix:
+.. _gpav:
 
-.. code-block:: R
+GPAV: Generalized Pool-Adjacent-Violators
+--------------------------------------------
+Burdakov et al. in [Burdakov06]_ proposed an approximate algorithm, named GPAV, to solve the *isotonic regression* (IR) or *monotonic regression* (MR) problem in its general case (i.e. partial order of the constraints). GPAV algorithm combines both low computational complexity (estimated to be :math:`\mathcal{O}(|V|^2))` and high accuracy.
+Given the constraints adjacency matrix of the graph, a vector of scores :math:`\hat{y} \in R^n` and a vector of strictly positive weights :math:`w \in R^n`, the GPAV algorithm returns a vector :math:`\bar{y}`` which is as close as possible, in the least-squares sense, to the response vector :math:`\hat{y}` and whose components are partially ordered in accordance with the constraints matrix ``adj``. In other words, GPAV solves the following problem:
 
-    data(labels);
+.. math::
 
-with the above command we loaded the annotations table ``L``, that is a named ``100 X 23`` matrix. Rows correspond to genes (``Entrez GeneID``) and columns to ``HPO`` terms/classes. ``L[i, j] = 1`` means that the gene ``i`` belong to class ``j``, ``L[i, j] = 0`` means that the gene ``i`` does not belong to class ``j``.
-
-Flat vs Hierarchical
-~~~~~~~~~~~~~~~~~~~~~~~
-Before computing performance metrics we must remove the root node from the annotation matrix, the flat scores matrix and the hierarchical scores matrix. It does not make sense at all to take into account the predictions of the root node, since it is a *dummy* node added to the ontology for practical reasons (e.g. some graph-based software may require a single root node to work). In ``R`` this can be accomplished in one line of code.
-
-.. code-block:: R
-    
-    ## remove root node from annotation matrix
-    if(root %in% colnames(L))
-        L <- L[,-which(colnames(L)==root)];
-
-    ## remove root node from flat scores matrix
-    if(root %in% colnames(S))
-        S <- S[,-which(colnames(S)==root)];        
-
-    ## remove root node from hierarchical scores matrix (eg S.htd)
-    if(root %in% colnames(S.htd))
-        S.htd <- S.htd[,-which(colnames(S.htd)==root)];
-
-Now we can compare the flat approach ``RANKS`` versus e.g. ``HTD-DAG`` by averaging the performance across ``3`` folds:
-
-.. code-block:: R
-
-    ## FLAT
-    PRC.flat <- AUPRC.single.over.classes(L, S, folds=3, seed=1);
-    AUC.flat <- AUROC.single.over.classes(L, S, folds=3, seed=1);
-    PXR.flat <- precision.at.given.recall.levels.over.classes(L, S, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=1);
-    FMM.flat <- compute.Fmeasure.multilabel(L, S, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=1);
-
-    ## HIERARCHICAL
-    PRC.hier <- AUPRC.single.over.classes(L, S.htd, folds=3, seed=1);
-    AUC.hier <- AUROC.single.over.classes(L, S.htd, folds=3, seed=1);
-    PXR.hier <- precision.at.given.recall.levels.over.classes(L, S.htd, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=1);
-    FMM.hier <- compute.Fmeasure.multilabel(L, S.htd, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=1);
-
-By looking at the results we can see that ``HTD-DAG`` outperforms the flat classifier ``RANKS``:
-
-.. code-block:: R
-
-   ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8263
-    AUC.hier$average
-    [1] 0.8312
-
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.4373
-    PRC.hier$average
-    [1] 0.4827
-
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.7071 0.6443 0.6853 0.6743 0.5768 0.7314 0.7020
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.5087 0.9394 0.4430 0.6600 0.5922 0.6570 0.4457 
-
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.5872 0.5872 0.5872 0.5715 0.5715 0.4487 0.4361 0.4361 0.4361 0.4361
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.6465 0.6465 0.6465 0.6227 0.6227 0.4996 0.4897 0.4897 0.4897 0.4897
-
-
-.. note::
-    ``HTD-DAG`` is the simplest ensemble approach among those available. ``HTD-DAG`` strategy makes flat scores consistent with the hierarchy by propagating from to top to the bottom of the hierarchy the negative predictions. Hence, in the worst case might happen that the predictions at leaves nodes are all negatives. Other ensemble variants (such as ``GPAV-DAG`` and ``TPR-DAG`` and its variants) lead to better improvements. 
-
-Running Experiments with the Hierarchical Ensemble Methods
-============================================================
-The ``HEMDAG`` library provides also high-level functions for batch experiments, where input and output data must be stored in compressed ``rda`` files. In this way we can run experiment with different ensemble variants by properly changing the arguments of high-level functions implemented in ``HEMDAG``:
-
-1. **Do.HTD**: high-level function to run experiments with ``HTD-DAG`` algorithm;
-2. **Do.GPAV**: high-level function to run experiments with ``GPAV-DAG`` algorithm;
-3. **Do.TPR.DAG**: high-level function to run experiments with all ``TPR-DAG`` variants;
-4. **Do.HTD.holdout**: high-level function to run hold-out experiment with ``HTD-DAG`` algorithm;
-5. **Do.GPAV.holdout**: high-level function to run hold-out experiment with ``GPAV-DAG`` algorithm;
-6. **Do.TPR.DAG.holdout**: high-level function to run hold-out experiment with all ``TPR-DAG`` variants;
-
-The normalization can be applied on-the-fly within the ensemble high-level function or can be pre-computed through the function ``Do.flat.scores.normalization``. Please have a look to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_ for further details on this function.
-
-.. _cvexp:
-
-Cross-Validated Experiments
------------------------------
-Here we perform several experiments by using the high-level functions, which provide an user-friendly interface to facilitate the execution of hierarchical ensemble methods.
-
-Data Preparation
-~~~~~~~~~~~~~~~~~~~
-For the following experiments we store the input data (i.e. the flat scores matrix ``S``, the graph ``g`` and the annotation table ``L``) in the directory ``data`` and the output data (i.e. the hierarchical scores matrix and the performances) in the folder ``results``:
-
-.. code-block:: R
-
-    # load data
-    data(graph);
-    data(scores);
-    data(labels);
-
-    if(!dir.exists("data"))
-        dir.create("data");
-
-    if(!dir.exists("results"))
-        dir.create("results");
-
-    # store data
-    save(g,file="data/graph.rda");
-    save(L,file="data/labels.rda");
-    save(S,file="data/scores.rda");
-
-HTD-DAG Experiments
-~~~~~~~~~~~~~~~~~~~~~
-Here we perform exactly the same experiment that we did above, but using this time the high-level ``Do.HTD`` to compute the ``HTD-DAG`` algorithm:
-
-.. code-block:: R
-
-    Do.HTD( norm=FALSE, norm.type="MaxNorm", folds=3, seed=1, n.round=3, f.criterion="F",
-            recall.levels=seq(from=0.1, to=1, by=0.1), flat.file="scores", ann.file="labels",
-            dag.file="graph", flat.dir="data/", ann.dir="data/", dag.dir="data/",
-            hierScore.dir="results/", perf.dir="results/", compute.performance=TRUE);
-
-Obviously the results returned by ``Do.HTD`` are identical to those obtained by the step-by-step experiment performed above:
-
-.. code-block:: R
-
-    load("results/PerfMeas.MaxNorm.scores.hierScores.HTD.rda");
-
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8263
-    AUC.hier$average
-    [1] 0.8312
-
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.4373
-    PRC.hier$average
-    [1] 0.4827
-
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.7071 0.6443 0.6853 0.6743 0.5768 0.7314 0.7020
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.5087 0.9394 0.4430 0.6600 0.5922 0.6570 0.4457 
-
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.5872 0.5872 0.5872 0.5715 0.5715 0.4487 0.4361 0.4361 0.4361 0.4361
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.6465 0.6465 0.6465 0.6227 0.6227 0.4996 0.4897 0.4897 0.4897 0.4897
-
-.. note::
-    All the high-level functions running ensemble-based algorithms automatically remove the root node from the annotation matrix, the flat and the hierarchical scores matrix before computing performance metrics.
-
-GPAV-DAG Experiments
-~~~~~~~~~~~~~~~~~~~~~
-Burdakov et al. in [Burdakov06]_ proposed an approximate algorithm, named ``GPAV``, to solve the *isotonic regression* (IR) or *monotonic regression* (MR) problem in its general case (i.e. partial order of the constraints). ``GPAV`` algorithm combines both low computational complexity (estimated to be :math:`\mathcal{O}(|V|^2)`) and high accuracy. 
+    \bar{y} = \left\{
+    \begin{array}{l}
+       \min \sum_{i \in N} (\hat{y}_i - \bar{y}_i )^2\\\\
+       \forall i, \quad  j \in par(i) \Rightarrow  \bar{y}_j  \geq \bar{y}_i
+    \end{array}
+    \right.
 
 .. [Burdakov06] O. Sysoev, A. Grimvall, and O. Burdakov, Data preordering in generalized pav algorithm for monotonic regression, Journal of Computational Mathematics, vol. 24, no. 6, pp. 771–790, 2006
 
-To run experiments with ``GPAV-DAG`` we must type, for instance:
+To call the GPAV algorithm just type:
 
 .. code-block:: R
 
-    Do.GPAV( norm=FALSE, norm.type= "MaxNorm", W=NULL, parallel=TRUE, ncores=7, 
-             folds=3, seed=1, n.round=3, f.criterion ="F", flat.file="scores", 
-             recall.levels=seq(from=0.1, to=1, by=0.1), ann.file="labels", 
-             dag.file="graph", flat.dir="data/", ann.dir="data/", dag.dir="data/", 
-             hierScore.dir="results/", perf.dir="results/", compute.performance=TRUE);
+    > S.gpav <- gpav.over.examples(S.norm, g, W=NULL);
 
-By loading the ``GPAV-DAG`` performance results we can see that this ensemble variant outperforms the flat classifier ``RANKS``:
+It is worth noting that there is also a parallel version of the GPAV algorithm:
 
 .. code-block:: R
 
-    load("results/PerfMeas.MaxNorm.scores.hierScores.GPAV.rda");
+    > S.gpav <- gpav.parallel(S.norm, g, W=NULL, ncores=8);
 
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8263
-    AUC.hier$average
-    [1] 0.8438
-    
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.4373
-    PRC.hier$average
-    [1] 0.5201
-    
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-         P      R      S      F    avF      A      T 
-    0.7071 0.6443 0.6853 0.6743 0.5768 0.7314 0.7020 
-    FMM.hier$average
-         P      R      S      F    avF      A      T 
-    0.5893 0.8581 0.5311 0.6988 0.6009 0.6983 0.5360 
-    
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9      1 
-    0.5872 0.5872 0.5872 0.5715 0.5715 0.4487 0.4361 0.4361 0.4361 0.4361 
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9      1 
-    0.6976 0.6976 0.6976 0.6835 0.6835 0.5214 0.5005 0.5005 0.5005 0.5005 
+Similarly to HTD-DAG also for GPAV, we can use the function ``gpav.vanilla`` (instead of ``gpav.over.examples`` or ``gpav.parallel``) to normalize the flat scores matrix ``S`` (according to **maxnorm** or **qnorm**) *on the fly*:
 
-TPR-DAG and ISO-TPR experiments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-``TPR-DAG`` is a family of algorithms in according to the chosen bottom-up and top-down approach. There are both parametric and non-parametric variants. To change variant is sufficient to modify the argument of the following parameters of the ``Do.TPR.DAG`` high-level function:
+.. code-block:: R
 
-* ``threshold``;
-* ``weight``;
-* ``positive``;
-* ``topdown``;
-* ``bottomup``;
+    > S.gpav <- gpav.vanilla(S, g, W=NULL, parallel=FALSE, ncores=8, norm=TRUE, norm.type="maxnorm");
 
-Please refer to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_ for further details about these parameters.
+.. _tpr:
 
-By replacing ``GPAV-DAG`` with ``HTD-DAG`` in the top-down step of ``TPR-DAG`` (variable ``topdown``), we design the ``ISO-TPR`` algorithm. The most important feature of ``ISO-TPR`` is that it maintains the hierarchical constraints by construction and selects the closest solution (in the least square sense) to the bottom-up predictions that obey the *true path rule*, the logical and biological rule that govern the bio-ontology, such as ``HPO`` and ``GO``. 
+TPR-DAG: True Path Rule for DAG and Variants
+------------------------------------------------
+TPR-DAG is a family of algorithms on the basis of the choice of the **bottom-up** step adopted for the selection of *positive* children (or descendants) and of the **top-down** step adopted to assure ontology-based predictions. Indeed, in their more general form, TPR-DAG algorithms adopt a two step learning strategy:
 
-Below we perform several experiments by playing with different ``TPR-DAG`` and ``ISO-TPR`` ensemble variants. In all the experiments, the performances were averaged across ``3`` folds.
+    1. in the first step they compute a *per-level bottom-up* visit from the leaves to the root to propagate positive predictions across the hierarchy;
+    2. in the second step they compute a *per-level top-down* visit from the root to the leaves in order to assure the consistency of the predictions;
 
 .. note::
-    In ``Do.TPR-DAG`` high-level function the parameter ``kk`` refers to the number of folds of the cross validation on which tuning the parameters of the *parametric* variants of the hierarchical ensemble algorithms, whereas the parameter ``folds`` refers to number of folds of the cross validation on which computing the performance metrics averaged across folds. For the non-parametric variants (i.e. if ``bottomup = threshold.free``), ``Do.TPR-DAG`` automatically set to zero the parameters ``kk`` and ``folds``.
 
-1. ``ISOtprT``: flat scores matrix normalized by ``MaxNorm``, *positive* **children** selection (normalizing the threshold on ``AUPRC`` (``PRC``) across ``5`` folds, parameter ``kk=5``) and by applying ``GPAV-DAG`` strategy in the top-down step
+    Levels (both in the first and second step) are defined in terms of the maximum path length from the root node. Please refer to our `BMC Bioinformatics paper <https://doi.org/10.1186/s12859-017-1854-y>`_ for further details.
+
+The *vanilla* TPR-DAG adopts a per-level bottom-up traversal of the DAG to correct the flat predictions :math:`\hat{y}_i` according to the following formula:
+
+.. math::
+
+    \bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
+
+where :math:`\phi_i` are the positive children of :math:`i` (parameter ``positive="children"``).
+
+Different strategies to select the positive children :math:`\phi_i` can be applied:
+
+    1. **threshold-free** strategy (parameter ``bottom="threshold.free"``): the positive nodes are those children that can increment the score of the node :math:`i`, that is those nodes that achieve a score higher than that of their parents:
+
+    .. math::
+
+        \phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
+
+    2. **threshold** strategy (parameter ``bottom="threshold"``): the positive children are selected on the basis of a threshold that can be selected in two different ways:
+
+        a) for each node a constant threshold :math:`\bar{t}` is a priori selected:
+
+        .. math::
+
+            \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
+
+        For instance if the predictions represent probabilities it could be meaningful to a priori select :math:`\bar{t}=0.5`.
+
+        b) the threshold is selected to maximize some performance metric :math:`\mathcal{M}` estimated on the training data, as for instance the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions :math:`\mathcal{M}(j,t)` on the training data for the class :math:`j` with respect to the threshold :math:`t`. The corresponding set of positives :math:`\forall i \in V` is:
+
+        .. math::
+
+            \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
+
+        For instance :math:`t_j^*` can be selected from a set of :math:`t \in (0,1)` through internal cross-validation techniques.
+
+The weighted TPR-DAG version ((parameter ``bottom="weighted.threshold.free"``)) can be designed by adding a weight :math:`w \in [0,1]` to balance between the contribution of the node :math:`i` and that of its positive children :math:`\phi`, through their convex combination:
+
+.. math::
+
+    \bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
+
+If :math:`w=1` no weight is attributed to the children and the TPR-DAG reduces to the HTD-DAG algorithm, since in this way only the prediction for node :math:`i` is used in the bottom-up step of the algorithm. If :math:`w=0` only the predictors associated to the children nodes vote to predict node :math:`i`. In the intermediate cases we attribute more importance to the predictor for the node :math:`i` or to its children depending on the values of :math:`w`.
+
+By combining the weighted and the threshold variant, we design the *weighted-threshold* variant (parameter ``bottom="weighted.threshold"``).
+
+All the *vanilla* TPR-DAG variants use the HTD-DAG algorithm in the top-down step (parameter ``topdown="htd"``) to provide ontology-based predictions (i.e. predictions that are coherent with the ontology structure):
+.. code-block:: R
+
+    > S.tprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="htd");
+    > S.tprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="htd", t=0.5);
+    > S.tprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
+    > S.tprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="htd", t=0.5, w=0.5);
+
+DESCENS: Descendants Ensemble Classifier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Since the contribution of the descendants of a given node decays exponentially with their distance from the node itself, to enhance the contribution of the most specific nodes to the overall decision of the ensemble we design the ensemble variant DESCENS. The novelty of DESCENS consists in strongly considering the contribution of all the descendants of each node instead of only that of its children (``positive="descendants"``). Therefore DESCENS predictions are more influenced by the information embedded in the leaves nodes, that are the classes containing the most informative and meaningful information from a biological and medical standpoint. For the choice of the *positive* descendants we use the same strategies adopted for the selection of the *positive* children shown above. Furthermore, we designed a variant specific only for DESCENS, that we named DESCENS-:math:`\tau` (parameter ``bottomup="tau"``). The DESCENS-:math:`\tau` variant balances the contribution between the *positives* children of a node :math:`i` and that of its *positives* descendants excluding its children by adding a weight :math:`\tau \in [0,1]`:
+
+.. math::
+
+    \bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
+
+where :math:`\phi_i` are the *positive* children of :math:`i` and :math:`\delta_i=\Delta_i \setminus \phi_i` the descendants of \eqn{i} without its children.
+
+If :math:`\tau=1` we consider only the contribution of the *positive* children of :math:`i`; if :math:`\tau=0` only the descendants that are not children contribute to the score, while for intermediate values of :math:`\tau` we can balance the contribution of :math:`\phi_i` and :math:`\delta_i` positive nodes.
+
+Also the DESCENS variants adopt in the top-down step the HTD-DAG algorithm to assure the consistency of the predictions:
 
 .. code-block:: R
 
-    Do.TPR.DAG( threshold=seq(0.1,0.9,0.1), weight=0, kk=5, folds=3, seed=1, norm=FALSE, 
-                norm.type="MaxNorm", positive="children", bottomup="threshold", topdown="GPAV", 
-                n.round=3, f.criterion="F", metric="PRC", recall.levels=seq(from=0.1, to=1, by=0.1), 
-                flat.file="scores", ann.file="labels", dag.file="graph", flat.dir="data/", 
-                ann.dir="data/", dag.dir="data/", hierScore.dir="results/", 
-                perf.dir="results/", compute.performance=TRUE);
+    > S.descensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="htd");
+    > S.descensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="htd", t=0.5);
+    > S.descensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
+    > S.descensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="htd", t=0.5, w=05);
+    > S.descensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="htd", t=0.5);
 
-2. ``ISOdescensTF``: flat scores matrix normalized by ``MaxNorm``, *positive* **descendants** selection (without threshold) and by applying ``GPAV-DAG`` strategy in the top-down step
-
-.. code-block:: R
-
-    Do.TPR.DAG( threshold=0, weight=0, kk=NULL, folds=3, seed=73, norm=FALSE, norm.type="MaxNorm", 
-                positive="descendants", bottomup="threshold.free", topdown="GPAV", n.round=3, 
-                f.criterion="F", metric=NULL, recall.levels=seq(from=0.1, to=1, by=0.1), 
-                flat.file="scores", ann.file="labels", dag.file="graph", flat.dir="data/", 
-                ann.dir="data/", dag.dir="data/", hierScore.dir="results/", 
-                perf.dir="results/", compute.performance=TRUE);
-
-3. ``ISOdescensTAU``: flat scores matrix normalized by ``Qnorm``, *positive* **descendants** selection (maximizing the threshold on the ``F-score`` (``FMAX``) across ``5`` folds, parameter ``kk=5``)and by applying ``GPAV-DAG`` strategy in the top-down step
+ISO-TPR: Isotonic Regression for DAG
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+By replacing the top-down step (:ref:`htd`) with the GPAV approach (:ref:`gpav`) we design the ISO-TPR variant (parameter ``positive="children"`` and ``topdown="gpav"``). The most important feature of ISO-TPR is that it maintains the hierarchical constraints by construction and it selects the closest solution (in the least square sense) to the bottom-up predictions that obeys the true path rule.
 
 .. code-block:: R
 
-    Do.TPR.DAG( threshold=seq(0.1,0.9,0.1), weight=0, kk=5, folds=3, seed=1, norm=FALSE, 
-                norm.type="Qnorm", positive="descendants", bottomup="tau", topdown="GPAV", 
-                n.round=3, f.criterion="F", metric="FMAX", flat.file="scores", 
-                ann.file="labels", recall.levels=seq(from=0.1, to=1, by=0.1), 
-                dag.file="graph", flat.dir="data/", ann.dir="data/", dag.dir="data/",
-                hierScore.dir="results/", perf.dir="results/", compute.performance=TRUE);
+    > S.ISOtprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
+    > S.ISOtprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.ISOtprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.ISOtprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
 
-4. ``tprT``: flat scores matrix normalized by ``Qnorm``, *positive* **children** selection (maximizing the threshold on the ``F-score`` (``FMAX``) across ``5`` folds, parameter ``kk=5``) and by applying ``HTD-DAG`` strategy in the top-down step
-
-.. code-block:: R
-
-    Do.TPR.DAG( threshold=seq(0.1,0.9,0.1), weight=0, kk=5, folds=3, seed=1, norm=FALSE, 
-                norm.type="Qnorm", positive="children", bottomup="threshold", topdown="HTD", 
-                n.round=3, f.criterion="F", metric="FMAX", recall.levels=seq(from=0.1, to=1, by=0.1), 
-                flat.file="scores", ann.file="labels", dag.file="graph", flat.dir="data/", 
-                ann.dir="data/", dag.dir="data/", hierScore.dir="results/", 
-                perf.dir="results/", compute.performance=TRUE);
-
-5. ``descensW``: flat scores matrix normalized by ``MaxNorm``,*positive* **descendants** selection (maximizing the weight on the ``F-score`` (``FMAX``) across ``5`` folds, parameter ``kk=5``) and by applying ``HTD-DAG`` strategy in the top-down step
+ISO-DESCENS: Isotonic Regression with Descendants Ensemble Classifier
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+By considering the **positive descendants** instead of **positive children** in the bottom-up step and by using the GPAV approach (instead of HTD-DAG algorithm) to guarantee the consistency of the predictions, we merely design the ISO-DESCENS variants (parameter ``positive="descendants"`` and ``topdown="gpav"``):
 
 .. code-block:: R
 
-    Do.TPR.DAG( threshold=0, weight=seq(0.1,0.9,0.1), kk=5, folds=3, seed=1, norm=FALSE, 
-                norm.type="MaxNorm", positive="descendants", bottomup="weighted.threshold.free", 
-                topdown="GPAV", n.round=3, f.criterion="F", metric="FMAX", flat.file="scores", 
-                recall.levels=seq(from=0.1, to=1, by=0.1), ann.file="labels", dag.file="graph", 
-                flat.dir="data/", ann.dir="data/", dag.dir="data/", hierScore.dir="results/", 
-                perf.dir="results/", compute.performance=TRUE);
+    > S.ISOdescensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
+    > S.ISOdescensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.ISOdescensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.ISOdescensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    > S.ISOdescensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
 
-6. ``descensTF``: flat scores matrix normalized by ``Qnorm``, *positive* **descendants** selection (without threshold) and by applying ``HTD-DAG`` strategy in the top-down step
+Obozinski Heuristic Methods
+--------------------------------
+HEMDAG includes also the three heuristics ensemble methods (And, Max, Or) proposed in [Obozinski08]_:
 
-.. code-block:: R
+1. **Max**: reports the largest logistic regression (LR) value of self and all descendants: :math:`p_i = max_{j \in descendants(i)} \hat{p_j}`;
 
-    Do.TPR.DAG( threshold=0, weight=0, kk=NULL, folds=3, seed=1, norm=FALSE, 
-                norm.type="Qnorm", positive="descendants", bottomup="threshold.free", 
-                topdown="HTD", n.round=3, f.criterion="F", metric=NULL, flat.file="scores", 
-                recall.levels=seq(from=0.1, to=1, by=0.1), ann.file="labels", dag.file="graph", 
-                flat.dir="data/", ann.dir="data/", dag.dir="data/", hierScore.dir="results/", 
-                perf.dir="results/", compute.performance=TRUE);
+2. **And**: reports the product of LR values of all ancestors and self. This is equivalent to computing the probability that all ancestral terms are "on" assuming that, conditional on the data, all predictions are independent: :math:`p_i = \prod_{j \in ancestors(i)} \hat{p_j}`;
 
-For instance, by loading the results of the ``ISOtprT``, we can see that also this variant improves upon ``RANKS`` performances:
-
-.. code-block:: R
-
-    load("results/PerfMeas.MaxNorm.scores.hierScores.ISOtprT.rda");
-
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8263
-    AUC.hier$average
-    [1] 0.8446
-
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.4373
-    PRC.hier$average
-    [1] 0.5485
-
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.7071 0.6443 0.6853 0.6743 0.5768 0.7314 0.7020
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.6007 0.8747 0.5261 0.7122 0.6224 0.7025 0.5827
-
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.5872 0.5872 0.5872 0.5715 0.5715 0.4487 0.4361 0.4361 0.4361 0.4361
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.7043 0.7043 0.7043 0.6876 0.6876 0.5401 0.5219 0.5219 0.5219 0.5219
-
-Obozinski Heuristic Methods experiments
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-``HEMDAG`` implements also three heuristics ensemble methods (``AND``, ``MAX``, ``OR``) proposed in [Obozinski08]_. Experiments with these variants can be performed exactly in the same way as done above. Please see the high-level function ``Do.heuristic.methods`` in the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_ to further details about how to run experiments with the Obozinski's heuristic ensemble-variants.
+3. **Or**: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data, all predictions are independent: :math:`1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})`;
 
 .. [Obozinski08] Obozinski G, Lanckriet G, Grant C, M J, Noble WS. Consistent probabilistic output for protein function prediction. Genome Biology. 2008;9:135–142. doi:10.1186/gb-2008-9-s1-s6.
 
-.. _hpoho:
+To call Obozinski's heuristic methods, just type:
 
-Hold-out Experiments
+.. code-block:: R
+
+    > S.max <- obozinski.max(S.norm, g, root);
+    > S.and <- obozinski.and(S.norm, g, root);
+    > S.or  <- obozinski.or(S.norm, g, root);
+
+Alternatively, the Obozinski's methods can be also called by changing properly the parameter ``heuristic`` of the function ``obozinski.methods``:
+
+.. code-block:: R
+
+    > S.max <- obozinski.methods(S, g, heuristic="max", norm=TRUE, norm.type="maxnorm");
+    > S.and <- obozinski.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
+    > S.or  <- obozinski.methods(S, g, heuristic="or",  norm=TRUE, norm.type="maxnorm");
+
+Hierarchical Constraints Check
+==================================
+Predictions returned by a flat classifier **do not respect** the *True Path Rule* (since they neglecting the structural information between different ontology terms), whereas the the predictions returned by a hierarchical ensemble methods **always obey** to the *True Path Rule*. According to this rule a *positive* instance for a class implies *positive* instance for all the ancestors of that class. We can easily check this fact by using the function ``check.hierarchy``. Below as an example we check the consistency of the scores corrected according to the HTD-DAG strategy. Of course, all the scores corrected with any hierarchical ensemble variants included in HEMDAG, respect the **True Path Rule**. We leave to the reader the possibility to check the consistency of the scores matrix of the remaining 22 hierarchical ensemble variants encompassed in HEMDAG.
+
+.. code-block:: R
+
+    > check.hierarchy(S, g, root)$status
+    [1] "NOTOK"
+
+    > check.hierarchy(S.htd, g, root)$status
+    [1] "OK"
+
+Performance Evaluation
+==========================
+To know the behavior of the hierarchical ensemble methods, the HEMDAG library provides both *term-centric* and *protein-centric* performance metrics:
+
+- ``AUPRC``: area under the precision-recall curve;
+- ``AUROC``: area under the ROC curve;
+- ``Fmax`` : maximum hierarchical F-score [Jiang2016]_;
+- ``PXR``  : precision at different recall levels;
+
+.. note::
+    a) HEMDAG allows to compute all the aforementioned performance metrics either **one-shot** or **averaged** across ``k`` fold. Depending on the dataset size, the metrics ``Fmax`` and ``PXR`` could take a while to finish. Please refer to HEMDAG `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_  for further information about what these functions receive in input and return in output.
+    b) For computing the *term-centric* metrics (``AUROC``, ``AUPRC`` and ``PXR``), HEMDAG uses the R package *precrec* (`link <https://CRAN.R-project.org/package=precrec>`__).
+
+.. [Jiang2016] Y. Jiang et al., An expanded evaluation of protein function prediction methods shows an improvement in accuracy, Genome Biology, vol. 17, p. 184, 2016
+
+Load the Annotation Matrix
+------------------------------
+To compare the hierarchical ensemble methods against the flat approach, we need the annotation matrix:
+
+.. code-block:: R
+
+    > data(labels);
+
+with the above command we loaded the annotations table ``L``, that is a named ``100 X 23`` matrix. Rows correspond to genes (``Entrez GeneID``) and columns to HPO terms/classes. ``L[i, j] = 1`` means that the gene ``i`` belong to class ``j``, ``L[i, j] = 0`` means that the gene ``i`` does not belong to class ``j``.
+
+Flat vs Hierarchical
 ------------------------
-``HEMDAG`` library allows to do also classical hold-out experiments. Respect to the cross-validated experiments performed above, we only need to load the indices of the examples to be used in the test set:
+Before computing performance metrics we should remove the root node from the annotation matrix, the flat scores matrix and the hierarchical scores matrix. Indeed, it does not make sense to take into account the predictions of the root node, since it is a *fake* node added to the ontology for practical reasons (e.g. some graph-based software may require a single root node to work). In R this can be accomplished in one line of code.
 
 .. code-block:: R
 
-    data(test.index);
-    save(test.index, file="data/test.index.rda"); 
+    ## remove root node from annotation matrix
+    > if(root %in% colnames(L))
+    +   L <- L[,-which(colnames(L)==root)];
 
-Now we can perform hold-out experiments. In all the experiments shown below, the performances were computed one-shot (``folds=NULL``). 
-We store the results in the directory ``results_ho``:
+    ## remove root node from the normalized flat scores matrix
+    > if(root %in% colnames(S.norm))
+    +   S.norm <- S.norm[,-which(colnames(S.norm)==root)];
+    ## remove root node from hierarchical scores matrix (eg S.htd)
+    > if(root %in% colnames(S.htd))
+    +   S.htd <- S.htd[,-which(colnames(S.htd)==root)];
 
-.. code-block:: R
-
-    if(!dir.exists("results_ho"))
-        dir.create("results_ho");
-
-HTD-DAG Experiments: Hold-out Version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. code-block:: R
-
-    Do.HTD.holdout( norm=FALSE, norm.type="MaxNorm", n.round=3, f.criterion ="F", folds=NULL, 
-                    seed=NULL, recall.levels=seq(from=0.1, to=1, by=0.1), flat.file="scores", 
-                    ann.file="labels", dag.file="graph", flat.dir="data/", ann.dir="data/", 
-                    dag.dir="data/", ind.test.set="test.index", ind.dir="data/", 
-                    hierScore.dir="results_ho/", perf.dir="results_ho/", 
-                    compute.performance=TRUE);
-
-By looking at the performances we can see that ``HTD-DAG`` outperforms ``RANKS``:
+Now we can compare the flat approach RANKS versus the HTD-DAG strategy by averaging the performance across ``3`` folds:
 
 .. code-block:: R
 
-    load("results_ho/PerfMeas.MaxNorm.scores.hierScores.HTD.rda");
+    ## RANKS
+    > prc.flat  <- auprc.single.over.classes(L, S.norm, folds=3, seed=23);
+    > auc.flat  <- auroc.single.over.classes(L, S.norm, folds=3, seed=23);
+    > pxr.flat  <- precision.at.given.recall.levels.over.classes(L, S.norm, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
+    > fmax.flat <- compute.fmax(L, S.norm, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8621
-    AUC.hier$average
-    [1] 0.8997
+    ## HTD-DAG
+    > prc.htd  <- auprc.single.over.classes(L, S.htd, folds=3, seed=23);
+    > auc.htd  <- auroc.single.over.classes(L, S.htd, folds=3, seed=23);
+    > pxr.htd  <- precision.at.given.recall.levels.over.classes(L, S.htd, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
+    > fmax.htd <- compute.fmax(L, S.htd, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.2789
-    PRC.hier$average
-    [1] 0.4504
+By looking at the results we can see that HTD-DAG outperforms the flat classifier RANKS:
 
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.5952 0.8182 0.4190 0.6891 0.6404 0.7424 0.3770
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.5589 0.9444 0.2824 0.7023 0.6506 0.6818 0.3590
+.. code-block:: R
 
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
+   ## AUC performance: RANKS VS HTD-DAG
+    > auc.flat$average
+    [1] 0.8297
+    > auc.htd$average
+    [1] 0.8336
+
+    ## PRC performance: RANKS VS HTD-DAG
+    > prc.flat$average
+    [1] 0.4333
+    > prc.htd$average
+    [1] 0.4627
+
+    ## Fmax performance: RANKS VS HTD-DAG
+    > fmax.flat$average
+        P      R      S      F    avF      A      T
+    0.5042 0.8639 0.4485 0.6368 0.5269 0.6612 0.5720
+    > fmax.htd$average
+        P      R      S      F    avF      A      T
+    0.5576 0.7745 0.6519 0.6484 0.5617 0.7521 0.6487
+
+    ## PXR: RANKS VS HTD-DAG
+    > pxr.flat$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.4424 0.4424 0.4424 0.4379 0.4379 0.3708 0.3621 0.3621 0.3621 0.3621
-    PXR.hier$avgPXR
+    0.5821 0.5821 0.5821 0.5531 0.5531 0.4483 0.4388 0.4388 0.4388 0.4388
+    > pxr.htd$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.6629 0.6629 0.6629 0.6174 0.6174 0.4698 0.4547 0.4547 0.4547 0.4547
-
-GPAV-DAG Experiments: Hold-out Version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. code-block:: R
-
-    Do.GPAV.holdout( norm=FALSE, norm.type="MaxNorm", n.round=3, f.criterion ="F", folds=NULL, 
-                     seed=NULL, recall.levels=seq(from=0.1, to=1, by=0.1), flat.file="scores", 
-                     ann.file="labels", dag.file="graph", flat.dir="data/", ann.dir="data/", 
-                     dag.dir="data/", ind.test.set="test.index", ind.dir="data/", 
-                     hierScore.dir="results_ho/", perf.dir="results_ho/", 
-                     compute.performance=TRUE);
-
-By looking at the performances we can see that ``GPAV-DAG`` outperforms the flat classifier ``RANKS``:
-
-.. code-block:: R
-
-    load("results_ho/PerfMeas.MaxNorm.scores.hierScores.GPAV.rda");
-
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8621
-    AUC.hier$average
-    [1] 0.8925
-
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.2789
-    PRC.hier$average
-    [1] 0.3427
-
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.5952 0.8182 0.4190 0.6891 0.6404 0.7424 0.3770
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.6952 0.8889 0.4606 0.7802 0.7239 0.8030 0.4370
-
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.4424 0.4424 0.4424 0.4379 0.4379 0.3708 0.3621 0.3621 0.3621 0.3621
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.5341 0.5341 0.5341 0.5250 0.5250 0.4333 0.4273 0.4273 0.4273 0.4273
-
-TPR-DAG and ISO-TPR Experiments: Hold-out Version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. note::
-    Similarly as done in the ``Do.TPR-DAG`` also in the hold-out version of the high-level function (``Do.TPR-DAG.holdout``), the parameter ``kk`` refers to the number of folds of the cross validation on which tuning the parameters of the *parametric* variants of the hierarchical ensemble algorithms, whereas the parameter ``folds`` refers to number of folds of the cross validation on which computing the performance metrics averaged across folds. For the non-parametric variants (i.e. if ``bottomup = threshold.free``), ``Do.TPR-DAG.holdout`` automatically set to zero the parameters ``kk`` and ``folds``.
-
-1. ``descensT``: flat scores matrix normalized by ``MaxNorm``, *positive* **descendants** selection (maximizing the threshold on the ``AUPRC`` (``PRC``) across ``5`` folds, parameters ``kk=5``) and by applying ``HTD-DAG`` strategy in the top-down step
-
-.. code-block:: R
-
-    Do.TPR.DAG.holdout( threshold=seq(0.1,0.9,0.1), weight=0, kk=5, folds=NULL, seed=1, norm=FALSE, 
-                        norm.type="MaxNorm", positive="descendants", bottomup="threshold", 
-                        topdown="HTD", recall.levels=seq(from=0.1, to=1, by=0.1), n.round=3, 
-                        f.criterion="F", metric="PRC", flat.file="scores", ann.file="labels", 
-                        dag.file="graph", flat.dir="data/", ann.dir="data/", dag.dir="data/", 
-                        ind.test.set="test.index", ind.dir="data/", hierScore.dir="results_ho/", 
-                        perf.dir="results_ho/", compute.performance=TRUE);
-
-2. ``ISOdescensT``: flat scores matrix normalized by ``MaxNorm``, *positive* **descendants** selection (maximizing the threshold on the ``AUPRC`` -- ``PRC`` across ``5`` folds -- ``kk=5``) and by applying ``GPAV-DAG`` strategy in the top-down step
-
-.. code-block:: R
-
-    Do.TPR.DAG.holdout( threshold=seq(0.1,0.9,0.1), weight=0, kk=5, folds=NULL, seed=1, norm=FALSE, 
-                        norm.type="MaxNorm", positive="descendants", topdown="GPAV", 
-                        bottomup="threshold", n.round=3, recall.levels=seq(from=0.1, to=1, by=0.1), 
-                        f.criterion="F", metric="FMAX", flat.file="scores", ann.file="labels", 
-                        dag.file="graph", flat.dir="data/", ann.dir="data/", dag.dir="data/", 
-                        ind.test.set="test.index", ind.dir="data/", hierScore.dir="results_ho/", 
-                        perf.dir="results_ho/", compute.performance=TRUE);
-
-For instance, by loading the results of the ``descensT`` variant, we can see that this ensemble variant improves upon ``RANKS`` performances:
-
-.. code-block:: R
-    
-    load("results_ho/PerfMeas.MaxNorm.scores.hierScores.descensT.rda");
-
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8621
-    AUC.hier$average
-    [1] 0.8789
-
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.2789
-    PRC.hier$average
-    [1] 0.5482
-
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.5952 0.8182 0.4190 0.6891 0.6404 0.7424 0.3770
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.7481 0.8889 0.5532 0.8125 0.7809 0.8788 0.5510
-
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.4424 0.4424 0.4424 0.4379 0.4379 0.3708 0.3621 0.3621 0.3621 0.3621
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.7538 0.7538 0.7538 0.6932 0.6932 0.4851 0.4796 0.4796 0.4796 0.4796
-
-Obozinski Heuristic Methods experiments: Hold-out Version
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Hold-out experiments with the three Obozinski heuristic variants can be performed exactly in the same way as done above. Please see the high-level function ``Do.heuristic.methods.holdout`` in the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_ to further details about how to run experiments with the Obozinski's heuristic ensemble-variants.
-
-
-Hierarchical Prediction of GO terms
-====================================
-Let us show now a step-by-step application of ``HEMDAG`` to the hierarchical prediction of protein function by using the model organism ``DROME`` (*D. melanogaster*). 
+    0.6218 0.6218 0.6218 0.5941 0.5941 0.4798 0.4668 0.4668 0.4668 0.4668
 
 .. note::
+    HTD-DAG is the simplest ensemble approach among those available. HTD-DAG strategy makes flat scores consistent with the hierarchy by propagating from to top to the bottom of the hierarchy the negative predictions. Hence, in the worst case might happen that the predictions at leaves nodes are all negatives. Other ensemble algorithms (such as GPAV and TPR-DAG and variants) should lead to better improvements.
 
-    For the sake of space here we show experiments with the ensemble-based hierarchical learning algorithms ``GPAV`` and ``ISO-TPR``. However, any other ensemble-based variants executed for the ``HPO``-term prediction and more in general listed in the ``HEMDAG`` library can be also applied for the ``GO``-term prediction.
+Tuning of Hyper-Parameter(s)
+===============================
+14 out of 18 of the TPR-DAG hierarchical algorithms are parametric. Instead of use a priori selected threshold (as done in :ref:`tpr` and variants), we can tune the hyper-parameter(s) of the parametric variants through the function ``tpr.dag.cv``. The hyper-parameter(s) can be maximize on the basis of ``AUPRC``(parameter ``metric="prc"``) or ``Fmax`` (parameter ``metric="fmax"``). Below, as an example, we maximize the threshold of the parametric variant ISO-TPR-threshold (``ISOtprT``) on the basis of ``AUPRC`` metric.
 
-Data Description
-=================
-The data used in the experiments shown below can be downloaded at the following `link <https://github.com/marconotaro/HEMDAG/tree/master/docs/data/>`__. 
+.. code-block:: R
 
-| 1. ``7227_DROME_GO_MF_DAG_STRING_v10.5_20DEC17.rda``: object of class ``graphNEL`` that represents the hierarchy of terms of the ``GO`` subontology *Molecular Function* (``MF``). This ``DAG`` has ``1736`` nodes (``GO`` terms) and ``2295`` edges (between-term relationships). From the ``GO`` obo file (December 2017 release) we extracted both the ``is_a`` and the ``part_of`` relationships, since it is safe grouping annotations by using both these ``GO`` relationships.
-|
-| 2. ``7227_DROME_GO_MF_ANN_STRING_v10.5_20DEC17.rda``: annotation matrix in which the transitive closure of annotation was performed. Rows correspond to ``STRING-ID`` and columns to ``GO`` terms. If ``T`` represents the annotation table, ``i`` a protein and ``j`` a ``GO`` term, ``T[i,j]=1`` means that the protein ``i`` is annotated with the term ``j``, ``T[i,j]=0`` means that protein ``i`` is not annotated with the term ``j``. We downloaded the ``GO`` labels from the `Gene Ontology Annotation (GOA) website <https://www.ebi.ac.uk/GOA>`__ (December 2017 release). We extracted just the experimentally supported annotations, i.e. the annotations that are directly supported by experimental evidences. The Experimental Evidence codes used to annotate the proteins are the following: (*i*) Inferred from Experiment (``EXP``);  (*ii*) Inferred from Direct Assay (``IDA``);  (*iii*) Inferred from Physical Interaction (``IPI``);  (*iv*) Inferred from Mutant Phenotype (``IMP``);  (*v*) Inferred from Genetic Interaction (``IGI``);  (*vi*) Inferred from Expression Pattern (``IEP``). Annotation matrix size: ``13702 X 1736``.
-|
-| 3. ``Scores.7227.DROME.GO.MF.pearson.100.feature.LogitBoost.5fcv.rda``: flat scores matrix representing the probability (or a score) that a gene product ``i`` belong to a given functional class ``j``. The higher the value, the higher the probability that a protein belongs to a given ``GO`` terms. This flat scores matrix was obtained by running the caret (Classification And REgression Training) `R` package (`link <https://github.com/topepo/caret/>`__). As flat classifier we used the ``LogitBoost`` setting the number of boosting iterations to ``10`` (i.e., we used the default parameter setting). The protein-protein interaction network used to create this flat scores matrix was downloaded from the `STRING website <http://string-db.org/>`__ (version 10.5). We evaluated the generalization performance of the ``LogitBoost`` classifier, cross-validating the model on the fourth-fifths of the data (training set) and evaluating the performance on the remaining one-fifths (test data). More precisely we created stratified-folds, that is folds containing the same amount of positives and negatives examples (i.e., proteins). In addition, to reduce the empirical temporal complexity, during the training phase, we selected from the ``STRING`` network the first ``100`` top-ranked features by using the classical Pearson’s correlation coefficient. The supervised feature selection method was cross-validated in an unbiased way, since we chose the top-ranked features during the training phase and then we used the selected features in the test phase.  However this entails to repeat the feature selection 'on the fly' in each training fold of the cross-validation, with a consequent selection of diverse top-ranked features in every training set. Finally, in order to avoid the prediction of ``GO`` terms having too few annotations for a reliable assessment, we considered only those classes having ``10`` or more annotations, obtaining so a flat scores matrix having ``13702`` rows (``STRING-ID``) and ``327`` columns (``GO`` terms). It is worth noting that by adopting a stratified 5-fold cross-validation and taking into account only those ``GO`` terms having more than ``10`` annotations, we guaranteed to have at least ``2`` positive instances in each training fold of the cross-validation.
+    > threshold <- seq(0.1, 0.9, 0.1);
 
-Running Experiments with the Hierarchical Ensemble Methods
-============================================================
-Let us start to play with the ensemble-based hierarchical learning algorithms ``GPAV`` and ``ISO-TPR`` to predict the protein function of the model organism ``DROME``.
+    > S.ISOtprT <- tpr.dag.cv(S, g, ann=L, norm=TRUE, norm.type="maxnorm", positive="children",
+                              bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE,
+                              ncores=1, threshold=threshold, weight=0, kk=3, seed=23,
+                              metric="prc", n.round=NULL, f.criterion=NULL);
 
-Loading the Data
+    ## stdout
+    maxnorm normalization: done
+    training fold:  1   top prc avg found:  0.4536119   best threshold: 0.1
+    training fold:  1   top prc avg found:  0.4592147   best threshold: 0.4
+    training fold:  2   top prc avg found:  0.2190192   best threshold: 0.1
+    training fold:  2   top prc avg found:  0.2193331   best threshold: 0.6
+    training fold:  2   top prc avg found:  0.2208776   best threshold: 0.7
+    training fold:  3   top prc avg found:  0.8148121   best threshold: 0.1
+    tpr-dag correction done
+
+Evaluating ``ISOtprT`` by computing *term-* and *protein-* centric performance, it easy to see how this ensemble variant outperform both the flat classifier RANKS and the hierarchical algorithm HTD-DAG:
+
+.. code-block:: R
+
+    ## remove root node before computing performance
+    > if(root %in% colnames(S.ISOtprT))
+    +   S.ISOtprT <- S.ISOtprT[,-which(colnames(S.ISOtprT)==root)];
+
+    > prc.ISOtprT  <- auprc.single.over.classes(L, S.ISOtprT, folds=3, seed=23);
+    > auc.ISOtprT  <- auroc.single.over.classes(L, S.ISOtprT, folds=3, seed=23);
+    > pxr.ISOtprT  <- precision.at.given.recall.levels.over.classes(L, S.ISOtprT, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
+    > fmax.ISOtprT <- compute.fmax(L, S.ISOtprT, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
+
+    ## AUC performance: RANKS VS HTD-DAG vs ISOtprT
+    > auc.flat$average
+    [1] 0.8297
+    > auc.htd$average
+    [1] 0.8336
+    > auc.ISOtprT$average
+    [1] 0.8446
+
+    ## PRC performance: RANKS VS HTD-DAG vs ISOtprT
+    > prc.flat$average
+    [1] 0.4333
+    > prc.htd$average
+    [1] 0.4627
+    > prc.ISOtprT$average
+    [1] 0.5346
+
+    ## Fmax performance: RANKS VS HTD-DAG vs ISOtprT
+    > fmax.flat$average
+        P      R      S      F    avF      A      T
+    0.5042 0.8639 0.4485 0.6368 0.5269 0.6612 0.5720
+    > fmax.htd$average
+        P      R      S      F    avF      A      T
+    0.5576 0.7745 0.6519 0.6484 0.5617 0.7521 0.6487
+    > fmax.ISOtprT$average
+        P      R      S      F    avF      A      T
+    0.5896 0.8306 0.5283 0.6896 0.6106 0.7066 0.6340
+
+    ## PXR: RANKS VS HTD-DAG vs ISOtprT
+    > pxr.flat$average
+       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
+    0.5821 0.5821 0.5821 0.5531 0.5531 0.4483 0.4388 0.4388 0.4388 0.4388
+    > pxr.htd$average
+       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
+    0.6218 0.6218 0.6218 0.5941 0.5941 0.4798 0.4668 0.4668 0.4668 0.4668
+    > pxr.ISOtprT$average
+       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
+    0.6848 0.6848 0.6848 0.6697 0.6697 0.5417 0.5027 0.5027 0.5027 0.5027
+
+By properly setting the parameters ``positive``, ``bottomup`` and ``topdown`` of the function ``tpr.dag.cv``, it is easy to make experiments with the TPR-DAG ensemble variants. For further details on the other input arguments of ``tpr.dag.cv`` function, please have a look to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_.
+
+Hold-out Functions
 ===================
-We load the input data (i.e. the flat scores matrix ``S``, the graph ``g`` and the annotation table ``ann``) and we store them in the directory ``data``. The output data (i.e. the hierarchical scores matrix and the performances) will be store in the folder ``results``:
+For all the hierarchical ensemble algorithms encompassed in the HEMDAG library there is also a corresponding hold-out version. The hold-out functions respect to the 'vanilla' ones, require in input a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix ``S`` to be used in the test set (parameter ``testIndex``). The hold-out ensemble functions included in HEMDAG are:
 
-.. code-block:: R
-    
-    # load input data
-    load(url("https://raw.githubusercontent.com/marconotaro/HEMDAG/master/docs/data/7227_DROME_GO_MF_DAG_STRING_v10.5_20DEC17.rda"));   
-    load(url("https://raw.githubusercontent.com/marconotaro/HEMDAG/master/docs/data/7227_DROME_GO_MF_ANN_STRING_v10.5_20DEC17.rda"));
-    load(url("https://raw.githubusercontent.com/marconotaro/HEMDAG/master/docs/data/Scores.7227.DROME.GO.MF.pearson.100.feature.LogitBoost.5fcv.rda")); 
-    
-    if(!dir.exists("data"))
-        dir.create("data");
+    * ``htd.holdout``;
+    * ``gpav.holdout``;
+    * ``tpr.dag.holdout``;
+    * ``obozinski.holdout``;
 
-    if(!dir.exists("results"))
-        dir.create("results");
-
-    # store data
-    save(g,file="data/7227_DROME_GO_MF_DAG_STRING_v10.5_20DEC17.rda");
-    save(ann,file="data/7227_DROME_GO_MF_ANN_STRING_v10.5_20DEC17.rda");
-    save(S,file="data/Scores.7227.DROME.GO.MF.pearson.100.feature.LogitBoost.5fcv.rda");
-
-Cross-Validated Experiments
-===========================
-In the same way we carried-out the experiments shown in section :ref:`cvexp` for the prediction of human gene-abnormal phenotype associations, below we perform the experiments for the prediction of functions of ``DROME`` proteins by using the Gene Ontology annotations as protein labels. In all the experiments shown below the flat scores matrix was normalized in the sense of the maximum, i.e. the score of each ``GO`` term was normalized by dividing the score values for the maximum score of that class (variable ``norm.type = MaxNorm``).
-
-.. note::
-    All the high-level functions in the ``HEMDAG`` library check if the number of classes between the flat scores matrix and the annotation matrix mismatched. If that happen, the number of terms of the annotation matrix is shrunk to the number of terms of the flat scores matrix and the corresponding subgraph is computed as well. It is assumed that all the nodes of the subgraph are accessible from the root.
-
-First of all, we need to load the ``HEMDAG`` library and set the path of input files and the directories where to store the results:
-
-.. code-block:: R
-
-    # loading library
-    library(HEMDAG);
-
-    # setting variables
-    dag.dir <- flat.dir <- ann.dir <- "data/";
-    hierScore.dir <- perf.dir <- "results/";
-    dag.file <- "7227_DROME_GO_MF_DAG_STRING_v10.5_20DEC17";
-    ann.file <- "7227_DROME_GO_MF_ANN_STRING_v10.5_20DEC17";
-    flat.file <- "Scores.7227.DROME.GO.MF.pearson.100.feature.LogitBoost.5fcv";
-
-GPAV Experiments
-----------------
-Now we can run the ``GPAV`` high-level function:
-
-.. code-block:: R
-
-    Do.GPAV( norm=FALSE, norm.type= "MaxNorm", W=NULL, parallel=TRUE, ncores=7, folds=NULL, 
-             seed=NULL, n.round=3, f.criterion ="F", recall.levels=seq(from=0.1, to=1, by=0.1), 
-             flat.file=flat.file, ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, 
-             ann.dir=ann.dir, dag.dir=dag.dir, hierScore.dir=hierScore.dir, 
-             perf.dir=perf.dir, compute.performance=TRUE);
-
-By looking at the results it easy to see that the learning algorithm ``GPAV`` outperforms the flat classifier ``LogitBoost``: 
-
-.. code-block:: R
-
-    load("results/PerfMeas.MaxNorm.Scores.7227.DROME.GO.MF.pearson.100.feature.LogitBoost.5fcv.hierScores.GPAV.rda");
-
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8211
-    AUC.hier$average
-    [1] 0.8552
-
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.1995
-    PRC.hier$average
-    [1] 0.2352
-
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.4255 0.5515 0.9781 0.4803 0.4055 0.9684 0.1190
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.4837 0.5582 0.9830 0.5183 0.4398 0.9735 0.1080 
-
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.4053 0.3349 0.2795 0.2304 0.1839 0.1349 0.0911 0.0597 0.0314 0.0105
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.4687 0.3896 0.3356 0.2924 0.2352 0.1778 0.1223 0.0797 0.0401 0.0119 
-
-ISO-TPR Experiments
---------------------
-Here we run some ``ISO-TPR`` variants:
-    
-1. ``ISOtprTF``: *positive* **children** selection (without threshold)
-
-.. code-block:: R
-    
-    Do.TPR.DAG( threshold=0, weight=0, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
-                norm.type="MaxNorm", positive="children", bottomup="threshold.free", topdown="GPAV", 
-                W=NULL, parallel=TRUE, ncores=7, n.round=3, f.criterion="F", metric=NULL, 
-                recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, ann.file=ann.file, 
-                dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, dag.dir=dag.dir, 
-                hierScore.dir=hierScore.dir, perf.dir=perf.dir, compute.performance=TRUE);
-
-By looking at the results we can see that our ensemble-based algorithm ``ISOtprTF`` outperforms the flat classifier ``LogitBoost``:
-
-.. code-block:: R
-
-    load("results/PerfMeas.MaxNorm.Scores.7227.DROME.GO.MF.pearson.100.feature.LogitBoost.5fcv.hierScores.ISOtprTF.rda");
-    
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8211
-    (AUC.hier$average
-    [1] 0.8544
-    
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.1995
-    PRC.hier$average
-    [1] 0.2397
-    
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.4255 0.5515 0.9781 0.4803 0.4055 0.9684 0.1190
-    FMM.hier$average
-       P      R      S      F      avF    A      T 
-    0.4820 0.5652 0.9822 0.5203 0.4413 0.9729 0.1200
-    
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1 
-    0.4053 0.3349 0.2795 0.2304 0.1839 0.1349 0.0911 0.0597 0.0314 0.0105
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.4764 0.4025 0.3444 0.2938 0.2383 0.1773 0.1226 0.0794 0.0402 0.0119
-
-2. ``ISOdescensTF``: *positive* **descendants** selection (without threshold)
-    
-.. code-block:: R
-
-    Do.TPR.DAG( threshold=0, weight=0, kk=NULL, folds=NULL, seed=NULL, norm=FALSE, 
-                norm.type="MaxNorm", positive="descendants", bottomup="threshold.free", 
-                topdown="GPAV", W=NULL, parallel=TRUE, ncores=7, n.round=3, f.criterion="F", 
-                metric=NULL, recall.levels=seq(from=0.1, to=1, by=0.1), flat.file=flat.file, 
-                ann.file=ann.file, dag.file=dag.file, flat.dir=flat.dir, ann.dir=ann.dir, 
-                dag.dir=dag.dir, hierScore.dir=hierScore.dir, 
-                perf.dir=perf.dir, compute.performance=TRUE);
-
-By looking at the results we can see that our ensemble-based algorithm ``ISOdescensTF`` outperforms the flat classifier ``LogitBoost``:
-
-.. code-block:: R
-
-    load("results/PerfMeas.MaxNorm.Scores.7227.DROME.GO.MF.pearson.100.feature.LogitBoost.5fcv.hierScores.ISOdescensTF.rda");
-
-    ## AUC performance: flat vs hierarchical
-    AUC.flat$average
-    [1] 0.8211
-    AUC.hier$average
-    [1] 0.8549
-    
-    ## PRC performance: flat vs hierarchical
-    PRC.flat$average
-    [1] 0.1995
-    PRC.hier$average
-    [1] 0.2449
-    
-    ## F-score performance: flat vs hierarchical
-    FMM.flat$average
-       P      R      S      F      avF    A      T
-    0.4255 0.5515 0.9781 0.4803 0.4055 0.9684 0.1190
-    FMM.hier$average
-       P      R      S      F      avF    A      T
-    0.4798 0.5683 0.9817 0.5203 0.4406 0.9725 0.1200
-    
-    ## Precision at different recall levels: flat vs hierarchical
-    PXR.flat$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.4053 0.3349 0.2795 0.2304 0.1839 0.1349 0.0911 0.0597 0.0314 0.0105 
-    PXR.hier$avgPXR
-       0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
-    0.5023 0.4109 0.3528 0.3027 0.2427 0.1785 0.1226 0.0781 0.0400 0.0118
-    
-Hold-out Experiments
-=====================
-For the sake of the space we do not show the hold-out experiments for the ``GO`` term prediction for the model organism ``DROME``, since they can be executed exactly in the same way of the hold-out experiments performed in section :ref:`hpoho` for the prediction of human gene-``HPO`` term associations. All that you need to do is properly set the input files name.
-
+For the sake of space we do not show here experiments by using the hold-out version of the hierarchical functions. Please refer to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_, for all the details on these functions.

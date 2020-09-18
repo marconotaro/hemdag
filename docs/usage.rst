@@ -3,9 +3,7 @@
 
 .. _usage:
 
-================================
+====================
 Usage of HEMDAG
-================================
-
-For a detailed description of available functions in the HEMDAG package please goto the
-`HEMDAG package on CRAN <https://CRAN.R-project.org/package=HEMDAG>`_ and have a look to the *Reference manual*.
+====================
+For a detailed description of the functions available in the HEMDAG library please go to the `CRAN page <https://CRAN.R-project.org/package=HEMDAG>`_ and have a look to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_.

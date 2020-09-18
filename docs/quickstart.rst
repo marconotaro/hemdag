@@ -4,15 +4,15 @@
 Quickstart
 ============
 
-This short How-To guides you from downloading the HEMDAG, load it into your R environment and make a first computation.
+This short *HowTo* guides you from downloading HEMDAG library, load it into your R environment and make first computations.
 
 Installation
-=====================
+================
 
-Please goto the :ref:`installation` section and use the :ref:`conda` option to install HEMDAG.
+Please go to the :ref:`installation` section and install HEMDAG by using one of the ways shown.
 
-Load HEMDAG library
-==========================
+Load HEMDAG Library
+=======================
 
 Start R in your console using
 
@@ -24,32 +24,72 @@ then load the library by using
 
 .. code-block:: R
 
-    library("HEMDAG")
+    > library(HEMDAG)
 
-Your first classification
-==========================
+First Classification -- for the Impatient
+=============================================
 
-We will use the DESCENS algorithm to do some predictions on a DAG (Human Phenotype Ontology).
+HEDMDAG encompasses in total 23 hierarchical ensemble methods. Below we show the *simple* call to all the hierarchical ensemble algorithms included in HEMDAG. We use the pre-built datasets available in the HEMDAG for making predictions. For more details about datasets and methods have a look to section :ref:`tutorial`.
 
-In contrast to the *vanilla* TPR-DAG version, DESCENS takes into account the contribution of all the descendants of each node instead of only that of its children. So DESCENS predictions are more influenced by the information embedded in the most specific terms of the taxonomy (e.g. leaf nodes), thus putting more emphasis on the terms that most characterize the gene under study.
+A. Loading the pre-built HEMDAG dataset
 
 .. code-block:: R
 
-    # load a ontology DAG stored in g
-    data(graph);
-    # load scores for genes to HPO stored in S
-    data(scores);
-    # load labels in L (genes annotated to HPO terms)
-    data(labels);
-    # Set the root in your DAG
-    root <- root.node(g);
-    # Run DESCENS Threshold free
-    S.descensTF  <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold.free", topdown="HTD");
-    # Run DESCENS with threshold
-    S.descensT   <- TPR.DAG(S, g, root, positive="descendants", bottomup="threshold", topdown="HTD", t=0.5);
-    # Run weighted DESCENS with threshold free
-    S.descensW   <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="HTD", w=0.5);
-    # Run weighted DESCENS with threshold
-    S.descensWT  <- TPR.DAG(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="HTD", t=0.5, w=05);
-    # Run DESCENS TAU
-    S.descensTAU <- TPR.DAG(S, g, root, positive="descendants", bottomup="tau", topdown="HTD", t=0.5);
+    # load the ontology DAG g
+    > data(graph);
+
+    # load the scores matrix S
+    > data(scores);
+
+    # load the annotation matrix L
+    > data(labels);
+
+    # compute the root node
+    > root <- root.node(g);
+
+
+B. HTD-DAG: Hierarchical Top-Down for DAG
+
+.. code-block:: R
+
+    > S.htd  <- htd(S, g, root);
+
+
+C. GPAV: Generalized Pool-Adjacent-Violators
+.. code-block:: R
+
+    > S.gpav <- gpav.over.examples(S, g, W=NULL);
+
+
+D. TPR-DAG (True Path Rule for DAG) and all its 18 ensemble variants
+.. code-block:: R
+
+    > S.tprTF         <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="htd");
+    > S.tprT          <- tpr.dag(S, g, root, positive="children", bottomup="threshold", topdown="htd", t=0.5);
+    > S.tprW          <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
+    > S.tprWT         <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold", topdown="htd", t=0.5, w=0.5);
+
+    > S.descensTF     <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold.free", topdown="htd");
+    > S.descensT      <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold", topdown="htd", t=0.5);
+    > S.descensW      <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
+    > S.descensWT     <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="htd", t=0.5, w=05);
+    > S.descensTAU    <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="htd", t=0.5);
+
+    > S.ISOtprTF      <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
+    > S.ISOtprT       <- tpr.dag(S, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.ISOtprW       <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.ISOtprWT      <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+
+    > S.ISOdescensTF  <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
+    > S.ISOdescensT   <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.ISOdescensW   <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.ISOdescensWT  <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    > S.ISOdescensTAU <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
+
+
+E. Obozisnki heuristic methods
+.. code-block:: R
+
+    > S.max <- obozinski.max(S,g,root);
+    > S.and <- obozinski.and(S,g,root);
+    > S.or  <- obozinski.or(S,g,root);
