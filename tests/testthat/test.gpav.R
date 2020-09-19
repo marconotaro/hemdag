@@ -59,12 +59,12 @@ test_that("gpav.parallel works", {
     if(Sys.info()['sysname']!="Windows"){
         S.gpav1core <- gpav.parallel(S, W=NULL, g, ncores=1);
         S.gpav2core <- gpav.parallel(S, W=NULL, g, ncores=2);
-    }
 
-    write.table(S.gpav1core, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
-    S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.gpav2core, S.check);
-    expect_equal(S.gpav1core, S.check);
+        write.table(S.gpav1core, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+        S.check <- as.matrix(read.table(tmp));
+        expect_equal(S.gpav2core, S.check);
+        expect_equal(S.gpav1core, S.check);
+    }
 
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
     expect_error(gpav.parallel(S.error, g, W=NULL), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
@@ -76,7 +76,7 @@ test_that("gpav.parallel works", {
     not_on_cran <- function(){identical(Sys.getenv("NOT_CRAN"), "TRUE");}  ## set NOT_CRAN environment variable to TRUE
     if(not_on_cran()){
         S.gpav0core <- gpav.parallel(S, W=NULL, g, ncores=0);
-        expect_equal(S.gpav0core, S.check, tolerance=1e-7);
+        expect_equal(S.gpav0core, S.check);
     }else{
         skip_on_cran(); ## skip test on CRAN
     }
