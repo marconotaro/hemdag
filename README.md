@@ -1,10 +1,9 @@
-# Welcome to HEMDAG R package! 
-
+# Welcome to HEMDAG R package!
 |          | Bioconda Badges | CRAN  Badges |
-| -------- | --------------- | ------------ | 
-| License | [![GPL3-License](https://img.shields.io/cran/l/HEMDAG?label=License&style=flat-square&color=orange)](https://www.gnu.org/licenses/gpl-3.0.en.html) | [![GPL3-License](https://img.shields.io/cran/l/HEMDAG?label=License&color=orange)](https://www.gnu.org/licenses/gpl-3.0.en.html) 
+| -------- | --------------- | ------------ |
+| License | [![GPL3-License](https://img.shields.io/cran/l/HEMDAG?label=License&style=flat-square&color=orange)](https://www.gnu.org/licenses/gpl-3.0.en.html) | [![GPL3-License](https://img.shields.io/cran/l/HEMDAG?label=License&color=orange)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 | Last Version | [![Anaconda-Version](https://anaconda.org/bioconda/r-hemdag/badges/version.svg)](https://anaconda.org/bioconda/r-hemdag) | [![CRAN-version](http://www.r-pkg.org/badges/version/HEMDAG?color=blue)](https://cran.r-project.org/package=HEMDAG)
-| Last Updated | [![Anaconda-Last-Updated](https://anaconda.org/bioconda/r-hemdag/badges/latest_release_date.svg)](https://anaconda.org/bioconda/r-hemdag)| [![CRAN-Last-Updated](https://www.r-pkg.org/badges/last-release/HEMDAG?color=blue)](https://cran.r-project.org/package=HEMDAG) 
+| Last Updated | [![Anaconda-Last-Updated](https://anaconda.org/bioconda/r-hemdag/badges/latest_release_date.svg)](https://anaconda.org/bioconda/r-hemdag)| [![CRAN-Last-Updated](https://www.r-pkg.org/badges/last-release/HEMDAG?color=blue)](https://cran.r-project.org/package=HEMDAG)
 | Read the Docs | [![Read the Docs Status](https://img.shields.io/readthedocs/hemdag?logo=read%20the%20docs&logoColor=white&style=flat-square)](https://hemdag.readthedocs.io) | [![Read the Docs Status](https://img.shields.io/readthedocs/hemdag?logo=read%20the%20docs&logoColor=white)](https://hemdag.readthedocs.io)
 | Total Downloads | [![Anaconda-Downloads](https://anaconda.org/bioconda/r-hemdag/badges/downloads.svg)](https://anaconda.org/bioconda/r-hemdag) | [![CRAN-Downloads](http://cranlogs.r-pkg.org/badges/grand-total/HEMDAG?color=green)](https://cranlogs.r-pkg.org/downloads/total/2017-08-11:last-day/HEMDAG)
 | Code Coverage | [![CodeCov](https://img.shields.io/codecov/c/gh/marconotaro/hemdag?logo=codecov&style=flat-square)](https://codecov.io/gh/marconotaro/hemdag) | [![CodeCov](https://img.shields.io/codecov/c/gh/marconotaro/hemdag?logo=codecov)](https://codecov.io/gh/marconotaro/hemdag)
@@ -25,13 +24,12 @@
 - provides several performance metrics to evaluate HEMs algorithms.
 
 ## Documentation
-Please get a look to the [documentation](https://hemdag.readthedocs.io "HEMDAG’s documentation") to know how to download, install and make experiments with the **HEMDAG** package. 
-
+Please get a look to the [documentation](https://hemdag.readthedocs.io "HEMDAG’s documentation") to know how to download, install and make experiments with the **HEMDAG** package.
 ## Cite HEMDAG
 If you use HEMDAG, please cite our [BMC Bioinformatics article](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1854-y):
 
 ```
-M. Notaro, M. Schubach, P. N. Robinson, and G Valentini. 
+M. Notaro, M. Schubach, P. N. Robinson, and G Valentini.
 Prediction of Human Phenotype Ontology terms by means of hierarchical ensemble methods.
 BMC Bioinformatics, 18(1):449, 2017
 ```
