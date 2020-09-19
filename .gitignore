@@ -1,5 +1,6 @@
 docs/_build/
-run/
+docs/_static/
+extra/
 .Rd2pdf*/
 src/gpav.o
 src/HEMDAG.so
@@ -9,4 +10,4 @@ build.sh
 build.R
 configure.test.pl
 codecov.sh
-TODO
+todo

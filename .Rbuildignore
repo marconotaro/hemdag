@@ -1,5 +1,5 @@
 docs/
-run/
+extra/
 .Rd2pdf*/
 md5sum.sh
 build.sh
@@ -8,4 +8,4 @@ configure.test.pl
 codecov.sh
 LICENSE.md
 README.md
-TODO
+todo
