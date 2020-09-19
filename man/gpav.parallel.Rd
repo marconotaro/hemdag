@@ -14,7 +14,8 @@ gpav.parallel(S, g, W = NULL, ncores = 8)
 \item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).}
 
-\item{ncores}{number of cores to use for parallel execution (\code{def. 8}).}
+\item{ncores}{number of cores to use for parallel execution (\code{def. 8}).
+If \code{ncores=0}, the maximum number of cores minus one are used.}
 }
 \value{
 A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.

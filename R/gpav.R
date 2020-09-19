@@ -144,6 +144,7 @@ gpav.over.examples <- function(S, g, W=NULL){
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @param ncores number of cores to use for parallel execution (\code{def. 8}).
+#' If \code{ncores=0}, the maximum number of cores minus one are used.
 #' @return A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 #' @export
 #' @examples
