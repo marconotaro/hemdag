@@ -14,15 +14,15 @@ htd(S, g, root = "00")
 \item{root}{name of the class that it is the top-level of the hierarchy (\code{def:00}).}
 }
 \value{
-A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm.
 }
 \description{
 Implementation of the top-down procedure to correct the scores of the hierarchy according to the constraints that the score of a
 node cannot be greater than a score of its parents.
 }
 \details{
-The HTD-DAG algorithm modifies the flat scores according to the hierarchy of a DAG through a unique run across
-the nodes of the graph. For a given example \eqn{x \in X}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
+The \code{HTD-DAG} algorithm modifies the flat scores according to the hierarchy of a DAG \eqn{G} through a unique run across
+the nodes of the graph. For a given example \eqn{x}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
 \eqn{\bar{y}}, by per-level visiting the nodes of the DAG from top to bottom according to the following simple rule:
 \deqn{
 \bar{y}_i := \left\{

@@ -22,10 +22,10 @@ If \code{norm=TRUE} the matrix \code{S} is normalized according to the normaliza
 }}
 }
 \value{
-A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm.
 }
 \description{
-Correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
+Correct the computed scores in a hierarchy according to the \code{HTD-DAG} algorithm.
 }
 \examples{
 data(graph);

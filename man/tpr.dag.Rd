@@ -33,7 +33,7 @@ tpr.dag(
 
 \item{bottomup}{strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. It can be one of the following values:
 \itemize{
- \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+ \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy;
  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
@@ -67,20 +67,23 @@ Use \code{parallel} only if \code{topdown=GPAV}; otherwise set \code{parallel=FA
 the desired number of cores. Set \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{ncores=1}.}
 }
 \value{
-A named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
+A named matrix with the scores of the classes corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 }
 \description{
 Collection of the true-path-rule-based hierarchical learning ensemble algorithms and its variants.
-In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
+
+\code{TPR-DAG} is a family of algorithms on the basis of the choice of the \strong{bottom-up} step adopted for the selection of
+\emph{positive} children (or descendants) and of the \strong{top-down} step adopted to assure ontology-based predictions.
+Indeed, in their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 \enumerate{
- \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions across the hierarchy;
- \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the consistency of the predictions;
+ \item in the first step they compute a \emph{per-level bottom-up} visit from leaves to root to propagate \emph{positive} predictions across the hierarchy;
+ \item in the second step they compute a \emph{per-level top-down} visit from root to leaves in order to assure the consistency of the predictions.
 }
-It is worth noting that levels (both in the first and second step) are defined in terms of the maximum distance from 
+It is worth noting that levels (both in the first and second step) are defined in terms of the maximum distance from
 the root node (see \code{\link{graph.levels}}).
 }
 \details{
-The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions 
+The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions
 \eqn{\hat{y}_i} according to the following formula:
 \deqn{
  \bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
@@ -119,7 +122,7 @@ contribution of the node \eqn{i} and that of its positive children \eqn{\phi}, t
 If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
 way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors
 associated to the children nodes vote to predict node \eqn{i}. In the intermediate cases we attribute more importance to the predictor for the
-node \eqn{i} or to its children depending on the values of \eqn{w}. 
+node \eqn{i} or to its children depending on the values of \eqn{w}.
 By combining the weighted and the threshold variant, we design the weighted-threshold variant.
 
 Since the contribution of the descendants of a given node decays exponentially with their distance from the node itself, to enhance the
@@ -139,9 +142,9 @@ If \eqn{\tau=1} we consider only the contribution of the ``positive'' children o
 children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and
 \eqn{\delta_i} positive nodes.
 
-Simply by replacing the top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we design the \code{ISO-TPR} variant.
+Simply by replacing the \code{HTD-DAG} top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we design the \code{ISO-TPR} variant.
 The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and it selects the closest
-solution (in the least square sense) to the bottom-up predictions that obeys the true path rule.
+solution (in the least square sense) to the bottom-up predictions that obeys the \emph{True Path Rule}.
 }
 \examples{
 data(graph);

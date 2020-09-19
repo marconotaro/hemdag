@@ -29,9 +29,9 @@ then load the library by using
 First Classification -- for the Impatient
 =============================================
 
-HEDMDAG encompasses in total 23 hierarchical ensemble methods. Below we show the *simple* call to all the hierarchical ensemble algorithms included in HEMDAG. We use the pre-built datasets available in the HEMDAG for making predictions. For more details about datasets and methods have a look to section :ref:`tutorial`.
+HEDMDAG encompasses in total 23 hierarchical ensemble methods. Below we show the *simple* call to all the hierarchical ensemble algorithms included in HEMDAG, bu using the pre-built datasets available in the HEMDAG for making predictions. For more details about datasets and methods have a look to section :ref:`tutorial`.
 
-A. Loading the pre-built HEMDAG dataset
+A. Loading the pre-built dataset of HEMDAG
 
 .. code-block:: R
 
@@ -56,12 +56,14 @@ B. HTD-DAG: Hierarchical Top-Down for DAG
 
 
 C. GPAV: Generalized Pool-Adjacent-Violators
+
 .. code-block:: R
 
     > S.gpav <- gpav.over.examples(S, g, W=NULL);
 
 
 D. TPR-DAG (True Path Rule for DAG) and all its 18 ensemble variants
+
 .. code-block:: R
 
     > S.tprTF         <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="htd");
@@ -88,6 +90,7 @@ D. TPR-DAG (True Path Rule for DAG) and all its 18 ensemble variants
 
 
 E. Obozisnki heuristic methods
+
 .. code-block:: R
 
     > S.max <- obozinski.max(S,g,root);

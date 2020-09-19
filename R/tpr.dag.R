@@ -4,14 +4,17 @@
 
 #' @title TPR-DAG ensemble variants
 #' @description Collection of the true-path-rule-based hierarchical learning ensemble algorithms and its variants.
-#' In their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
+#'
+#' \code{TPR-DAG} is a family of algorithms on the basis of the choice of the \strong{bottom-up} step adopted for the selection of
+#' \emph{positive} children (or descendants) and of the \strong{top-down} step adopted to assure ontology-based predictions.
+#' Indeed, in their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 #' \enumerate{
-#'  \item in the first step they compute a \emph{per-level bottom-up} visit from the leaves to the root to propagate positive predictions across the hierarchy;
-#'  \item in the second step they compute a \emph{per-level top-down} visit from the root to the leaves in order to assure the consistency of the predictions;
+#'  \item in the first step they compute a \emph{per-level bottom-up} visit from leaves to root to propagate \emph{positive} predictions across the hierarchy;
+#'  \item in the second step they compute a \emph{per-level top-down} visit from root to leaves in order to assure the consistency of the predictions.
 #' }
-#' It is worth noting that levels (both in the first and second step) are defined in terms of the maximum distance from 
+#' It is worth noting that levels (both in the first and second step) are defined in terms of the maximum distance from
 #' the root node (see \code{\link{graph.levels}}).
-#' @details The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions 
+#' @details The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions
 #' \eqn{\hat{y}_i} according to the following formula:
 #' \deqn{
 #'  \bar{y}_i := \frac{1}{1 + |\phi_i|} (\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j)
@@ -50,7 +53,7 @@
 #' If \eqn{w=1} no weight is attributed to the children and the \code{TPR-DAG} reduces to the \code{HTD-DAG} algorithm, since in this
 #' way only the prediction for node \eqn{i} is used in the bottom-up step of the algorithm. If \eqn{w=0} only the predictors
 #' associated to the children nodes vote to predict node \eqn{i}. In the intermediate cases we attribute more importance to the predictor for the
-#' node \eqn{i} or to its children depending on the values of \eqn{w}. 
+#' node \eqn{i} or to its children depending on the values of \eqn{w}.
 #' By combining the weighted and the threshold variant, we design the weighted-threshold variant.
 #'
 #' Since the contribution of the descendants of a given node decays exponentially with their distance from the node itself, to enhance the
@@ -70,9 +73,9 @@
 #' children contribute to the score, while for intermediate values of \eqn{\tau} we can balance the contribution of \eqn{\phi_i} and
 #' \eqn{\delta_i} positive nodes.
 #'
-#' Simply by replacing the top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we design the \code{ISO-TPR} variant.
+#' Simply by replacing the \code{HTD-DAG} top-down step (\code{\link{htd}}) with the \code{GPAV} approach (\code{\link{gpav}}) we design the \code{ISO-TPR} variant.
 #' The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and it selects the closest
-#' solution (in the least square sense) to the bottom-up predictions that obeys the true path rule.
+#' solution (in the least square sense) to the bottom-up predictions that obeys the \emph{True Path Rule}.
 #' @seealso \code{\link{gpav}}, \code{\link{htd}}
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
@@ -84,7 +87,7 @@
 #' }
 #' @param bottomup strategy to enhance the flat predictions by propagating the positive predictions from leaves to root. It can be one of the following values:
 #' \itemize{
-#'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy (\code{def.});
+#'  \item \code{threshold.free} (\code{def.}): positive nodes are selected on the basis of the \code{threshold.free} strategy;
 #'  \item \code{threshold}: positive nodes are selected on the basis of the \code{threshold} strategy;
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
@@ -110,7 +113,7 @@
 #' Use \code{parallel} only if \code{topdown=GPAV}; otherwise set \code{parallel=FALSE}.
 #' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE}, otherwise set \code{ncores} to
 #' the desired number of cores. Set \code{ncores} if and only if \code{topdown=GPAV}; otherwise set \code{ncores=1}.
-#' @return A named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
+#' @return A named matrix with the scores of the classes corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -267,13 +270,13 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 }
 
 #' @title TPR-DAG cross-validation experiments
-#' @description Correct the computed scores in a hierarchy according to the a TPR-DAG ensemble variant.
+#' @description Correct the computed scores in a hierarchy according to the a \code{TPR-DAG} ensemble variant.
 #' @details The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric}.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param ann an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to
 #' class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric
-#' TPR-DAG ensemble variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.
+#' \code{TPR-DAG} ensemble variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S}
 #' is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
@@ -335,7 +338,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
 #' }
 #' If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.
-#' @return A named matrix with the scores of the functional terms corrected according to the chosen TPR-DAG ensemble algorithm.
+#' @return A named matrix with the scores of the functional terms corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -478,12 +481,12 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 }
 
 #' @title TPR-DAG holdout experiments
-#' @description Correct the computed scores in a hierarchy according to the selected TPR-DAG ensemble variant by applying a classical holdout procedure.
+#' @description Correct the computed scores in a hierarchy according to the selected \code{TPR-DAG} ensemble variant by applying a classical holdout procedure.
 #' @details The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric},
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param ann an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to
-#' class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric TPR-DAG ensemble
+#' class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric \code{TPR-DAG} ensemble
 #' variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.
 #' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
@@ -547,7 +550,7 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
 #' }
 #' If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.
-#' @return A named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
+#' @return A named matrix with the scores of the classes corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 #' Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples

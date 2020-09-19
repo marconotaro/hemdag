@@ -4,6 +4,6 @@ Authors
 
 in alphabetical order
 
-- Marco Notaro
+- Marco Notaro (maintainer)
 - Max Schubach
 - Giorgio Valentini

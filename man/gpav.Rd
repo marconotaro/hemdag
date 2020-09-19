@@ -20,7 +20,6 @@ equal to the length of \code{Y} and \code{W}.}
 A list of 3 elements:
 \itemize{
    \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
-   \code{NOTE}: the classes of \code{YFit} are topologically sorted, that is are in the same order of those of \code{adj}.
    \item \code{blocks}: list of vectors, containing the partitioning of nodes (represented with an integer number) into blocks;
    \item \code{W}: vector of weights.
 }
@@ -38,11 +37,12 @@ In other words, \code{GPAV} solves the following problem:
 \deqn{
    \bar{y} = \left\{
    \begin{array}{l}
-       \min \sum_{i \in N} (\hat{y}_i - \bar{y}_i )^2\\\\
+       \min \sum_{i \in V} (\hat{y}_i - \bar{y}_i )^2\\\\
        \forall i, \quad  j \in par(i) \Rightarrow  \bar{y}_j  \geq \bar{y}_i
    \end{array}
 \right.
 }
+where \eqn{V} are the number of vertexes of the graph.
 }
 \examples{
 data(graph);

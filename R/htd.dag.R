@@ -5,8 +5,8 @@
 #' @title HTD-DAG
 #' @description Implementation of the top-down procedure to correct the scores of the hierarchy according to the constraints that the score of a
 #' node cannot be greater than a score of its parents.
-#' @details The HTD-DAG algorithm modifies the flat scores according to the hierarchy of a DAG through a unique run across
-#' the nodes of the graph. For a given example \eqn{x \in X}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
+#' @details The \code{HTD-DAG} algorithm modifies the flat scores according to the hierarchy of a DAG \eqn{G} through a unique run across
+#' the nodes of the graph. For a given example \eqn{x}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
 #' \eqn{\bar{y}}, by per-level visiting the nodes of the DAG from top to bottom according to the following simple rule:
 #' \deqn{
 #' \bar{y}_i := \left\{
@@ -21,7 +21,7 @@
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that it is the top-level of the hierarchy (\code{def:00}).
-#' @return A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+#' @return A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -58,7 +58,7 @@ htd <- function(S, g, root="00"){
 }
 
 #' @title HTD-DAG vanilla
-#' @description Correct the computed scores in a hierarchy according to the HTD-DAG algorithm.
+#' @description Correct the computed scores in a hierarchy according to the \code{HTD-DAG} algorithm.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
@@ -69,7 +69,7 @@ htd <- function(S, g, root="00"){
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 #'  }
-#' @return A matrix with the scores of the classes corrected according to the HTD-DAG algorithm.
+#' @return A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm.
 #' @export
 #' @examples
 #' data(graph);
@@ -94,7 +94,7 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 }
 
 #' @title HTD-DAG holdout
-#' @description Correct the computed scores in a hierarchy according to the HTD-DAG algorithm applying a classical holdout procedure.
+#' @description Correct the computed scores in a hierarchy according to the \code{HTD-DAG} algorithm applying a classical holdout procedure.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
@@ -106,7 +106,7 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 #'  }
-#' @return A matrix with the scores of the classes corrected according to the HTD-DAG algorithm. Rows of the matrix are shrunk to \code{testIndex}.
+#' @return A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples
 #' data(graph);

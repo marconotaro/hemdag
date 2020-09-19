@@ -24,10 +24,10 @@ If \code{norm=TRUE} the matrix \code{S} is normalized according to the normaliza
 }}
 }
 \value{
-A matrix with the scores of the classes corrected according to the HTD-DAG algorithm. Rows of the matrix are shrunk to \code{testIndex}.
+A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 }
 \description{
-Correct the computed scores in a hierarchy according to the HTD-DAG algorithm applying a classical holdout procedure.
+Correct the computed scores in a hierarchy according to the \code{HTD-DAG} algorithm applying a classical holdout procedure.
 }
 \examples{
 data(graph);

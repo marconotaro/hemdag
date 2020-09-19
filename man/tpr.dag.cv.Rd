@@ -32,7 +32,7 @@ tpr.dag.cv(
 
 \item{ann}{an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to
 class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric
-TPR-DAG ensemble variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.}
+\code{TPR-DAG} ensemble variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.}
 
 \item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S}
 is normalized according to the normalization type selected in \code{norm.type}.}
@@ -111,10 +111,10 @@ the best Fmax. If \code{bottomup==threshold.free}, set \code{n.round=NULL}.}
 If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.}
 }
 \value{
-A named matrix with the scores of the functional terms corrected according to the chosen TPR-DAG ensemble algorithm.
+A named matrix with the scores of the functional terms corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 }
 \description{
-Correct the computed scores in a hierarchy according to the a TPR-DAG ensemble variant.
+Correct the computed scores in a hierarchy according to the a \code{TPR-DAG} ensemble variant.
 }
 \details{
 The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric}.

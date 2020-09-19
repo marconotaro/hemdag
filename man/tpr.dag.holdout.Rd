@@ -32,7 +32,7 @@ tpr.dag.holdout(
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
 \item{ann}{an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to
-class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric TPR-DAG ensemble
+class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric \code{TPR-DAG} ensemble
 variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.}
 
 \item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.}
@@ -114,11 +114,11 @@ on the basis of the best Fmax. If \code{bottomup==threshold.free}, set \code{n.r
 If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.}
 }
 \value{
-A named matrix with the scores of the classes corrected according to the chosen TPR-DAG ensemble algorithm.
+A named matrix with the scores of the classes corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 Rows of the matrix are shrunk to \code{testIndex}.
 }
 \description{
-Correct the computed scores in a hierarchy according to the selected TPR-DAG ensemble variant by applying a classical holdout procedure.
+Correct the computed scores in a hierarchy according to the selected \code{TPR-DAG} ensemble variant by applying a classical holdout procedure.
 }
 \details{
 The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric},
