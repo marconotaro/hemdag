@@ -27,8 +27,8 @@ gpav.holdout(
 
 \item{parallel}{a boolean value. Should the parallel version \code{GPAV} be run?
 \itemize{
-   \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
-   \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
+ \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
+ \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 }}
 
 \item{ncores}{number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE},
@@ -39,9 +39,9 @@ If \code{norm=TRUE} the matrix \code{S} is normalized according to the normaliza
 
 \item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
-\item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
-\item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
+ \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
+ \item \code{maxnorm}: each score is divided for the maximum value of each class;
+ \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 }
 \value{

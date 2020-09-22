@@ -92,7 +92,7 @@
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
 #'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
-#'  NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
+#'   NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
 #' @param topdown strategy to make scores ``hierarchy-aware''. It can be one of the following values:
 #' \itemize{
@@ -280,11 +280,11 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}. If \code{norm=TRUE} the matrix \code{S}
 #' is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class (\code{\link{scores.normalization}});
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used (\code{\link{scores.normalization}});
-#'  }
+#' }
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
 #'  \item \code{children} (\code{def.}): positive children are are considered for each node;
@@ -341,7 +341,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' S.tpr <- tpr.dag.cv(S, g, ann=NULL, norm=FALSE, norm.type=NULL, positive="children",
 #' bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, ncores=1,
 #' threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL);
-tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL, 
+tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL,
     parallel=FALSE, ncores=1, threshold=seq(from=0.1, to=0.9, by=0.1), weight=0, kk=5, seed=23, metric="auprc", n.round=NULL){
     ## parameters check
     if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold"
@@ -483,11 +483,11 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
-#'  }
+#' }
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
 #' \itemize{
 #'  \item \code{children} (\code{def.}): positive children are are considered for each node;
@@ -500,7 +500,7 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
 #'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
-#'  NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
+#'   NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
 #' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
@@ -529,9 +529,9 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' without seed initialization. If \code{bottomup=threshold.free}, set \code{seed=NULL}.
 #' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 #' \enumerate{
-#' \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
-#' \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
-#' \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
+#'  \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
+#'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+#'  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 #' }
 #' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold
 #' on the basis of the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.

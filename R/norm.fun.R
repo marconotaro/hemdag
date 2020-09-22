@@ -26,8 +26,8 @@ normalize.max <- function(S){
 #' @details To apply the quantile normalization the \pkg{preprocessCore} package must be properly installed.
 #' @param norm.type can be one of the following two values:
 #' \itemize{
-#' \item maxnorm (\code{def.}): each score is divided w.r.t. the max of each class;
-#' \item qnorm: a quantile normalization is applied. Package preprocessCore is used;
+#'  \item maxnorm (\code{def.}): each score is divided w.r.t. the max of each class;
+#'  \item qnorm: a quantile normalization is applied. Package preprocessCore is used;
 #' }
 #' @param S A named flat scores matrix with examples on rows and classes on columns.
 #' @return The matrix of the scores flat normalized w.r.t. \code{maxnorm} or \code{qnorm}.

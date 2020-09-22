@@ -41,9 +41,9 @@ If \code{norm=TRUE} the matrix \code{S} is normalized according to the normaliza
 
 \item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
-\item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
-\item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
+ \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
+ \item \code{maxnorm}: each score is divided for the maximum value of each class;
+ \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 
 \item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that \code{W} is a unitary vector of the same
@@ -72,7 +72,7 @@ to the desired number of cores. Set \code{ncores} if and only if \code{topdown=g
  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
- NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
+  NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 }}
 
 \item{topdown}{strategy to make the scores hierarchy-consistent. It can be one of the following values:
@@ -97,9 +97,9 @@ without seed initialization. If \code{bottomup=threshold.free}, set \code{seed=N
 
 \item{metric}{a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 \enumerate{
-\item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
-\item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
-\item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
+ \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
+ \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+ \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 }}
 
 \item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold

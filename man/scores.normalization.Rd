@@ -9,8 +9,8 @@ scores.normalization(norm.type = "maxnorm", S)
 \arguments{
 \item{norm.type}{can be one of the following two values:
 \itemize{
-\item maxnorm (\code{def.}): each score is divided w.r.t. the max of each class;
-\item qnorm: a quantile normalization is applied. Package preprocessCore is used;
+ \item maxnorm (\code{def.}): each score is divided w.r.t. the max of each class;
+ \item qnorm: a quantile normalization is applied. Package preprocessCore is used;
 }}
 
 \item{S}{A named flat scores matrix with examples on rows and classes on columns.}

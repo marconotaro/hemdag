@@ -38,9 +38,9 @@ is normalized according to the normalization type selected in \code{norm.type}.}
 
 \item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
-\item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
-\item \code{maxnorm}: each score is divided for the maximum value of each class (\code{\link{scores.normalization}});
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used (\code{\link{scores.normalization}});
+ \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
+ \item \code{maxnorm}: each score is divided for the maximum value of each class (\code{\link{scores.normalization}});
+ \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used (\code{\link{scores.normalization}});
 }}
 
 \item{positive}{choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:

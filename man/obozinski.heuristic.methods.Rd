@@ -30,11 +30,11 @@ Implementation of the Obozinski's heuristic methods \code{Max}, \code{And}, \cod
 \details{
 Obozinski's heuristic methods:
 \enumerate{
-\item \bold{Max}: reports the largest logistic regression (LR) value of self and all descendants: \eqn{p_i = max_{j \in descendants(i)} \hat{p_j}};
-\item \bold{And}: reports the product of LR values of all ancestors and self. This is equivalent to computing the probability that all
- ancestral terms are "on" assuming that, conditional on the data, all predictions are independent: \eqn{p_i = \prod_{j \in ancestors(i)} \hat{p_j}};
-\item \bold{Or}: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data,
- all predictions are independent: \eqn{1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})};
+ \item \bold{Max}: reports the largest logistic regression (LR) value of self and all descendants: \eqn{p_i = max_{j \in descendants(i)} \hat{p_j}};
+ \item \bold{And}: reports the product of LR values of all ancestors and self. This is equivalent to computing the probability that all
+  ancestral terms are "on" assuming that, conditional on the data, all predictions are independent: \eqn{p_i = \prod_{j \in ancestors(i)} \hat{p_j}};
+ \item \bold{Or}: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data,
+  all predictions are independent: \eqn{1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})};
 }
 }
 \examples{

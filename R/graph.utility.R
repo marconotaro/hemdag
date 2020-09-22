@@ -472,14 +472,14 @@ check.dag.integrity <- function(g, root="00"){
 #' @return A list of 3 elements:
 #' \itemize{
 #'  \item status:
-#'     \itemize{
-#'      \item \code{OK} if none hierarchical constraints have bee broken;
-#'      \item \code{NOTOK} if there is at least one hierarchical constraints broken;
+#'   \itemize{
+#'    \item \code{OK} if none hierarchical constraints have bee broken;
+#'    \item \code{NOTOK} if there is at least one hierarchical constraints broken;
 #'   }
-#'     \item hierarchy_constraints_broken:
-#'     \itemize{
-#'      \item TRUE: example did not respect the hierarchical constraints;
-#'      \item FALSE: example broke the hierarchical constraints;
+#'  \item hierarchy_constraints_broken:
+#'   \itemize{
+#'    \item TRUE: example did not respect the hierarchical constraints;
+#'    \item FALSE: example broke the hierarchical constraints;
 #'   }
 #'  \item hierarchy_constraints_satisfied: how many terms satisfied the hierarchical constraint;
 #' }

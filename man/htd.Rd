@@ -25,13 +25,13 @@ The \code{HTD-DAG} algorithm modifies the flat scores according to the hierarchy
 the nodes of the graph. For a given example \eqn{x}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
 \eqn{\bar{y}}, by per-level visiting the nodes of the DAG from top to bottom according to the following simple rule:
 \deqn{
-\bar{y}_i := \left\{
-   \begin{array}{lll}
-     \hat{y}_i  & {\rm if} \quad i \in root(G) \\
-     \min_{j \in par(i)} \bar{y}_j & {\rm if} \quad \min_{j \in par(i)} \bar{y}_j < \hat{y}_i \\
-     \hat{y}_i & {\rm otherwise}
-   \end{array}
-  \right.
+ \bar{y}_i := \left\{
+  \begin{array}{lll}
+   \hat{y}_i  & {\rm if} \quad i \in root(G) \\
+   \min_{j \in par(i)} \bar{y}_j & {\rm if} \quad \min_{j \in par(i)} \bar{y}_j < \hat{y}_i \\
+   \hat{y}_i & {\rm otherwise}
+  \end{array}
+ \right.
 }
 The node levels correspond to their maximum path length from the root.
 }

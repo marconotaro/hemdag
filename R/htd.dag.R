@@ -9,13 +9,13 @@
 #' the nodes of the graph. For a given example \eqn{x}, the flat predictions \eqn{f(x) = \hat{y}} are hierarchically corrected to
 #' \eqn{\bar{y}}, by per-level visiting the nodes of the DAG from top to bottom according to the following simple rule:
 #' \deqn{
-#' \bar{y}_i := \left\{
-#'    \begin{array}{lll}
-#'      \hat{y}_i  & {\rm if} \quad i \in root(G) \\
-#'      \min_{j \in par(i)} \bar{y}_j & {\rm if} \quad \min_{j \in par(i)} \bar{y}_j < \hat{y}_i \\
-#'      \hat{y}_i & {\rm otherwise}
-#'    \end{array}
-#'   \right.
+#'  \bar{y}_i := \left\{
+#'   \begin{array}{lll}
+#'    \hat{y}_i  & {\rm if} \quad i \in root(G) \\
+#'    \min_{j \in par(i)} \bar{y}_j & {\rm if} \quad \min_{j \in par(i)} \bar{y}_j < \hat{y}_i \\
+#'    \hat{y}_i & {\rm otherwise}
+#'   \end{array}
+#'  \right.
 #' }
 #' The node levels correspond to their maximum path length from the root.
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
@@ -64,11 +64,11 @@ htd <- function(S, g, root="00"){
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
-#'  }
+#' }
 #' @return A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm.
 #' @export
 #' @examples
@@ -101,11 +101,11 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
-#'  }
+#' }
 #' @return A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples

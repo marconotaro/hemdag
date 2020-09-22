@@ -85,7 +85,7 @@ test_that("auprc works", {
     expect_equal(auprc, auprc.check);
 
     ## seed autoset to NULL (over classes)
-    auprc <- auprc.single.over.classes(ann, S, folds=NULL, seed=1);  
+    auprc <- auprc.single.over.classes(ann, S, folds=NULL, seed=1);
     write.table(data.frame(auprc), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     auprc.tmp <- read.table(tmp);
     auprc.check <- list(average=unique(auprc.tmp$average), per.class=auprc.tmp$per.class);
@@ -155,7 +155,7 @@ test_that("auroc works", {
 
     ## warning messages
     expect_warning(auroc.single.class(labels, scores, folds=2, seed=NULL), "folds are generated without seed initialization");
-    
+
     ## seed autoset to NULL (single class)
     auroc <- auroc.single.class(labels, scores, folds=NULL, seed=1);
     write.table(data.frame(auroc), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
@@ -165,7 +165,7 @@ test_that("auroc works", {
     expect_equal(auroc, auroc.check);
 
     ## seed autoset to NULL (over classes)
-    auroc <- auroc.single.over.classes(ann, S, folds=NULL, seed=1);  
+    auroc <- auroc.single.over.classes(ann, S, folds=NULL, seed=1);
     write.table(data.frame(auroc), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     auroc.tmp <- read.table(tmp);
     auroc.check <- list(average=unique(auroc.tmp$average), per.class=auroc.tmp$per.class);
@@ -254,7 +254,7 @@ test_that("fmax works", {
 
     ## warning messages
     expect_warning(compute.fmax(ann, S, folds=2, seed=NULL), "folds are generated without seed initialization");
-    
+
     ## seed autoset to NULL
     fmax <- compute.fmax(ann, S, folds=NULL, seed=1);
     write.table(fmax, row.names=TRUE, col.names=FALSE, quote=FALSE, file=tmp.av);
@@ -321,7 +321,7 @@ test_that("pxr works", {
 
     ## warning messages
     expect_warning(precision.at.given.recall.levels.over.classes(ann, S, folds=2, seed=NULL), "folds are generated without seed initialization");
-    
+
     ## seed autoset to NULL
     pxr <- precision.at.given.recall.levels.over.classes(ann, S, folds=NULL, seed=1);
     write.table(data.frame(pxr), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);

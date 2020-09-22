@@ -11,11 +11,11 @@
 #' \href{https://genomebiology.biomedcentral.com/articles/10.1186/gb-2008-9-s1-s6}{doi:10.1186/gb-2008-9-s1-s6}}).
 #' @details Obozinski's heuristic methods:
 #' \enumerate{
-#' \item \bold{Max}: reports the largest logistic regression (LR) value of self and all descendants: \eqn{p_i = max_{j \in descendants(i)} \hat{p_j}};
-#' \item \bold{And}: reports the product of LR values of all ancestors and self. This is equivalent to computing the probability that all
-#'  ancestral terms are "on" assuming that, conditional on the data, all predictions are independent: \eqn{p_i = \prod_{j \in ancestors(i)} \hat{p_j}};
-#' \item \bold{Or}: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data,
-#'  all predictions are independent: \eqn{1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})};
+#'  \item \bold{Max}: reports the largest logistic regression (LR) value of self and all descendants: \eqn{p_i = max_{j \in descendants(i)} \hat{p_j}};
+#'  \item \bold{And}: reports the product of LR values of all ancestors and self. This is equivalent to computing the probability that all
+#'   ancestral terms are "on" assuming that, conditional on the data, all predictions are independent: \eqn{p_i = \prod_{j \in ancestors(i)} \hat{p_j}};
+#'  \item \bold{Or}: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data,
+#'   all predictions are independent: \eqn{1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})};
 #' }
 #' @param S a named flat scores matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
@@ -111,11 +111,11 @@ obozinski.or <- function(S, g, root="00"){
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
-#'  }
+#' }
 #' @return A matrix with the scores of the classes corrected according to the chosen heuristic algorithm.
 #' @export
 #' @examples
@@ -162,11 +162,11 @@ obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
-#'  }
+#' }
 #' @return A matrix with the scores of the classes corrected according to the chosen heuristic algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples

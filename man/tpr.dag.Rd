@@ -38,7 +38,7 @@ tpr.dag(
  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
- NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
+  NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 }}
 
 \item{topdown}{strategy to make scores ``hierarchy-aware''. It can be one of the following values:

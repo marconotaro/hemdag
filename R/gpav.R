@@ -56,11 +56,11 @@ adj.upper.tri <- function(g){
 #' to the response vector \eqn{\hat{y}} and whose components are partially ordered in accordance with the constraints matrix \code{adj}.
 #' In other words, \code{GPAV} solves the following problem:
 #' \deqn{
-#'    \bar{y} = \left\{
-#'    \begin{array}{l}
-#'        \min \sum_{i \in V} (\hat{y}_i - \bar{y}_i )^2\\\\
-#'        \forall i, \quad  j \in par(i) \Rightarrow  \bar{y}_j  \geq \bar{y}_i
-#'    \end{array}
+#'  \bar{y} = \left\{
+#'   \begin{array}{l}
+#'    \min \sum_{i \in V} (\hat{y}_i - \bar{y}_i )^2\\\\
+#'    \forall i, \quad  j \in par(i) \Rightarrow  \bar{y}_j  \geq \bar{y}_i
+#'   \end{array}
 #' \right.
 #'}
 #' where \eqn{V} are the number of vertexes of the graph.
@@ -72,9 +72,9 @@ adj.upper.tri <- function(g){
 #' equal to the length of \code{Y} and \code{W}.
 #' @return A list of 3 elements:
 #' \itemize{
-#'    \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
-#'    \item \code{blocks}: list of vectors, containing the partitioning of nodes (represented with an integer number) into blocks;
-#'    \item \code{W}: vector of weights.
+#'  \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
+#'  \item \code{blocks}: list of vectors, containing the partitioning of nodes (represented with an integer number) into blocks;
+#'  \item \code{W}: vector of weights.
 #' }
 #' @export
 #' @examples
@@ -150,7 +150,7 @@ gpav.over.examples <- function(S, g, W=NULL){
 #' @examples
 #' data(graph);
 #' data(scores);
-#' if (Sys.info()['sysname']!="Windows"){
+#' if(Sys.info()['sysname']!="Windows"){
 #'    S.gpav <- gpav.parallel(S,W=NULL,g,ncores=2);
 #' }
 gpav.parallel <- function(S, g, W=NULL, ncores=8){
@@ -186,19 +186,19 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @param parallel a boolean value. Should the parallel version \code{GPAV} be run?
 #' \itemize{
-#'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
-#'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
+#'  \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
+#'  \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 #' }
 #' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE},
 #' otherwise set \code{ncores} to the desired number of cores.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
-#'  }
+#' }
 #' @return A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm.
 #' @export
 #' @examples
@@ -247,19 +247,19 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @param parallel a boolean value. Should the parallel version \code{GPAV} be run?
 #' \itemize{
-#'    \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
-#'    \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
+#'  \item \code{TRUE}: execute the parallel implementation of \code{GPAV} (\code{\link{gpav.parallel}});
+#'  \item \code{FALSE} (\code{def.}): execute the sequential implementation of \code{GPAV} (\code{\link{gpav.over.examples}});
 #' }
 #' @param ncores number of cores to use for parallel execution. Set \code{ncores=1} if \code{parallel=FALSE},
 #' otherwise set \code{ncores} to the desired number of cores.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
-#'  \enumerate{
+#' \enumerate{
 #'  \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
 #'  \item \code{maxnorm}: each score is divided for the maximum value of each class;
 #'  \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
-#'  }
+#' }
 #' @return A named matrix with the scores of the classes corrected according to the \code{GPAV} algorithm. Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
 #' @examples

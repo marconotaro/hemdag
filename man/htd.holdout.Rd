@@ -18,9 +18,9 @@ If \code{norm=TRUE} the matrix \code{S} is normalized according to the normaliza
 
 \item{norm.type}{a string character. It can be one of the following values:
 \enumerate{
-\item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
-\item \code{maxnorm}: each score is divided for the maximum value of each class;
-\item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
+ \item \code{NULL} (def.): none normalization is applied (\code{norm=FALSE})
+ \item \code{maxnorm}: each score is divided for the maximum value of each class;
+ \item \code{qnorm}: quantile normalization. \pkg{preprocessCore} package is used;
 }}
 }
 \value{

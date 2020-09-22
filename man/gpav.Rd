@@ -19,9 +19,9 @@ equal to the length of \code{Y} and \code{W}.}
 \value{
 A list of 3 elements:
 \itemize{
-   \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
-   \item \code{blocks}: list of vectors, containing the partitioning of nodes (represented with an integer number) into blocks;
-   \item \code{W}: vector of weights.
+ \item \code{YFit}: a named vector with the scores of the classes corrected according to the \code{GPAV} algorithm.
+ \item \code{blocks}: list of vectors, containing the partitioning of nodes (represented with an integer number) into blocks;
+ \item \code{W}: vector of weights.
 }
 }
 \description{
@@ -35,11 +35,11 @@ weights \eqn{w \in R^n}, the \code{GPAV} algorithm returns a vector \eqn{\bar{y}
 to the response vector \eqn{\hat{y}} and whose components are partially ordered in accordance with the constraints matrix \code{adj}.
 In other words, \code{GPAV} solves the following problem:
 \deqn{
-   \bar{y} = \left\{
-   \begin{array}{l}
-       \min \sum_{i \in V} (\hat{y}_i - \bar{y}_i )^2\\\\
-       \forall i, \quad  j \in par(i) \Rightarrow  \bar{y}_j  \geq \bar{y}_i
-   \end{array}
+ \bar{y} = \left\{
+  \begin{array}{l}
+   \min \sum_{i \in V} (\hat{y}_i - \bar{y}_i )^2\\\\
+   \forall i, \quad  j \in par(i) \Rightarrow  \bar{y}_j  \geq \bar{y}_i
+  \end{array}
 \right.
 }
 where \eqn{V} are the number of vertexes of the graph.

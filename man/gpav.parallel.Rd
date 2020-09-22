@@ -26,7 +26,7 @@ Compute \code{GPAV} across all the examples (parallel implementation).
 \examples{
 data(graph);
 data(scores);
-if (Sys.info()['sysname']!="Windows"){
+if(Sys.info()['sysname']!="Windows"){
    S.gpav <- gpav.parallel(S,W=NULL,g,ncores=2);
 }
 }

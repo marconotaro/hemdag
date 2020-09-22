@@ -240,12 +240,12 @@ test_that("tpr.dag.holdout works",{
     threshold <- seq(0.1, 0.9, 0.2);
     weight <- seq(0.1, 0.9, 0.2);
 
-    expect_output(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", 
-        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL), 
+    expect_output(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free",
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
     "tpr-dag holdout correction done");
 
-    expect_output(tpr.dag.holdout(S.degen, g, ann=NULL, testIndex=testIndex.degen, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", 
-        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL), 
+    expect_output(tpr.dag.holdout(S.degen, g, ann=NULL, testIndex=testIndex.degen, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free",
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
     "tpr-dag holdout correction done");
 
     expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="descendants",
@@ -253,7 +253,7 @@ test_that("tpr.dag.holdout works",{
         metric="fmax", n.round=3),
         "training fold:\\t1\\ttop fmax avg found:\\t0.7272727\\tbest weight:\\t0.1\\t\\ntraining fold:\\t2\\ttop fmax avg found:\\t0.8244898\\tbest weight:\\t0.1\\t\\ntpr-dag holdout correction done");
 
-    expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd", 
+    expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd",
         W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="auprc", n.round=NULL),
         "training fold:\\t2\\ttop auprc avg found:\\t0.4801396\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t2\\ttop auprc avg found:\\t0.6534264\\tbest threshold:\\t0.9\\t\\ntpr-dag holdout correction done");
 
@@ -270,8 +270,8 @@ test_that("tpr.dag.holdout works",{
         "maxnorm normalization done\\ntpr-dag holdout correction done");
 
     ## n.round autoset to NULL
-    expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", 
-        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="auprc", n.round=3), 
+    expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav",
+        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="auprc", n.round=3),
     "training fold:\\t2\\ttop auprc avg found:\\t0.3068528\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t2\\ttop auprc avg found:\\t0.4801396\\tbest threshold:\\t0.5\\t\\ntpr-dag holdout correction done");
 
     ## error messages
