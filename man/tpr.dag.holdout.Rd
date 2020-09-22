@@ -21,9 +21,8 @@ tpr.dag.holdout(
   weight = seq(from = 0.1, to = 0.9, by = 0.1),
   kk = 5,
   seed = 23,
-  metric = "fmax",
-  n.round = 3,
-  f.criterion = "F"
+  metric = "auprc",
+  n.round = NULL
 )
 }
 \arguments{
@@ -73,7 +72,7 @@ to the desired number of cores. Set \code{ncores} if and only if \code{topdown=g
  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
- NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
+ NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 }}
 
 \item{topdown}{strategy to make the scores hierarchy-consistent. It can be one of the following values:
@@ -98,20 +97,13 @@ without seed initialization. If \code{bottomup=threshold.free}, set \code{seed=N
 
 \item{metric}{a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 \enumerate{
-\item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
-\item \code{fmax} (def.): the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+\item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
+\item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
 \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 }}
 
 \item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold
-on the basis of the best Fmax. If \code{bottomup==threshold.free}, set \code{n.round=NULL}.}
-
-\item{f.criterion}{character. Type of F-measure to be used to select the best F-measure. Two possibilities:
-\enumerate{
-\item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
-\item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
-}
-If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.}
+on the basis of the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.}
 }
 \value{
 A named matrix with the scores of the classes corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
@@ -130,5 +122,5 @@ data(labels);
 data(test.index);
 S.tpr <- tpr.dag.holdout(S, g, ann=NULL, testIndex=test.index, norm=FALSE, norm.type=NULL,
 positive="children", bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE,
-ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL);
+ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL);
 }

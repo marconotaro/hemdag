@@ -30,8 +30,8 @@ If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUROC averaged ac
 \code{auroc.single.class} returns a numeric value corresponding to the AUROC for the considered class;
 \code{auprc.single.over.classes} returns a list with two elements:
 \enumerate{
-    \item average: the average AUROC across classes;
-    \item per.class: a named vector with AUROC for each class. Names correspond to classes.
+ \item average: the average AUROC across classes;
+ \item per.class: a named vector with AUROC for each class. Names correspond to classes.
 }
 }
 \description{

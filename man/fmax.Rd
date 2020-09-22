@@ -9,7 +9,6 @@ compute.fmax(
   target,
   predicted,
   n.round = 3,
-  f.criterion = "F",
   verbose = TRUE,
   b.per.example = FALSE,
   folds = NULL,
@@ -24,18 +23,12 @@ compute.fmax(
 
 \item{n.round}{number of rounding digits to be applied to predicted (\code{default=3}).}
 
-\item{f.criterion}{character. Type of F-measure to be used to select the best F-score. There are two possibilities:
-\enumerate{
-   \item \code{F} (def.) corresponds to the harmonic mean between the average precision and recall;
-   \item \code{avF} corresponds to the per-example F-score averaged across all the examples;
-}}
-
 \item{verbose}{a boolean value. If \code{TRUE} (def.) the number of iterations are printed on stdout.}
 
 \item{b.per.example}{a boolean value.
 \itemize{
-   \item \code{TRUE}: results are returned for each example;
-   \item \code{FALSE}: only the average results are returned;
+ \item \code{TRUE}: results are returned for each example;
+ \item \code{FALSE}: only the average results are returned;
 }}
 
 \item{folds}{number of folds on which computing the Fmax If \code{folds=NULL} (\code{def.}), the Fmax is computed one-shot,
@@ -47,18 +40,18 @@ If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the Fmax averaged acr
 \value{
 Two different outputs respect to the input parameter \code{b.per.example}:
 \itemize{
-   \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms
-    of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T).
-    F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across
-examples and T is the best selected threshold;
-    \item \code{b.per.example==FALSE}: a list with two elements:
-        \enumerate{
-            \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R),
-           Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
-            \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F),    av.F-measure (av.F)
-            and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively
-           to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
-        }
+ \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms
+  of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T).
+  F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across
+  examples and T is the best selected threshold;
+ \item \code{b.per.example==FALSE}: a list with two elements:
+  \enumerate{
+   \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R),
+    Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
+   \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F)
+    and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively
+    to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
+  }
 }
 }
 \description{
@@ -74,6 +67,5 @@ data(scores);
 root <- root.node(g);
 L <- L[,-which(colnames(L)==root)];
 S <- S[,-which(colnames(S)==root)];
-fmax <- compute.fmax(L, S, n.round=3, f.criterion="F", verbose=TRUE,
-b.per.example=TRUE, folds=5, seed=23);
+fmax <- compute.fmax(L, S, n.round=3, verbose=TRUE, b.per.example=TRUE, folds=5, seed=23);
 }

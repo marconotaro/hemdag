@@ -20,24 +20,24 @@ F.measure.multilabel(target, predicted, b.per.example = FALSE)
 
 \item{b.per.example}{a boolean value.
 \itemize{
-   \item \code{TRUE}: results are returned for each example;
-   \item \code{FALSE}: only the average results are returned;
+ \item \code{TRUE}: results are returned for each example;
+ \item \code{FALSE}: only the average results are returned;
 }}
 }
 \value{
 Two different outputs respect to the input parameter \code{b.per.example}:
 \itemize{
-   \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with average precision (P), recall (R),
-    specificity (S), F-measure (F), average F-measure (avF) and Accuracy (A) across examples. F is the F-measure computed as the
-    harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across examples;
-    \item \code{b.per.example==FALSE}: a list with two elements:
-        \enumerate{
-            \item average: a named vector with average precision (P), recall (R), specificity (S), F-measure (F), average F-measure (avF)
-            and Accuracy (A) across examples;
-            \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F) and
-            av.F-measure (av.F) for each example. Row names correspond to examples, column names correspond respectively to Precision (P), Recall (R),
-            Specificity (S), Accuracy (A), F-measure (F) and av.F-measure (av.F);
-        }
+ \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with average precision (P), recall (R),
+  specificity (S), F-measure (F), average F-measure (avF) and Accuracy (A) across examples. F is the F-measure computed as the
+  harmonic mean between the average precision and recall; av.F is the F-measure computed as average across examples;
+ \item \code{b.per.example==FALSE}: a list with two elements:
+  \enumerate{
+    \item average: a named vector with average precision (P), recall (R), specificity (S), F-measure (F), average F-measure (avF)
+     and Accuracy (A) across examples;
+    \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F) and
+     av.F-measure (av.F) for each example. Row names correspond to examples, column names correspond respectively to Precision (P), Recall (R),
+     Specificity (S), Accuracy (A), F-measure (F) and av.F-measure (av.F);
+  }
 }
 }
 \description{

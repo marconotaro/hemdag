@@ -25,8 +25,8 @@
 #' @return \code{auprc.single.class} returns a numeric value corresponding to the AUPRC for the considered class;
 #' \code{auprc.single.over.classes} returns a list with two elements:
 #' \enumerate{
-#'     \item average: the average AUPRC across classes;
-#'     \item per.class: a named vector with AUPRC for each class. Names correspond to classes.
+#'  \item average: the average AUPRC across classes;
+#'  \item per.class: a named vector with AUPRC for each class. Names correspond to classes.
 #' }
 #' @export
 #' @examples
@@ -47,10 +47,8 @@ auprc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
         stop("names of labels and scores are not in the same order");
     if(any((labels!=0) & (labels!=1)))
         stop("labels variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed)){
+    if(is.null(folds) && !is.null(seed))
         seed <- NULL;
-        warning("seed auto-set to NULL");
-    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     ## degenerate case when all labels are equals
@@ -122,10 +120,8 @@ auprc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
         stop("target variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed)){
+    if(is.null(folds) && !is.null(seed))
         seed <- NULL;
-        warning("seed auto-set to NULL");
-    }
     ## AUPRC averaged across folds and classes
     if(!is.null(folds)){
         prc.class <- rep(0,ncol(predicted));
@@ -211,8 +207,8 @@ auprc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
 #' @return \code{auroc.single.class} returns a numeric value corresponding to the AUROC for the considered class;
 #' \code{auprc.single.over.classes} returns a list with two elements:
 #' \enumerate{
-#'     \item average: the average AUROC across classes;
-#'     \item per.class: a named vector with AUROC for each class. Names correspond to classes.
+#'  \item average: the average AUROC across classes;
+#'  \item per.class: a named vector with AUROC for each class. Names correspond to classes.
 #' }
 #' @export
 #' @examples
@@ -233,10 +229,8 @@ auroc.single.class <- function(labels, scores, folds=NULL, seed=NULL){
         stop("names of labels and scores are not in the same order");
     if(any((labels!=0) & (labels!=1)))
         stop("labels variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed)){
+    if(is.null(folds) && !is.null(seed))
         seed <- NULL;
-        warning("seed auto-set to NULL");
-    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     ## degenerate case when all labels are equals
@@ -302,10 +296,8 @@ auroc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
         stop("target variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed)){
+    if(is.null(folds) && !is.null(seed))
         seed <- NULL;
-        warning("seed auto-set to NULL");
-    }
     ## AUROC averaged across folds and classes
     if(!is.null(folds)){
         auc.class <- rep(0,ncol(predicted));
@@ -365,22 +357,22 @@ auroc.single.over.classes <- function(target, predicted, folds=NULL, seed=NULL){
 #' \eqn{predicted[i,j]=1} if example \eqn{i} is predicted belonging to class \eqn{j}, \eqn{target[i,j]=0} otherwise.
 #' @param b.per.example a boolean value.
 #' \itemize{
-#'    \item \code{TRUE}: results are returned for each example;
-#'    \item \code{FALSE}: only the average results are returned;
+#'  \item \code{TRUE}: results are returned for each example;
+#'  \item \code{FALSE}: only the average results are returned;
 #' }
 #' @return Two different outputs respect to the input parameter \code{b.per.example}:
 #' \itemize{
-#'    \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with average precision (P), recall (R),
-#'     specificity (S), F-measure (F), average F-measure (avF) and Accuracy (A) across examples. F is the F-measure computed as the
-#'     harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across examples;
-#'     \item \code{b.per.example==FALSE}: a list with two elements:
-#'         \enumerate{
-#'             \item average: a named vector with average precision (P), recall (R), specificity (S), F-measure (F), average F-measure (avF)
-#'             and Accuracy (A) across examples;
-#'             \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F) and
-#'             av.F-measure (av.F) for each example. Row names correspond to examples, column names correspond respectively to Precision (P), Recall (R),
-#'             Specificity (S), Accuracy (A), F-measure (F) and av.F-measure (av.F);
-#'         }
+#'  \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with average precision (P), recall (R),
+#'   specificity (S), F-measure (F), average F-measure (avF) and Accuracy (A) across examples. F is the F-measure computed as the
+#'   harmonic mean between the average precision and recall; av.F is the F-measure computed as average across examples;
+#'  \item \code{b.per.example==FALSE}: a list with two elements:
+#'   \enumerate{
+#'     \item average: a named vector with average precision (P), recall (R), specificity (S), F-measure (F), average F-measure (avF)
+#'      and Accuracy (A) across examples;
+#'     \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F) and
+#'      av.F-measure (av.F) for each example. Row names correspond to examples, column names correspond respectively to Precision (P), Recall (R),
+#'      Specificity (S), Accuracy (A), F-measure (F) and av.F-measure (av.F);
+#'   }
 #' }
 #' @examples
 #' data(labels);
@@ -452,7 +444,7 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
         overall.av.f.measure <- (2*av.precision*av.recall)/av.prec.rec;
         av.f.measure <- sum(f.measure)/n.examples;
         av.accuracy  <- sum(accuracy)/n.examples;
-        average <- c(av.precision, av.recall, av.specificity, overall.av.f.measure, av.f.measure,av.accuracy);
+        average <- c(av.precision, av.recall, av.specificity, overall.av.f.measure, av.f.measure, av.accuracy);
         names(average) <- c("P", "R", "S", "F", "avF", "A");
        if(b.per.example){
             per.example <- cbind(precision, recall, specificity, f.measure, accuracy);
@@ -475,31 +467,26 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
 #' \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.
 #' @param predicted a numeric matrix with continuous predicted values (scores): rows correspond to examples and columns to classes.
 #' @param n.round number of rounding digits to be applied to predicted (\code{default=3}).
-#' @param f.criterion character. Type of F-measure to be used to select the best F-score. There are two possibilities:
-#' \enumerate{
-#'    \item \code{F} (def.) corresponds to the harmonic mean between the average precision and recall;
-#'    \item \code{avF} corresponds to the per-example F-score averaged across all the examples;
-#' }
 #' @param verbose a boolean value. If \code{TRUE} (def.) the number of iterations are printed on stdout.
 #' @param b.per.example a boolean value.
 #' \itemize{
-#'    \item \code{TRUE}: results are returned for each example;
-#'    \item \code{FALSE}: only the average results are returned;
+#'  \item \code{TRUE}: results are returned for each example;
+#'  \item \code{FALSE}: only the average results are returned;
 #' }
 #' @return Two different outputs respect to the input parameter \code{b.per.example}:
 #' \itemize{
-#'    \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms
-#'     of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T).
-#'     F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across
-#' examples and T is the best selected threshold;
-#'     \item \code{b.per.example==FALSE}: a list with two elements:
-#'         \enumerate{
-#'             \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R),
-#'            Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
-#'             \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F)
-#'             and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively
-#'            to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
-#'         }
+#'  \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms
+#'   of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T).
+#'   F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across
+#'   examples and T is the best selected threshold;
+#'  \item \code{b.per.example==FALSE}: a list with two elements:
+#'   \enumerate{
+#'    \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R),
+#'     Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
+#'    \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F)
+#'     and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively
+#'     to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
+#'   }
 #' }
 #' @export
 #' @examples
@@ -509,8 +496,8 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
 #' root <- root.node(g);
 #' L <- L[,-which(colnames(L)==root)];
 #' S <- S[,-which(colnames(S)==root)];
-#' fscore <- find.best.f(L, S, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=TRUE);
-find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=FALSE){
+#' fscore <- find.best.f(L, S, n.round=3, verbose=TRUE, b.per.example=TRUE);
+find.best.f <- function(target, predicted, n.round=3, verbose=TRUE, b.per.example=FALSE){
     if(!is.matrix(target) || !is.matrix(predicted))
         stop("target or predicted must be a matrix");
     n.examples <- nrow(target);
@@ -551,8 +538,8 @@ find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=T
         predicted.labels <- matrix(numeric(n.examples*n.classes), nrow=n.examples);
         predicted.labels[predicted>=t] <- 1;
         res <- F.measure.multilabel(target, predicted.labels, b.per.example);
-        if(res$average[f.criterion] > best){
-            best <- res$average[f.criterion];
+        if(res$average["F"] > best){
+            best <- res$average["F"];
             best.res <- res;
             best.thresh <- t;
         }
@@ -584,16 +571,11 @@ find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=T
 #' \eqn{target[i,j]=1} if example \eqn{i} belongs to class \eqn{j}, \eqn{target[i,j]=0} otherwise.
 #' @param predicted a numeric matrix with predicted values (scores): rows correspond to examples and columns to classes.
 #' @param n.round number of rounding digits to be applied to predicted (\code{default=3}).
-#' @param f.criterion character. Type of F-measure to be used to select the best F-score. There are two possibilities:
-#' \enumerate{
-#'    \item \code{F} (def.) corresponds to the harmonic mean between the average precision and recall;
-#'    \item \code{avF} corresponds to the per-example F-score averaged across all the examples;
-#' }
 #' @param verbose a boolean value. If \code{TRUE} (def.) the number of iterations are printed on stdout.
 #' @param b.per.example a boolean value.
 #' \itemize{
-#'    \item \code{TRUE}: results are returned for each example;
-#'    \item \code{FALSE}: only the average results are returned;
+#'  \item \code{TRUE}: results are returned for each example;
+#'  \item \code{FALSE}: only the average results are returned;
 #' }
 #' @param folds number of folds on which computing the Fmax If \code{folds=NULL} (\code{def.}), the Fmax is computed one-shot,
 #' otherwise the Fmax is computed averaged across folds.
@@ -601,18 +583,18 @@ find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=T
 #' If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the Fmax averaged across folds is computed without seed initialization.
 #' @return Two different outputs respect to the input parameter \code{b.per.example}:
 #' \itemize{
-#'    \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms
-#'     of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T).
-#'     F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across
-#' examples and T is the best selected threshold;
-#'     \item \code{b.per.example==FALSE}: a list with two elements:
-#'         \enumerate{
-#'             \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R),
-#'            Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
-#'             \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F),    av.F-measure (av.F)
-#'             and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively
-#'            to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
-#'         }
+#'  \item \code{b.per.example==FALSE}: a list with a single element average. A named vector with 7 elements relative to the best result in terms
+#'   of the F.measure: Precision (P), Recall (R), Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T).
+#'   F is the F-measure computed as the harmonic mean between the average precision and recall; av.F is the F-measure computed as the average across
+#'   examples and T is the best selected threshold;
+#'  \item \code{b.per.example==FALSE}: a list with two elements:
+#'   \enumerate{
+#'    \item average: a named vector with with 7 elements relative to the best result in terms of the F.measure: Precision (P), Recall (R),
+#'     Specificity (S), F.measure (F), av.F.measure (av.F), Accuracy (A) and the best selected Threshold (T);
+#'    \item per.example: a named matrix with the Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F)
+#'     and the best selected Threshold (T) for each example. Row names correspond to examples, column names correspond respectively
+#'     to Precision (P), Recall (R), Specificity (S), Accuracy (A), F-measure (F), av.F-measure (av.F) and the best selected Threshold (T);
+#'   }
 #' }
 #' @export
 #' @examples
@@ -622,9 +604,8 @@ find.best.f <- function(target, predicted, n.round=3, f.criterion="F", verbose=T
 #' root <- root.node(g);
 #' L <- L[,-which(colnames(L)==root)];
 #' S <- S[,-which(colnames(S)==root)];
-#' fmax <- compute.fmax(L, S, n.round=3, f.criterion="F", verbose=TRUE,
-#' b.per.example=TRUE, folds=5, seed=23);
-compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=TRUE, b.per.example=FALSE, folds=NULL, seed=NULL){
+#' fmax <- compute.fmax(L, S, n.round=3, verbose=TRUE, b.per.example=TRUE, folds=5, seed=23);
+compute.fmax <- function(target, predicted, n.round=3, verbose=TRUE, b.per.example=FALSE, folds=NULL, seed=NULL){
     if(!is.matrix(target) || !is.matrix(predicted))
         stop("target or predicted must be a matrix");
     n.examples <- nrow(target);
@@ -635,10 +616,8 @@ compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
         stop("target variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed)){
+    if(is.null(folds) && !is.null(seed))
         seed <- NULL;
-        warning("seed auto-set to NULL");
-    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     ## Fmax averaged across folds
@@ -647,8 +626,7 @@ compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=
         avg.res.list <- list();
         res.per.example <- c();
         for(k in 1:folds){
-            fold.res <- find.best.f(target[testIndex[[k]],], predicted[testIndex[[k]],], n.round=n.round, f.criterion=f.criterion,
-                verbose=verbose, b.per.example=TRUE);
+            fold.res <- find.best.f(target[testIndex[[k]],], predicted[testIndex[[k]],], n.round=n.round, verbose=verbose, b.per.example=TRUE);
             avg.res.list[[k]] <- fold.res$average;
             res.per.example <- rbind(res.per.example, fold.res$per.example);
         }
@@ -673,7 +651,7 @@ compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=
         }
     }
     ## Fmax one-shot
-    res <- find.best.f(target=target, predicted=predicted, n.round=n.round, f.criterion=f.criterion, verbose=verbose, b.per.example=b.per.example);
+    res <- find.best.f(target=target, predicted=predicted, n.round=n.round, verbose=verbose, b.per.example=b.per.example);
     return(res);
 }
 
@@ -698,8 +676,8 @@ compute.fmax <- function(target, predicted, n.round=3, f.criterion="F", verbose=
 #' The first column is the precision, the second the recall;
 #' \code{precision.at.given.recall.levels.over.classes} returns a list with two elements:
 #' \enumerate{
-#' \item average: a vector with the average precision at different recall levels across classes;
-#' \item fixed.recall: a matrix with the precision at different recall levels: rows are classes, columns precision at different recall levels;
+#'  \item average: a vector with the average precision at different recall levels across classes;
+#'  \item fixed.recall: a matrix with the precision at different recall levels: rows are classes, columns precision at different recall levels;
 #' }
 #' @export
 #' @examples
@@ -752,10 +730,8 @@ precision.at.given.recall.levels.over.classes <- function(target, predicted, fol
         stop("rows or columns names of target and predicted are not in the same order");
     if(any((target!=0) & (target!=1)))
         stop("target variable must take values 0 or 1");
-    if(is.null(folds) && !is.null(seed)){
+    if(is.null(folds) && !is.null(seed))
         seed <- NULL;
-        warning("seed auto-set to NULL");
-    }
     if(!is.null(folds) && is.null(seed))
         warning("folds are generated without seed initialization");
     n.classes <- ncol(predicted);

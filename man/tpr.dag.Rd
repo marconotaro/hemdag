@@ -38,7 +38,7 @@ tpr.dag(
  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
- NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
+ NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 }}
 
 \item{topdown}{strategy to make scores ``hierarchy-aware''. It can be one of the following values:
@@ -92,25 +92,25 @@ where \eqn{\phi_i} are the positive children of \eqn{i}.
 Different strategies to select the positive children \eqn{\phi_i} can be applied:
 \enumerate{
  \item \strong{threshold-free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes
- that achieve a score higher than that of their parents:
- \deqn{
+  that achieve a score higher than that of their parents:
+  \deqn{
      \phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
- }
+  }
  \item \strong{threshold} strategy: the positive children are selected on the basis of a threshold that can be selected in two different ways:
- \enumerate{
-     \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
-     \deqn{
-         \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
-     }
-     For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
-     \item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
-     the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions
-     \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}.
-     The corresponding set of positives \eqn{\forall i \in V} is:
-     \deqn{
-         \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
-     }
-     For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
+  \enumerate{
+   \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
+    \deqn{
+     \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
+    }
+  For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
+   \item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
+    the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions
+    \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}.
+    The corresponding set of positives \eqn{\forall i \in V} is:
+    \deqn{
+     \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
+    }
+  For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
  }
 }
 
@@ -135,7 +135,7 @@ children shown above. Furthermore, we designed a variant specific only for \code
 The \code{DESCENS}-\eqn{\tau} variant balances the contribution between the ``positives'' children of a node \eqn{i}
 and that of its ``positives'' descendants excluding its children by adding a weight \eqn{\tau \in [0,1]}:
 \deqn{
-\bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
+ \bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
 }
 where \eqn{\phi_i} are the ``positive'' children of \eqn{i} and \eqn{\delta_i=\Delta_i \setminus \phi_i} the descendants of \eqn{i} without its children.
 If \eqn{\tau=1} we consider only the contribution of the ``positive'' children of \eqn{i}; if \eqn{\tau=0} only the descendants that are not

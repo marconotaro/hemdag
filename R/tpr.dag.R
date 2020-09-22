@@ -23,25 +23,25 @@
 #' Different strategies to select the positive children \eqn{\phi_i} can be applied:
 #' \enumerate{
 #'  \item \strong{threshold-free} strategy: the positive nodes are those children that can increment the score of the node \eqn{i}, that is those nodes
-#'  that achieve a score higher than that of their parents:
-#'  \deqn{
+#'   that achieve a score higher than that of their parents:
+#'   \deqn{
 #'      \phi_i := \{ j \in child(i) | \bar{y}_j > \hat{y}_i \}
-#'  }
+#'   }
 #'  \item \strong{threshold} strategy: the positive children are selected on the basis of a threshold that can be selected in two different ways:
-#'  \enumerate{
-#'      \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
-#'      \deqn{
-#'          \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
-#'      }
-#'      For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
-#'      \item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
-#'      the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions
-#'      \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}.
-#'      The corresponding set of positives \eqn{\forall i \in V} is:
-#'      \deqn{
-#'          \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
-#'      }
-#'      For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
+#'   \enumerate{
+#'    \item for each node a constant threshold \eqn{\bar{t}} is a priori selected:
+#'     \deqn{
+#'      \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
+#'     }
+#'   For instance if the predictions represent probabilities it could be meaningful to a priori select \eqn{\bar{t}=0.5}.
+#'    \item the threshold is selected to maximize some performance metric \eqn{\mathcal{M}} estimated on the training data, as for instance
+#'     the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions
+#'     \eqn{\mathcal{M}(j,t)} on the training data for the class \eqn{j} with respect to the threshold \eqn{t}.
+#'     The corresponding set of positives \eqn{\forall i \in V} is:
+#'     \deqn{
+#'      \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
+#'     }
+#'   For instance \eqn{t_j^*} can be selected from a set of \eqn{t \in (0,1)} through internal cross-validation techniques.
 #'  }
 #' }
 #'
@@ -66,7 +66,7 @@
 #' The \code{DESCENS}-\eqn{\tau} variant balances the contribution between the ``positives'' children of a node \eqn{i}
 #' and that of its ``positives'' descendants excluding its children by adding a weight \eqn{\tau \in [0,1]}:
 #' \deqn{
-#' \bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
+#'  \bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
 #' }
 #' where \eqn{\phi_i} are the ``positive'' children of \eqn{i} and \eqn{\delta_i=\Delta_i \setminus \phi_i} the descendants of \eqn{i} without its children.
 #' If \eqn{\tau=1} we consider only the contribution of the ``positive'' children of \eqn{i}; if \eqn{\tau=0} only the descendants that are not
@@ -92,7 +92,7 @@
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
 #'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
-#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
+#'  NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
 #' @param topdown strategy to make scores ``hierarchy-aware''. It can be one of the following values:
 #' \itemize{
@@ -128,7 +128,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
         bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
         stop("positive or bottomup or topdown value misspelled");
     if(positive=="children" && bottomup=="tau")
-        stop("tau is a descendants variants. Please set positive to descendants");
+        stop("tau is a descens variant. Please set positive to descendants");
     if(bottomup=="threshold" || bottomup=="tau")
         w <- 0;
     if(bottomup=="threshold.free"){
@@ -297,7 +297,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
 #'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
-#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
+#'  NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
 #' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
@@ -326,18 +326,12 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' initialization. If \code{bottomup=threshold.free}, set \code{seed=NULL}.
 #' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 #' \enumerate{
-#' \item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
-#' \item \code{fmax} (def.): the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
-#' \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
+#'  \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
+#'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+#'  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 #' }
 #' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold on the basis of
-#' the best Fmax. If \code{bottomup==threshold.free}, set \code{n.round=NULL}.
-#' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
-#' \enumerate{
-#' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
-#' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
-#' }
-#' If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.
+#' the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.
 #' @return A named matrix with the scores of the functional terms corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 #' @export
 #' @examples
@@ -346,23 +340,20 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' data(labels);
 #' S.tpr <- tpr.dag.cv(S, g, ann=NULL, norm=FALSE, norm.type=NULL, positive="children",
 #' bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, ncores=1,
-#' threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL);
-tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE, ncores=1,
-    threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric="fmax", n.round=3, f.criterion="F"){
+#' threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL);
+tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL, 
+    parallel=FALSE, ncores=1, threshold=seq(from=0.1, to=0.9, by=0.1), weight=0, kk=5, seed=23, metric="auprc", n.round=NULL){
     ## parameters check
     if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold"
         && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
         stop("positive or bottomup or topdown value misspelled");
     if(positive=="children" && bottomup=="tau")
-        stop("tau is a descendants variants. Please set positive to descendants");
+        stop("tau is a descens variant. Please set positive to descendants");
     if(bottomup=="threshold" || bottomup=="tau")
         weight <- 0;
     if(bottomup=="threshold.free"){
-        threshold <- 0;
-        weight <- 0;
-        kk <- NULL;
-        seed <- NULL;
-        ann <- NULL;
+        threshold <- weight <- 0;
+        kk <- seed <- ann <- metric <- n.round <- NULL;
     }
     if(bottomup=="weighted.threshold.free")
         threshold <- 0;
@@ -372,18 +363,18 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
         stop("do you wanna or not normalize the matrix S? norm and norm.type inconsistent");
     if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
         stop("smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
-    if(metric!="fmax" && metric!="prc" && !is.null(metric))
+    if(metric!="fmax" && metric!="auprc" && !is.null(metric))
         stop("value of parameter metric misspelled");
     if(is.null(metric) && bottomup!="threshold.free")
         stop(paste0("the bottom-up approach ", bottomup, " is parametric"),". Select the metric on which maximize according to those available");
-    if(!is.null(metric) && bottomup=="threshold.free")
-        stop("do you wanna run a parametric or a parametric-free tpr-dag variants? metric and bottomup are inconsistent");
     if(is.null(seed) && bottomup!="threshold.free")
         stop("set seed to create folds");
     if(is.null(ann) && bottomup!="threshold.free")
         stop("the annotation matrix must be provided to maximize the hyper-parameter(s) of the chosen tpr-dag ensemble variant");
-    if((is.null(n.round) || is.null(f.criterion)) && (metric=="fmax" && !is.null(metric)))
-        stop("set n.round and/or f.criterion properly");
+    if(is.null(n.round) && (metric=="fmax" && !is.null(metric)))
+        stop("set n.round properly");
+    if(metric=="auprc" && !is.null(n.round))
+        n.round <- NULL;
     ## add root node if it does not exist
     root <- root.node(g);
     if(!(root %in% colnames(S))){
@@ -440,7 +431,7 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
                                 pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
                             }
                         }
-                        train.metric <- find.best.f(ann.train, pred.train, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=FALSE)[["F"]];
+                        train.metric <- find.best.f(ann.train, pred.train, n.round=n.round, verbose=FALSE, b.per.example=FALSE)[["F"]];
                     }else{
                         if(root %in% colnames(pred.train)){
                             pred.train <- pred.train[,-which(colnames(pred.train)==root)];
@@ -509,7 +500,7 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #'  \item \code{weighted.threshold.free}: positive nodes are selected on the basis of the \code{weighted.threshold.free} strategy;
 #'  \item \code{weighted.threshold}: positive nodes are selected on the basis of the \code{weighted.threshold} strategy;
 #'  \item \code{tau}: positive nodes are selected on the basis of the \code{tau} strategy.
-#'  NOTE: \code{tau} is only a \code{DESCENS} variants. If you select \code{tau} strategy you must set \code{positive=descendants};
+#'  NOTE: \code{tau} is only a \code{DESCENS} variant. If you select \code{tau} strategy you must set \code{positive=descendants};
 #' }
 #' @param topdown strategy to make the scores hierarchy-consistent. It can be one of the following values:
 #' \itemize{
@@ -538,18 +529,12 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' without seed initialization. If \code{bottomup=threshold.free}, set \code{seed=NULL}.
 #' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 #' \enumerate{
-#' \item \code{prc}: the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
-#' \item \code{fmax} (def.): the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+#' \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
+#' \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
 #' \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 #' }
 #' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold
-#' on the basis of the best Fmax. If \code{bottomup==threshold.free}, set \code{n.round=NULL}.
-#' @param f.criterion character. Type of F-measure to be used to select the best F-measure. Two possibilities:
-#' \enumerate{
-#' \item \code{F} (def.): corresponds to the harmonic mean between the average precision and recall;
-#' \item \code{avF}: corresponds to the per-example \code{F-score} averaged across all the examples;
-#' }
-#' If \code{bottomup=threshold.free}, set \code{f.criterion=NULL}.
+#' on the basis of the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.
 #' @return A named matrix with the scores of the classes corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 #' Rows of the matrix are shrunk to \code{testIndex}.
 #' @export
@@ -560,23 +545,20 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' data(test.index);
 #' S.tpr <- tpr.dag.holdout(S, g, ann=NULL, testIndex=test.index, norm=FALSE, norm.type=NULL,
 #' positive="children", bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE,
-#' ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL);
+#' ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL);
 tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, positive="children", bottomup="threshold",
-    topdown="htd",  threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric="fmax", n.round=3, f.criterion="F"){
+    topdown="htd",  threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric="auprc", n.round=NULL){
     ## parameters check
     if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold"
         && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
         stop("positive or bottomup or topdown value misspelled");
     if(positive=="children" && bottomup=="tau")
-        stop("tau is a descendants variants. Please set positive to descendants");
+        stop("tau is a descens variant. Please set positive to descendants");
     if(bottomup=="threshold" || bottomup=="tau")
         weight <- 0;
     if(bottomup=="threshold.free"){
-        threshold <- 0;
-        weight <- 0;
-        kk <- NULL;
-        seed <- NULL;
-        ann <- NULL;
+        threshold <- weight <- 0;
+        kk <- seed <- ann <- metric <- n.round <- NULL;
     }
     if(bottomup=="weighted.threshold.free")
         threshold <- 0;
@@ -586,18 +568,18 @@ tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=
         stop("do you wanna or not normalize the matrix S? norm and norm.type inconsistent");
     if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
         stop("smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
-    if(metric!="fmax" && metric!="prc" && !is.null(metric))
+    if(metric!="fmax" && metric!="auprc" && !is.null(metric))
         stop("value of parameter metric misspelled");
     if(is.null(metric) && bottomup!="threshold.free")
         stop(paste0("the bottom-up approach ", bottomup, " is parametric"),". Select the metric on which maximize according to those available");
-    if(!is.null(metric) && bottomup=="threshold.free")
-        stop("do you wanna run a parametric or a parametric-free tpr-dag variants? metric and bottomup are inconsistent");
     if(is.null(seed) && bottomup!="threshold.free")
         stop("set seed to create folds");
     if(is.null(ann) && bottomup!="threshold.free")
         stop("the annotation matrix must be provided to maximize the hyper-parameter(s) of the chosen tpr-dag ensemble variant");
-    if((is.null(n.round) || is.null(f.criterion)) && (metric=="fmax" && !is.null(metric)))
-        stop("set n.round and/or f.criterion properly");
+    if(is.null(n.round) && (metric=="fmax" && !is.null(metric)))
+        stop("set n.round properly");
+    if(metric=="auprc" && !is.null(n.round))
+        n.round <- NULL;
     ## add root node if it does not exist
     root <- root.node(g);
     if(!(root %in% colnames(S))){
@@ -660,7 +642,7 @@ tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=
                                 pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
                             }
                         }
-                        train.metric <- find.best.f(target.train, pred.train, n.round=n.round, f.criterion=f.criterion, verbose=FALSE, b.per.example=FALSE)[["F"]];
+                        train.metric <- find.best.f(target.train, pred.train, n.round=n.round, verbose=FALSE, b.per.example=FALSE)[["F"]];
                     }else{
                         if(root %in% colnames(pred.train)){
                             pred.train <- pred.train[,-which(colnames(pred.train)==root)];

@@ -39,8 +39,8 @@ If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the PXR averaged acro
 The first column is the precision, the second the recall;
 \code{precision.at.given.recall.levels.over.classes} returns a list with two elements:
 \enumerate{
-\item average: a vector with the average precision at different recall levels across classes;
-\item fixed.recall: a matrix with the precision at different recall levels: rows are classes, columns precision at different recall levels;
+ \item average: a vector with the average precision at different recall levels across classes;
+ \item fixed.recall: a matrix with the precision at different recall levels: rows are classes, columns precision at different recall levels;
 }
 }
 \description{

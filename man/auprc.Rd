@@ -30,8 +30,8 @@ If \code{seed=NULL} and \code{folds}\eqn{\neq}\code{NULL}, the AUPRC averaged ac
 \code{auprc.single.class} returns a numeric value corresponding to the AUPRC for the considered class;
 \code{auprc.single.over.classes} returns a list with two elements:
 \enumerate{
-    \item average: the average AUPRC across classes;
-    \item per.class: a named vector with AUPRC for each class. Names correspond to classes.
+ \item average: the average AUPRC across classes;
+ \item per.class: a named vector with AUPRC for each class. Names correspond to classes.
 }
 }
 \description{
