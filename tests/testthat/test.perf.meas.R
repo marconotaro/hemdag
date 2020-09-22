@@ -75,8 +75,22 @@ test_that("auprc works", {
 
     ## warning messages
     expect_warning(auprc.single.class(labels, scores, folds=2, seed=NULL), "folds are generated without seed initialization");
-    expect_warning(auprc.single.class(labels, scores, folds=NULL, seed=1), "seed auto-set to NULL");
-    expect_warning(auprc.single.over.classes(ann, S, folds=NULL, seed=1), "seed auto-set to NULL");
+
+    ## seed autoset to NULL (single class)
+    auprc <- auprc.single.class(labels, scores, folds=NULL, seed=1);
+    write.table(data.frame(auprc), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    auprc.tmp <- read.table(tmp);
+    auprc.check <- auprc.tmp[,1];
+    names(auprc.check) <- "one.shoot";
+    expect_equal(auprc, auprc.check);
+
+    ## seed autoset to NULL (over classes)
+    auprc <- auprc.single.over.classes(ann, S, folds=NULL, seed=1);  
+    write.table(data.frame(auprc), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    auprc.tmp <- read.table(tmp);
+    auprc.check <- list(average=unique(auprc.tmp$average), per.class=auprc.tmp$per.class);
+    names(auprc.check$per.class) <- colnames(S);
+    expect_equal(auprc, auprc.check);
 })
 
 test_that("auroc works", {
@@ -141,8 +155,22 @@ test_that("auroc works", {
 
     ## warning messages
     expect_warning(auroc.single.class(labels, scores, folds=2, seed=NULL), "folds are generated without seed initialization");
-    expect_warning(auroc.single.class(labels, scores, folds=NULL, seed=1), "seed auto-set to NULL");
-    expect_warning(auroc.single.over.classes(ann, S, folds=NULL, seed=1), "seed auto-set to NULL");
+    
+    ## seed autoset to NULL (single class)
+    auroc <- auroc.single.class(labels, scores, folds=NULL, seed=1);
+    write.table(data.frame(auroc), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    auroc.tmp <- read.table(tmp);
+    auroc.check <- auroc.tmp[,1];
+    names(auroc.check) <- "one.shoot";
+    expect_equal(auroc, auroc.check);
+
+    ## seed autoset to NULL (over classes)
+    auroc <- auroc.single.over.classes(ann, S, folds=NULL, seed=1);  
+    write.table(data.frame(auroc), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    auroc.tmp <- read.table(tmp);
+    auroc.check <- list(average=unique(auroc.tmp$average), per.class=auroc.tmp$per.class);
+    names(auroc.check$per.class) <- colnames(S);
+    expect_equal(auroc, auroc.check);
 })
 
 test_that("fmax works", {
@@ -152,7 +180,7 @@ test_that("fmax works", {
     tmp.ex <- tempfile();
 
     ## fmax one-shot
-    fmax <- compute.fmax(ann, S, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=NULL, seed=NULL);
+    fmax <- compute.fmax(ann, S, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=NULL, seed=NULL);
     write.table(fmax$average, row.names=TRUE, col.names=FALSE, quote=FALSE, file=tmp.av);
     write.table(fmax$per.example, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp.ex);
     fmax.tmp <- read.table(tmp.av, stringsAsFactor=FALSE);
@@ -162,7 +190,7 @@ test_that("fmax works", {
     fmax.check <- list(average=fmax.av, per.example=fmax.ex);
     expect_equal(fmax, fmax.check);
 
-    fmax <- compute.fmax(ann, S, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=FALSE, folds=NULL, seed=NULL);
+    fmax <- compute.fmax(ann, S, n.round=3, verbose=FALSE, b.per.example=FALSE, folds=NULL, seed=NULL);
     write.table(fmax, row.names=TRUE, col.names=FALSE, quote=FALSE, file=tmp.av);
     fmax.tmp <- read.table(tmp.av, stringsAsFactor=FALSE);
     fmax.check <- fmax.tmp[,2];
@@ -170,7 +198,7 @@ test_that("fmax works", {
     expect_equal(fmax, fmax.check);
 
     ## famx cross-validated
-    fmax <- compute.fmax(ann, S, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=2, seed=23);
+    fmax <- compute.fmax(ann, S, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=2, seed=23);
     write.table(fmax$average, row.names=TRUE, col.names=FALSE, quote=FALSE, file=tmp.av);
     write.table(fmax$per.example, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp.ex);
     fmax.tmp <- read.table(tmp.av, stringsAsFactor=FALSE);
@@ -226,7 +254,14 @@ test_that("fmax works", {
 
     ## warning messages
     expect_warning(compute.fmax(ann, S, folds=2, seed=NULL), "folds are generated without seed initialization");
-    expect_warning(compute.fmax(ann, S, folds=NULL, seed=1), "seed auto-set to NULL");
+    
+    ## seed autoset to NULL
+    fmax <- compute.fmax(ann, S, folds=NULL, seed=1);
+    write.table(fmax, row.names=TRUE, col.names=FALSE, quote=FALSE, file=tmp.av);
+    fmax.tmp <- read.table(tmp.av, stringsAsFactor=FALSE);
+    fmax.check <- fmax.tmp[,2];
+    names(fmax.check) <- fmax.tmp[,1];
+    expect_equal(fmax, fmax.check);
 })
 
 test_that("pxr works", {
@@ -286,7 +321,15 @@ test_that("pxr works", {
 
     ## warning messages
     expect_warning(precision.at.given.recall.levels.over.classes(ann, S, folds=2, seed=NULL), "folds are generated without seed initialization");
-    expect_warning(precision.at.given.recall.levels.over.classes(ann, S, folds=NULL, seed=1), "seed auto-set to NULL");
+    
+    ## seed autoset to NULL
+    pxr <- precision.at.given.recall.levels.over.classes(ann, S, folds=NULL, seed=1);
+    write.table(data.frame(pxr), row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    pxr.tmp <- read.table(tmp);
+    pxr.check <- list(average=pxr.tmp$average, fixed.recall=as.matrix(pxr.tmp[,2:ncol(pxr.tmp)]));
+    names(pxr.check$average) <- rec.lev;
+    dimnames(pxr.check$fixed.recall) <- list(colnames(ann), rec.lev);
+    expect_equal(pxr, pxr.check);
 })
 
 test_that("stratified data works", {
@@ -338,7 +381,7 @@ test_that("stratified fold works", {
     labels.flip <- labels[order(length(labels):1)];
     labels.trunk <- labels[-c(1,2,3,5)];
 
-    ## stop message
+    ## stop messages
     expect_error(create.stratified.fold.df(ann, S, folds=5, seed=23), "labels or scores must be a vector");
     expect_error(create.stratified.fold.df(labels.trunk, scores, folds=5, seed=23), "length of true and predicted labels does not match");
     expect_error(create.stratified.fold.df(scores, labels, folds=5, seed=23), "labels variable must take values 0 or 1");
@@ -348,6 +391,6 @@ test_that("stratified fold works", {
     expect_error(create.stratified.fold.df(labels, scores, folds=15, seed=23),
         "number of folds selected too high: some folds have no examples. Please reduce the number of folds");
 
-    ## warning message
+    ## warning messages
     expect_warning(create.stratified.fold.df(labels, scores, folds=2, seed=NULL), "folds are generated without seed initialization");
 })

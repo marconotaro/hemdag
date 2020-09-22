@@ -22,16 +22,16 @@ test_that("tpr.dag works",{
     S.descensWT     <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="htd", t=0.5, w=05);
     S.descensTAU    <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="htd", t=0.5);
 
-    S.ISOtprTF      <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
-    S.ISOtprT       <- tpr.dag(S, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
-    S.ISOtprW       <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    S.ISOtprWT      <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    S.isotprTF      <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
+    S.isotprT       <- tpr.dag(S, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
+    S.isotprW       <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    S.isotprWT      <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
 
-    S.ISOdescensTF  <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
-    S.ISOdescensT   <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
-    S.ISOdescensW   <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    S.ISOdescensWT  <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
-    S.ISOdescensTAU <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
+    S.isodescensTF  <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
+    S.isodescensT   <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
+    S.isodescensW   <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    S.isodescensWT  <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    S.isodescensTAU <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
 
     write.table(S.tprTF, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
@@ -71,42 +71,42 @@ test_that("tpr.dag works",{
     expect_equal(S.descensTAU, S.check);
 
 
-    write.table(S.ISOtprTF, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isotprTF, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOtprTF, S.check);
+    expect_equal(S.isotprTF, S.check);
 
-    write.table(S.ISOtprT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isotprT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOtprT, S.check);
+    expect_equal(S.isotprT, S.check);
 
-    write.table(S.ISOtprW, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isotprW, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOtprW, S.check);
+    expect_equal(S.isotprW, S.check);
 
-    write.table(S.ISOtprWT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isotprWT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOtprWT, S.check);
+    expect_equal(S.isotprWT, S.check);
 
 
-    write.table(S.ISOdescensTF, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isodescensTF, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOdescensTF, S.check);
+    expect_equal(S.isodescensTF, S.check);
 
-    write.table(S.ISOdescensT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isodescensT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOdescensT, S.check);
+    expect_equal(S.isodescensT, S.check);
 
-    write.table(S.ISOdescensW, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isodescensW, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOdescensW, S.check);
+    expect_equal(S.isodescensW, S.check);
 
-    write.table(S.ISOdescensWT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isodescensWT, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOdescensWT, S.check);
+    expect_equal(S.isodescensWT, S.check);
 
-    write.table(S.ISOdescensTAU, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
+    write.table(S.isodescensTAU, row.names=TRUE, col.names=TRUE, quote=FALSE, file=tmp);
     S.check <- as.matrix(read.table(tmp));
-    expect_equal(S.ISOdescensTAU, S.check);
+    expect_equal(S.isodescensTAU, S.check);
 
 
     ## no root testing
@@ -121,7 +121,7 @@ test_that("tpr.dag works",{
     expect_error(tpr.dag(S, g, root, positive="child", bottomup="threshold.free", topdown="htd"),
         "positive or bottomup or topdown value misspelled");
     expect_error(tpr.dag(S, g, root, positive="children", bottomup="tau", topdown="htd"),
-        "tau is a descendants variants. Please set positive to descendants");
+        "tau is a descens variant. Please set positive to descendants");
     expect_warning(tpr.dag(S, g, root, positive="descendants", bottomup="threshold", topdown="htd", t=1),
         "when t or w is equal to 1, tpr-dag is reduced to htd-dag");
     expect_warning(tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="gpav", parallel=TRUE, ncores=1),
@@ -147,80 +147,81 @@ test_that("tpr.dag.cv works",{
     weight <- seq(0.1, 0.9, 0.2);
 
     expect_output(tpr.dag.cv(S, g, ann=NULL, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE,
-        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL), "tpr-dag correction done");
+        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL), "tpr-dag correction done");
 
     expect_output(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE,
-        ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="prc", n.round=NULL, f.criterion=NULL),
-        "training fold:\\t1\\ttop prc avg found:\\t0.236183\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t1\\ttop prc avg found:\\t0.3748124\\tbest threshold:\\t0.5\\t\\ntraining fold:\\t2\\ttop prc avg found:\\t0.2832962\\tbest threshold:\\t0.1\\t\\ntpr-dag correction done");
+        ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="auprc", n.round=NULL),
+        "training fold:\\t1\\ttop auprc avg found:\\t0.236183\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t1\\ttop auprc avg found:\\t0.3748124\\tbest threshold:\\t0.5\\t\\ntraining fold:\\t2\\ttop auprc avg found:\\t0.2832962\\tbest threshold:\\t0.1\\t\\ntpr-dag correction done");
 
     expect_output(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold.free", topdown="gpav", W=NULL,
-        parallel=FALSE, ncores=1, threshold=0, weight=weight, kk=3, seed=23, metric="fmax", n.round=3, f.criterion="F"),
+        parallel=FALSE, ncores=1, threshold=0, weight=weight, kk=3, seed=23, metric="fmax", n.round=3),
     "training fold:\\t1\\ttop fmax avg found:\\t0.8113208\\tbest weight:\\t0.1\\t\\ntraining fold:\\t2\\ttop fmax avg found:\\t0.7933067\\tbest weight:\\t0.1\\t\\ntraining fold:\\t3\\ttop fmax avg found:\\t0.776699\\tbest weight:\\t0.1\\t\\ntpr-dag correction done");
 
     expect_output(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold", topdown="gpav", W=NULL, parallel=FALSE,
-        ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric="fmax", n.round=3, f.criterion="F"),
+        ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric="fmax", n.round=3),
     "training fold:\\t1\\ttop fmax avg found:\\t0.8113208\\tbest threshold:\\t0.1\\tbest weight:\\t0.1\\t\\ntraining fold:\\t2\\ttop fmax avg found:\\t0.8219138\\tbest threshold:\\t0.1\\tbest weight:\\t0.1\\t\\ntraining fold:\\t3\\ttop fmax avg found:\\t0.8224138\\tbest threshold:\\t0.1\\tbest weight:\\t0.1\\t\\ntpr-dag correction done");
 
     expect_output(tpr.dag.cv(S, g, ann=NULL, norm=TRUE, norm.type="qnorm", positive="children", bottomup="threshold.free", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "qnorm normalization: done\\ntpr-dag correction done");
 
     expect_output(tpr.dag.cv(S.degen, g, ann=ann.degen, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL,
-        parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="prc", n.round=NULL, f.criterion=NULL), "tpr-dag correction done");
+        parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="auprc", n.round=NULL), "tpr-dag correction done");
 
     expect_output(tpr.dag.cv(S.degen, g, ann=ann.degen, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL,
-        parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="fmax", n.round=3, f.criterion="F"), "tpr-dag correction done");
+        parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="fmax", n.round=3), "tpr-dag correction done");
 
     expect_output(tpr.dag.cv(S.noroot, g, ann=NULL, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="gpav", W=NULL,
-        parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL), "tpr-dag correction done");
+        parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL), "tpr-dag correction done");
+
+    ## n.round autoset to NULL
+    expect_output(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE,
+        ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="auprc", n.round=3),
+        "training fold:\\t1\\ttop auprc avg found:\\t0.236183\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t1\\ttop auprc avg found:\\t0.3748124\\tbest threshold:\\t0.5\\t\\ntraining fold:\\t2\\ttop auprc avg found:\\t0.2832962\\tbest threshold:\\t0.1\\t\\ntpr-dag correction done");
 
     ## error messages
     expect_error(tpr.dag.cv(S, g, ann=NULL, norm=TRUE, norm.type="maxnorm", positive="descendantss", bottomup="threshold.free", topdown="htd", W=NULL,
-        parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "positive or bottomup or topdown value misspelled");
 
     expect_error(tpr.dag.cv(S, g, ann=ann, norm=TRUE, norm.type="maxnorm", positive="children", bottomup="tau", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
-        "tau is a descendants variants. Please set positive to descendants");
+        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
+        "tau is a descens variant. Please set positive to descendants");
 
     expect_error(tpr.dag.cv(S, g, ann=NULL, norm=FALSE, norm.type="maxnorm", positive="children", bottomup="threshold.free", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "do you wanna or not normalize the matrix S\\? norm and norm.type inconsistent");
 
     expect_error(tpr.dag.cv(S, g, ann=NULL, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "choose a normalization methods among those available");
 
     expect_error(tpr.dag.cv(S, g, ann=NULL, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=0, weight=0, kk=3, seed=23, metric="prc", n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=0, weight=0, kk=3, seed=23, metric="auprc", n.round=NULL),
         "the annotation matrix must be provided to maximize the hyper-parameter\\(s\\) of the chosen tpr-dag ensemble variant");
 
     expect_error(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=threshold, weight=0, kk=1, seed=23, metric="prc", n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=threshold, weight=0, kk=1, seed=23, metric="auprc", n.round=NULL),
         "smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
 
     expect_error(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric=NULL, n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric=NULL, n.round=NULL),
         "the bottom-up approach weighted.threshold is parametric. Select the metric on which maximize according to those available");
 
     expect_error(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="auc", n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric="auc", n.round=NULL),
         "value of parameter metric misspelled");
 
-    expect_error(tpr.dag.cv(S, g, ann=NULL, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="prc", n.round=NULL, f.criterion=NULL),
-        "do you wanna run a parametric or a parametric-free tpr-dag variants\\? metric and bottomup are inconsistent");
-
     expect_error(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd", W=NULL, parallel=FALSE,
-        ncores=1, threshold=threshold, weight=0, kk=3, seed=NULL, metric="prc", n.round=NULL, f.criterion=NULL),
+        ncores=1, threshold=threshold, weight=0, kk=3, seed=NULL, metric="auprc", n.round=NULL),
         "set seed to create folds");
 
     expect_error(tpr.dag.cv(S.degen, g, ann=ann.degen, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL,
-        parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="fmax", n.round=3, f.criterion="F"),
+        parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="fmax", n.round=3),
         "number of folds selected too high: some folds have no examples. Please reduce the number of folds")
 
     expect_error(tpr.dag.cv(S, g, ann=ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold", topdown="gpav", W=NULL, parallel=FALSE,
-        ncores=1, threshold=0, weight=weight, kk=3, seed=23, metric="fmax", n.round=NULL, f.criterion=NULL), "set n.round and/or f.criterion properly");
+        ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric="fmax", n.round=NULL), "set n.round properly");
 })
 
 test_that("tpr.dag.holdout works",{
@@ -239,83 +240,83 @@ test_that("tpr.dag.holdout works",{
     threshold <- seq(0.1, 0.9, 0.2);
     weight <- seq(0.1, 0.9, 0.2);
 
-    expect_output(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children",
-        bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL,
-        metric=NULL, n.round=NULL, f.criterion=NULL), "tpr-dag holdout correction done");
+    expect_output(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", 
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL), 
+    "tpr-dag holdout correction done");
 
-    expect_output(tpr.dag.holdout(S.degen, g, ann=NULL, testIndex=testIndex.degen, norm=FALSE, norm.type=NULL, positive="children",
-        bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL,
-        metric=NULL, n.round=NULL, f.criterion=NULL), "tpr-dag holdout correction done");
+    expect_output(tpr.dag.holdout(S.degen, g, ann=NULL, testIndex=testIndex.degen, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", 
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL), 
+    "tpr-dag holdout correction done");
 
     expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="descendants",
         bottomup="weighted.threshold.free", topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=weight, kk=2, seed=23,
-        metric="fmax", n.round=3, f.criterion="F"),
+        metric="fmax", n.round=3),
         "training fold:\\t1\\ttop fmax avg found:\\t0.7272727\\tbest weight:\\t0.1\\t\\ntraining fold:\\t2\\ttop fmax avg found:\\t0.8244898\\tbest weight:\\t0.1\\t\\ntpr-dag holdout correction done");
 
-    expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children",
-        bottomup="threshold", topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23,
-        metric="prc", n.round=NULL, f.criterion=NULL),
-        "training fold:\\t2\\ttop prc avg found:\\t0.4801396\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t2\\ttop prc avg found:\\t0.6534264\\tbest threshold:\\t0.9\\t\\ntpr-dag holdout correction done");
+    expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd", 
+        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="auprc", n.round=NULL),
+        "training fold:\\t2\\ttop auprc avg found:\\t0.4801396\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t2\\ttop auprc avg found:\\t0.6534264\\tbest threshold:\\t0.9\\t\\ntpr-dag holdout correction done");
 
     expect_output(tpr.dag.holdout(S.noroot, g, ann=NULL, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free",
-        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "tpr-dag holdout correction done");
 
     expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold",
-        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=weight, kk=2, seed=23, metric="fmax", n.round=3, f.criterion="F"),
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=weight, kk=2, seed=23, metric="fmax", n.round=3),
         "training fold:\\t1\\ttop fmax avg found:\\t0.8\\tbest threshold:\\t0.1\\tbest weight:\\t0.1\\t\\ntraining fold:\\t2\\ttop fmax avg found:\\t0.8244898\\tbest threshold:\\t0.1\\tbest weight:\\t0.1\\t\\ntpr-dag holdout correction done");
 
     expect_output(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=TRUE, norm.type="maxnorm", positive="children", bottomup="threshold.free",
-        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "maxnorm normalization done\\ntpr-dag holdout correction done");
 
+    ## n.round autoset to NULL
+    expect_output(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", 
+        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23, metric="auprc", n.round=3), 
+    "training fold:\\t2\\ttop auprc avg found:\\t0.3068528\\tbest threshold:\\t0.1\\t\\ntraining fold:\\t2\\ttop auprc avg found:\\t0.4801396\\tbest threshold:\\t0.5\\t\\ntpr-dag holdout correction done");
+
     ## error messages
-    expect_error(tpr.dag.holdout(S.degen, g, ann=ann.degen,  testIndex=testIndex.degen, norm=FALSE, norm.type=NULL, positive="children",
+    expect_error(tpr.dag.holdout(S.degen, g, ann=ann.degen, testIndex=testIndex.degen, norm=FALSE, norm.type=NULL, positive="children",
         bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=2, seed=23,
-        metric="prc", n.round=NULL, f.criterion=NULL),
+        metric="auprc", n.round=NULL),
         "training matrix too small \\(only one example/row\\) for hyper-parameters tuning. Please use threshold.free strategy instead");
 
     expect_error(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=TRUE, norm.type="maxnorm", positive="descendantss", bottomup="threshold.free",
-        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "positive or bottomup or topdown value misspelled");
 
     expect_error(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=TRUE, norm.type="maxnorm", positive="children", bottomup="tau", topdown="htd",
-        W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
-        "tau is a descendants variants. Please set positive to descendants");
+        W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
+        "tau is a descens variant. Please set positive to descendants");
 
     expect_error(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=FALSE, norm.type="maxnorm", positive="children", bottomup="threshold.free",
-        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "do you wanna or not normalize the matrix S\\? norm and norm.type inconsistent");
 
     expect_error(tpr.dag.holdout(S, g, ann=NULL, testIndex=testIndex, norm=TRUE, norm.type=NULL, positive="children", bottomup="threshold.free",
-        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL, f.criterion=NULL),
+        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL),
         "choose a normalization methods among those available");
 
     expect_error(tpr.dag.holdout(S, g, ann=NULL,testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd",
-        W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=3, seed=23, metric="prc", n.round=NULL, f.criterion=NULL),
+        W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=0, kk=3, seed=23, metric="auprc", n.round=NULL),
         "the annotation matrix must be provided to maximize the hyper-parameter\\(s\\) of the chosen tpr-dag ensemble variant");
 
     expect_error(tpr.dag.holdout(S, g, ann=ann,testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd",
-        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=1, seed=23, metric="prc", n.round=NULL, f.criterion=NULL),
+        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=1, seed=23, metric="auprc", n.round=NULL),
         "smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
 
     expect_error(tpr.dag.holdout(S, g, ann=ann,testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold",
-        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric=NULL, n.round=NULL, f.criterion=NULL),
+        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric=NULL, n.round=NULL),
         "the bottom-up approach weighted.threshold is parametric. Select the metric on which maximize according to those available");
 
     expect_error(tpr.dag.holdout(S, g, ann=ann,testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold",
-        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="auc", n.round=NULL, f.criterion=NULL),
+        topdown="htd", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric="auc", n.round=NULL),
         "value of parameter metric misspelled");
 
-    expect_error(tpr.dag.holdout(S, g, ann=NULL,testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold.free", topdown="htd",
-        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=3, seed=23, metric="prc", n.round=NULL, f.criterion=NULL),
-        "do you wanna run a parametric or a parametric-free tpr-dag variants\\? metric and bottomup are inconsistent");
-
     expect_error(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="htd",
-        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=0, kk=3, seed=NULL, metric="prc", n.round=NULL, f.criterion=NULL),
+        W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=weight, kk=3, seed=NULL, metric="auprc", n.round=NULL),
         "set seed to create folds");
 
     expect_error(tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=FALSE, norm.type=NULL, positive="children", bottomup="weighted.threshold",
-        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=0, weight=weight, kk=3, seed=23, metric="fmax", n.round=NULL, f.criterion=NULL),
-        "set n.round and/or f.criterion properly");
+        topdown="gpav", W=NULL, parallel=FALSE, ncores=1, threshold=threshold, weight=weight, kk=3, seed=23, metric="fmax", n.round=NULL),
+        "set n.round properly");
 })
