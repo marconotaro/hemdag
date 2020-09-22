@@ -77,16 +77,16 @@ D. TPR-DAG (True Path Rule for DAG) and all its 18 ensemble variants
     > S.descensWT     <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="htd", t=0.5, w=05);
     > S.descensTAU    <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="htd", t=0.5);
 
-    > S.ISOtprTF      <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
-    > S.ISOtprT       <- tpr.dag(S, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
-    > S.ISOtprW       <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    > S.ISOtprWT      <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    > S.isotprTF      <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
+    > S.isotprT       <- tpr.dag(S, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.isotprW       <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.isotprWT      <- tpr.dag(S, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
 
-    > S.ISOdescensTF  <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
-    > S.ISOdescensT   <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
-    > S.ISOdescensW   <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    > S.ISOdescensWT  <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
-    > S.ISOdescensTAU <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
+    > S.isodescensTF  <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
+    > S.isodescensT   <- tpr.dag(S, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.isodescensW   <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.isodescensWT  <- tpr.dag(S, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    > S.isodescensTAU <- tpr.dag(S, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
 
 
 E. Obozisnki heuristic methods

@@ -277,10 +277,10 @@ By replacing the HTD-DAG top-down step (:ref:`htd`) with the GPAV approach (:ref
 
 .. code-block:: R
 
-    > S.ISOtprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
-    > S.ISOtprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
-    > S.ISOtprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    > S.ISOtprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    > S.isotprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
+    > S.isotprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.isotprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.isotprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
 
 ISO-DESCENS: Isotonic Regression with Descendants Ensemble Classifier
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -288,11 +288,11 @@ By considering the **positive descendants** instead of **positive children** in 
 
 .. code-block:: R
 
-    > S.ISOdescensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
-    > S.ISOdescensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
-    > S.ISOdescensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    > S.ISOdescensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
-    > S.ISOdescensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
+    > S.isodescensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
+    > S.isodescensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
+    > S.isodescensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    > S.isodescensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    > S.isodescensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
 
 Obozinski Heuristic Methods
 --------------------------------
@@ -385,13 +385,13 @@ Now we can compare the flat approach RANKS versus the HTD-DAG strategy, by avera
     > prc.flat  <- auprc.single.over.classes(L, S.norm, folds=3, seed=23);
     > auc.flat  <- auroc.single.over.classes(L, S.norm, folds=3, seed=23);
     > pxr.flat  <- precision.at.given.recall.levels.over.classes(L, S.norm, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
-    > fmax.flat <- compute.fmax(L, S.norm, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
+    > fmax.flat <- compute.fmax(L, S.norm, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
     ## HTD-DAG
     > prc.htd  <- auprc.single.over.classes(L, S.htd, folds=3, seed=23);
     > auc.htd  <- auroc.single.over.classes(L, S.htd, folds=3, seed=23);
     > pxr.htd  <- precision.at.given.recall.levels.over.classes(L, S.htd, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
-    > fmax.htd <- compute.fmax(L, S.htd, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
+    > fmax.htd <- compute.fmax(L, S.htd, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
 By looking at the results, it easy to see that the HTD-DAG outperforms the flat classifier RANKS:
 
@@ -430,16 +430,16 @@ By looking at the results, it easy to see that the HTD-DAG outperforms the flat 
 
 Tuning of Hyper-Parameter(s)
 ===============================
-14 out of 18 of the TPR-DAG hierarchical algorithms are parametric. Instead of use a priori selected threshold (as done in :ref:`tpr` and variants), we can tune the hyper-parameter(s) of the parametric variants through the function ``tpr.dag.cv``. The hyper-parameter(s) can be maximize on the basis of ``AUPRC`` (parameter ``metric="prc"``) or ``Fmax`` (parameter ``metric="fmax"``). Below, as an example, we maximize the threshold of the parametric variant ISO-TPR-Threshold (``ISOtprT``) on the basis of ``AUPRC`` metric.
+14 out of 18 of the TPR-DAG hierarchical algorithms are parametric. Instead of use a priori selected threshold (as done in :ref:`tpr` and variants), we can tune the hyper-parameter(s) of the parametric variants through the function ``tpr.dag.cv``. The hyper-parameter(s) can be maximize on the basis of ``AUPRC`` (parameter ``metric="prc"``) or ``Fmax`` (parameter ``metric="fmax"``). Below, as an example, we maximize the threshold of the parametric variant ISO-TPR-Threshold (``isotprT``) on the basis of ``AUPRC`` metric.
 
 .. code-block:: R
 
     > threshold <- seq(0.1, 0.9, 0.1);
 
-    > S.ISOtprT <- tpr.dag.cv(S, g, ann=L, norm=TRUE, norm.type="maxnorm", positive="children",
+    > S.isotprT <- tpr.dag.cv(S, g, ann=L, norm=TRUE, norm.type="maxnorm", positive="children",
                               bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE,
                               ncores=1, threshold=threshold, weight=0, kk=3, seed=23,
-                              metric="prc", n.round=NULL, f.criterion=NULL);
+                              metric="prc", n.round=NULL);
 
     ## stdout
     maxnorm normalization: done
@@ -451,54 +451,54 @@ Tuning of Hyper-Parameter(s)
     training fold:  3   top prc avg found:  0.8148121   best threshold: 0.1
     tpr-dag correction done
 
-Evaluating ``ISOtprT`` by computing *term-* and *protein-* centric performance (always averaging the performance across 3 folds), it easy to see how this ensemble variant outperform both the flat classifier RANKS and the hierarchical algorithm HTD-DAG:
+Evaluating ``isotprT`` by computing *term-* and *protein-* centric performance (always averaging the performance across 3 folds), it easy to see how this ensemble variant outperform both the flat classifier RANKS and the hierarchical algorithm HTD-DAG:
 
 .. code-block:: R
 
     ## remove root node before computing performance
-    > if(root %in% colnames(S.ISOtprT))
-    +    S.ISOtprT <- S.ISOtprT[,-which(colnames(S.ISOtprT)==root)];
+    > if(root %in% colnames(S.isotprT))
+    +    S.isotprT <- S.isotprT[,-which(colnames(S.isotprT)==root)];
 
-    > prc.ISOtprT  <- auprc.single.over.classes(L, S.ISOtprT, folds=3, seed=23);
-    > auc.ISOtprT  <- auroc.single.over.classes(L, S.ISOtprT, folds=3, seed=23);
-    > pxr.ISOtprT  <- precision.at.given.recall.levels.over.classes(L, S.ISOtprT, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
-    > fmax.ISOtprT <- compute.fmax(L, S.ISOtprT, n.round=3, f.criterion="F", verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
+    > prc.isotprT  <- auprc.single.over.classes(L, S.isotprT, folds=3, seed=23);
+    > auc.isotprT  <- auroc.single.over.classes(L, S.isotprT, folds=3, seed=23);
+    > pxr.isotprT  <- precision.at.given.recall.levels.over.classes(L, S.isotprT, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
+    > fmax.isotprT <- compute.fmax(L, S.isotprT, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
-    ## AUC performance: RANKS VS HTD-DAG vs ISOtprT
+    ## AUC performance: RANKS VS HTD-DAG vs isotprT
     > auc.flat$average
     [1] 0.8297
     > auc.htd$average
     [1] 0.8336
-    > auc.ISOtprT$average
+    > auc.isotprT$average
     [1] 0.8446
 
-    ## PRC performance: RANKS VS HTD-DAG vs ISOtprT
+    ## PRC performance: RANKS VS HTD-DAG vs isotprT
     > prc.flat$average
     [1] 0.4333
     > prc.htd$average
     [1] 0.4627
-    > prc.ISOtprT$average
+    > prc.isotprT$average
     [1] 0.5346
 
-    ## Fmax performance: RANKS VS HTD-DAG vs ISOtprT
+    ## Fmax performance: RANKS VS HTD-DAG vs isotprT
     > fmax.flat$average
         P      R      S      F    avF      A      T
     0.5042 0.8639 0.4485 0.6368 0.5269 0.6612 0.5720
     > fmax.htd$average
         P      R      S      F    avF      A      T
     0.5576 0.7745 0.6519 0.6484 0.5617 0.7521 0.6487
-    > fmax.ISOtprT$average
+    > fmax.isotprT$average
         P      R      S      F    avF      A      T
     0.5896 0.8306 0.5283 0.6896 0.6106 0.7066 0.6340
 
-    ## PXR: RANKS VS HTD-DAG vs ISOtprT
+    ## PXR: RANKS VS HTD-DAG vs isotprT
     > pxr.flat$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.5821 0.5821 0.5821 0.5531 0.5531 0.4483 0.4388 0.4388 0.4388 0.4388
     > pxr.htd$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.6218 0.6218 0.6218 0.5941 0.5941 0.4798 0.4668 0.4668 0.4668 0.4668
-    > pxr.ISOtprT$average
+    > pxr.isotprT$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.6848 0.6848 0.6848 0.6697 0.6697 0.5417 0.5027 0.5027 0.5027 0.5027
 
