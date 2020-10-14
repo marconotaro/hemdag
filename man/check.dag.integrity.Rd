@@ -2,7 +2,7 @@
 % Please edit documentation in R/graph.utility.R
 \name{check.dag.integrity}
 \alias{check.dag.integrity}
-\title{dag checker}
+\title{DAG checker}
 \usage{
 check.dag.integrity(g, root = "00")
 }

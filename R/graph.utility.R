@@ -432,7 +432,7 @@ build.subgraph <- function(nd, g, edgemode="directed"){
     return(G);
 }
 
-#' @title dag checker
+#' @title DAG checker
 #' @description Check the integrity of a dag.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that is on the top-level of the hierarchy (\code{def. root="00"}).
