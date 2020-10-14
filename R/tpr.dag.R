@@ -416,7 +416,7 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
                 test.sample<- rownames(S)[testIndex[[k]]];
                 test <- matrix(test, ncol=length(test), dimnames=list(test.sample, names(test)));
             }
-            ## metric initialization
+            ## parameters initialization
             top.metric <- 0;
             bestT <- 0;
             bestW <- 0;
@@ -448,12 +448,11 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
                         bestW <- w;
                         # train.top[[k]] <- c(metric=top.metric, best.thres=bestT, best.weight=bestW);
                         if(bottomup=="threshold" || bottomup=="tau"){
-                            cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
+                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
                         }else if(bottomup=="weighted.threshold.free"){
-                            cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
-                        }
-                        else{
-                            cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:",bestT, "best weight:", bestW, sep="\t", "\n");
+                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
+                        }else{
+                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:",bestT, "best weight:", bestW, sep="\t", "\n");
                         }
                     }
                 }
@@ -617,7 +616,10 @@ tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=
             stop("training matrix too small (only one example/row) for hyper-parameters tuning. Please use threshold.free strategy instead");
         }
         foldIndex <- unstratified.cv.data(S.train, kk=kk, seed=seed);
-        # train.top <- vector(mode="list", length=kk); ## for check
+        ## parameters initialization
+        top.metric <- 0;
+        bestT <- 0;
+        bestW <- 0;
         for(k in 1:kk){
             ## train and test set
             train <- S.train[foldIndex[[k]],];
@@ -627,10 +629,7 @@ tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=
                 train <- matrix(train, ncol=length(train), dimnames=list(train.sample, names(train)));
                 target.train <- matrix(target.train, ncol=length(target.train), dimnames=list(train.sample, names(target.train)));
             }
-            ## metric initialization
-            top.metric <- 0;
-            bestT <- 0;
-            bestW <- 0;
+            ## metric initialization            
             for(t in threshold){
                 for(w in weight){
                     pred.train <- tpr.dag(train, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
@@ -659,16 +658,23 @@ tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=
                         bestW <- w;
                         # train.top[[k]] <- c(metric=top.metric, best.thres=bestT, best.weight=bestW);
                         if(bottomup=="threshold" || bottomup=="tau"){
-                            cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
+                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
                         }else if(bottomup=="weighted.threshold.free"){
-                            cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
-                        }
-                        else{
-                            cat("training fold:", k, paste0("top ", metric," avg found:"), top.metric, "best threshold:",bestT, "best weight:", bestW, sep="\t", "\n");
+                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
+                        }else{
+                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, "best weight:", bestW, sep="\t", "\n");
                         }
                     }
                 }
             }
+        }
+        ## final best threshold
+        if(bottomup=="threshold" || bottomup=="tau"){
+            cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
+        }else if(bottomup=="weighted.threshold.free"){
+            cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
+        }else{
+            cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best threshold:", bestT, "best weight:", bestW, sep="\t", "\n");
         }
         S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
         cat("tpr-dag holdout correction done\n");
