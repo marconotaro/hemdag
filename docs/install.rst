@@ -9,7 +9,7 @@ HEMDAG is available on CRAN, through Bioconda and from source code. You can use 
 
 Installation via Conda
 ========================
-This is the recommended way to install HEMDAG for normal users because it will enables you to switch software versions easily. In addition R with all needed dependencies will be installed.
+This is the recommended way to install HEMDAG for normal users because it will enable you to switch software versions easily. In addition R with all needed dependencies will be installed.
 
 First, you have to install the Miniconda Python3 distribution. See `here <https://docs.conda.io/en/latest/miniconda.html>`_ for installation instructions. Make sure to:
 
