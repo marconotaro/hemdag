@@ -1,3 +1,11 @@
+#### HEMDAG 2.7.4
+
+###### Changes
+- remove extra input parameter ``f.criterion`` from ``tpr.dag.cv``, ``tpr.dag.holdout``, ``find.best.f`` and ``compute.fmax``: type of F-measure used to select the best F-measure is always the harmonic mean between the average precision and recall (``f.criterion="F"``) and never the F-measure computed as average across examples (``f.criterion="avF"``);
+- fix a minor bug in ``tpr.dag.holdout``;
+- add warning checks in ``tpr.dag.cv`` and ``tpr.dag.holdout``;
+- improve some test cases and manual;
+
 #### HEMDAG 2.7.3
 
 ###### New Features
