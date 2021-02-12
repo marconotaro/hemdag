@@ -46,7 +46,7 @@ Maintainer:
 \references{
 Marco Notaro, Max Schubach, Peter N. Robinson and Giorgio Valentini,
 \emph{Prediction of Human Phenotype Ontology terms by means of Hierarchical Ensemble methods},
-BMC Bioinformatics 2017, 18(1):449, doi:\href{https://doi.org/10.1186/s12859-017-1854-y}{10.1186/s12859-017-1854-y}
+BMC Bioinformatics 2017, 18(1):449, \doi{10.1186/s12859-017-1854-y}
 }
 
 \keyword{package}

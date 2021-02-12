@@ -10,8 +10,7 @@ f44bbfa43dd7fe005386a17edca4011c  ./inst/extdata/gene2pheno.txt.gz
 5d5105e3f14e98178c3586e12283d442  ./inst/extdata/graph.edges.txt.gz
 ae5c730c9a4b79556d70f65e0ba25223  ./inst/extdata/scores.list.txt.gz
 051a2dbc7af149382cb34ad8ae556543  ./inst/extdata/scores.tupla.txt.gz
-be681e9fb9ffbffe2d7762780d468274  ./inst/HEMDAG_2.7.3.pdf
-853484a62f2e61ff45092901b79ba038  ./inst/HEMDAG_2.7.4.pdf
+d0108ed271c18e499ecd92ecd23374c4  ./inst/HEMDAG_2.7.4.pdf
 25b7cfb3349549ef518223b17ab72441  ./man/adj.upper.tri.Rd
 56ae76e6521047ad443f937a672fc042  ./man/auprc.Rd
 b15a344355462cc537fb4b08be6ef554  ./man/auroc.Rd
@@ -38,10 +37,10 @@ c30bc4f12efa4d56bd415bc71e222e48  ./man/fmax.Rd
 1c82a28b38339748eb723e72853938f7  ./man/gpav.holdout.Rd
 d344b427b209ba890029a597f8bd3c7b  ./man/gpav.over.examples.Rd
 ffc157eca876a9247e3a68df3b2dbd49  ./man/gpav.parallel.Rd
-38615151215592f5d3ad7a3fa0b9c341  ./man/gpav.Rd
+c8ff30d6bf9c8ca6ef0fa913d4479c8f  ./man/gpav.Rd
 d882b63cb62190754ef58f85121b5098  ./man/gpav.vanilla.Rd
 1cc3019d214b28dd17f16d25c2170eae  ./man/graph.levels.Rd
-d267daca420001d49260d7856c143692  ./man/HEMDAG-package.Rd
+93db7c60b410f81688e146ea93466620  ./man/HEMDAG-package.Rd
 5fae7e8063c8ab82b0d4a0c8365dc11f  ./man/hierarchical.checkers.Rd
 544242166b796ac2662179bfd681866b  ./man/htd.holdout.Rd
 b4db81d76b8764d7348b853ed764fe01  ./man/htd.Rd
@@ -49,7 +48,7 @@ b4db81d76b8764d7348b853ed764fe01  ./man/htd.Rd
 e9af539cf4af535493e79030cc219276  ./man/lexicographical.topological.sort.Rd
 a17ecee4c2c426e22be4b2c0c8049fa2  ./man/multilabel.F.measure.Rd
 b288d33083fccc31ef658228234473c4  ./man/normalize.max.Rd
-03a7e9d1281a348c5afb67fb0a584235  ./man/obozinski.heuristic.methods.Rd
+781dbf6abe09b084f40f106bc811239a  ./man/obozinski.heuristic.methods.Rd
 7e2307a0d1dec2c0382b0573276e6de7  ./man/obozinski.holdout.Rd
 98043fb4b0b6f31dab4cbaee3763b8c1  ./man/obozinski.methods.Rd
 6475de2e46cc621f3db6dd11eae687fd  ./man/pxr.Rd
@@ -71,11 +70,11 @@ c41c626caf31f262b1220e6af1eb079e  ./man/weighted.adjacency.matrix.Rd
 90aedca12ed87b241fb294d3d18b15dd  ./NAMESPACE
 14d802f02fe744f645fef34c73ae0eab  ./NEWS.md
 49e5c3bac134ae2126c43af5a250697d  ./R/annotation.utility.R
-4af4754d79aca86a651b2f8fffa6abed  ./R/gpav.R
+929969f1d08f6f8a1666bb1d201c8cb7  ./R/gpav.R
 47b5ce83fb1eb1a1987a2e2f53fd92d7  ./R/graph.utility.R
 d27fa2344e00e8b72c5cb750e7d2ee9f  ./R/htd.dag.R
 3526568342db0b34c5ac53603e93462d  ./R/norm.fun.R
-bace4d4a19ebc028582dd6aec030eff0  ./R/obozinski.methods.R
+419d1992b062763940c78076c1c029e5  ./R/obozinski.methods.R
 381acaf7708abd7c3607caa80e63b962  ./R/perf.meas.R
 a040ecfb9fcb9ae66b98e1b3961d7a36  ./R/pkg.attach.R
 e737957db40e9d28794cb391c1b0f924  ./R/pkg.import.R

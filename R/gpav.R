@@ -50,7 +50,7 @@ adj.upper.tri <- function(g){
 #' @title Generalized Pool-Adjacent Violators (GPAV)
 #' @description Implementation of \code{GPAV} (Generalized Pool-Adjacent Violators) algorithm.
 #' (\cite{Burdakov et al., In: Di Pillo G, Roma M, editors. An O(n2) Algorithm for Isotonic Regression. Boston, MA: Springer US; 2006.
-#' p. 25–33. Available from: \href{https://doi.org/10.1007/0-387-30065-1_3}{https://doi.org/10.1007/0-387-30065-1_3}}
+#' p. 25–33. Available from: \doi{10.1007/0-387-30065-1_3}}
 #' @details Given the constraints adjacency matrix of the graph, a vector of scores \eqn{\hat{y} \in R^n} and a vector of strictly positive
 #' weights \eqn{w \in R^n}, the \code{GPAV} algorithm returns a vector \eqn{\bar{y}} which is as close as possible, in the least-squares sense,
 #' to the response vector \eqn{\hat{y}} and whose components are partially ordered in accordance with the constraints matrix \code{adj}.

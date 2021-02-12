@@ -25,7 +25,7 @@ A matrix with the scores of the classes corrected according to the chosen Obozin
 }
 \description{
 Implementation of the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008,
-\href{https://genomebiology.biomedcentral.com/articles/10.1186/gb-2008-9-s1-s6}{doi:10.1186/gb-2008-9-s1-s6}}).
+\doi{10.1186/gb-2008-9-s1-s6}}).
 }
 \details{
 Obozinski's heuristic methods:

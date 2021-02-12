@@ -27,7 +27,7 @@ A list of 3 elements:
 \description{
 Implementation of \code{GPAV} (Generalized Pool-Adjacent Violators) algorithm.
 (\cite{Burdakov et al., In: Di Pillo G, Roma M, editors. An O(n2) Algorithm for Isotonic Regression. Boston, MA: Springer US; 2006.
-p. 25–33. Available from: \href{https://doi.org/10.1007/0-387-30065-1_3}{https://doi.org/10.1007/0-387-30065-1_3}}
+p. 25–33. Available from: \doi{10.1007/0-387-30065-1_3}}
 }
 \details{
 Given the constraints adjacency matrix of the graph, a vector of scores \eqn{\hat{y} \in R^n} and a vector of strictly positive
