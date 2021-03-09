@@ -53,7 +53,7 @@ See `doc_setup` on creating a local setup for building the documentation.
 Submit Feedback
 ===============
 
-The best way to send feedback is to file an issue at https://github.com/marconotaro/HEMDAG/issues
+The best way to send feedback is to file an issue at https://github.com/marconotaro/hemdag/issues
 
 If you are proposing a feature:
 

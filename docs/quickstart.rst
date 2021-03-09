@@ -29,13 +29,13 @@ then load the library by using
 First Classification -- for the Impatient
 =============================================
 
-HEDMDAG encompasses in total 23 hierarchical ensemble methods. Below we show the *simple* call to all the hierarchical ensemble algorithms included in HEMDAG, bu using the pre-built datasets available in the HEMDAG for making predictions. For more details about datasets and methods have a look to section :ref:`tutorial`.
+HEMDAG encompasses in total 23 hierarchical ensemble methods. Below we show the *simple* call to all the hierarchical ensemble algorithms included in HEMDAG, bu using the pre-built datasets available in the HEMDAG for making predictions. For more details about datasets and methods have a look to section :ref:`tutorial`.
 
 A. Loading the pre-built dataset of HEMDAG
 
 .. code-block:: R
 
-    # load the ontology DAG g
+    # load the DAG g
     > data(graph);
 
     # load the scores matrix S

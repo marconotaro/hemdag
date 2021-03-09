@@ -152,16 +152,16 @@ run a normalization method (between **maxnorm** and **qnrom**) *on the fly*:
 
 GPAV: Generalized Pool-Adjacent-Violators
 --------------------------------------------
-Burdakov et al. in [Burdakov06]_ proposed an approximate algorithm, named GPAV, to solve the *isotonic regression* (IR) or *monotonic regression* (MR) problem in its general case (i.e. partial order of the constraints). GPAV algorithm combines both low computational complexity (estimated to be :math:`\mathcal{O}(|V|^2`), where :math:`V` is the number of nodes of the graph) and high accuracy. Given the constraints adjacency matrix of the graph, a vector of scores :math:`\hat{y} \in R^n` and a vector of strictly positive weights :math:`w \in R^n`, the GPAV algorithm returns a vector :math:`\bar{y}`` which is as close as possible, in the least-squares sense, to the response vector :math:`\hat{y}` and whose components are partially ordered in accordance with the constraints matrix ``adj``. In other words, GPAV solves the following problem:
+Burdakov et al. in [Burdakov06]_ proposed an approximate algorithm, named GPAV, to solve the *isotonic regression* (IR) or *monotonic regression* (MR) problem in its general case (i.e. partial order of the constraints). GPAV algorithm combines both low computational complexity (estimated to be :math:`\mathcal{O}(|V|^2`), where :math:`V` is the number of nodes of the graph) and high accuracy. Formally, given a vector of observed values :math:`\hat{y} \in R^n`, a strictly positive vector of weights :math:`w \in R^n` and a dag :math:`G(V,E)`, GPAV finds the vector of fitted values :math:`\bar{y} \in \mathbb{R}^n` that solves the following convex quadratic program:
 
 .. math::
 
-    \bar{y} = \left\{
-    \begin{array}{l}
-       \min \sum_{i \in V} (\hat{y}_i - \bar{y}_i )^2\\\\
-       \forall i, \quad  j \in par(i) \Rightarrow  \bar{y}_j  \geq \bar{y}_i
+  \begin{equation}
+    \begin{array}{ll}
+        \min\limits_{\bar{y}} \quad \sum\limits_{i \in V} w_i (\bar{y}_i - \hat{y}_i)^2 \\
+        s.t. \quad \bar{y}_j \geq \bar{y}_i \quad \forall (i,j) \in E
     \end{array}
-    \right.
+  \end{equation}
 
 .. [Burdakov06] O. Sysoev, A. Grimvall, and O. Burdakov, Data preordering in generalized pav algorithm for monotonic regression, Journal of Computational Mathematics, vol. 24, no. 6, pp. 771–790, 2006
 
@@ -185,18 +185,18 @@ Similarly to HTD-DAG also for GPAV, we can use the function ``gpav.vanilla`` (in
 
 .. _tpr:
 
-TPR-DAG: True Path Rule for DAG and Variants
+TPR-DAG: True Path Rule for DAG
 ------------------------------------------------
-TPR-DAG is a family of algorithms on the basis of the choice of the **bottom-up** step adopted for the selection of *positive* children (or descendants) and of the **top-down** step adopted to assure ontology-based predictions. Indeed, in their more general form, the TPR-DAG algorithms adopt a two step learning strategy:
+TPR-DAG is a family of algorithms on the basis of the choice of the **bottom-up** step adopted for the selection of *positive* children. Indeed, in their more general form, the TPR-DAG algorithms adopt a two step learning strategy:
 
     1. in the first step they compute a *per-level bottom-up* visit from leaves to root to propagate *positive* predictions across the hierarchy;
-    2. in the second step they compute a *per-level top-down* visit from root to leaves in order to assure the consistency of the predictions.
+    2. in the second step they compute a *per-level top-down* visit from root to leaves in order to assure the consistency of the predictions. In other word, the :ref:`htd` algorithm is applied.
 
 .. note::
 
     Levels (both in the first and second step) are defined in terms of the maximum path length from the root node. Please refer to our `BMC Bioinformatics paper <https://doi.org/10.1186/s12859-017-1854-y>`_ for further details.
 
-The *vanilla* TPR-DAG adopts a per-level bottom-up traversal of the DAG to correct the flat predictions :math:`\hat{y}_i` according to the following formula:
+The *vanilla* TPR-DAG adopts a per-level bottom-up traversal of the DAG to modify the flat predictions :math:`\hat{y}_i` according to the following formula:
 
 .. math::
 
@@ -214,29 +214,29 @@ Different strategies to select the positive children :math:`\phi_i` can be appli
 
     2. **threshold** strategy (parameter ``bottom="threshold"``): the positive children are selected on the basis of a threshold that can be selected in two different ways:
 
-        a) for each node a constant threshold :math:`\bar{t}` is a priori selected:
+        a) a unique threshold :math:`\bar{t}` is a priori selected for all nodes to determine the set of positives
 
         .. math::
 
-            \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}
+            \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}, \forall i \in V
 
         For instance if the predictions represent probabilities it could be meaningful to a priori select :math:`\bar{t}=0.5`.
 
-        b) the threshold is selected to maximize some performance metric :math:`\mathcal{M}` estimated on the training data, as for instance the Fmax or the AUPRC. In other words the threshold is selected to maximize some measure of accuracy of the predictions :math:`\mathcal{M}(j,t)` on the training data for the class :math:`j` with respect to the threshold :math:`t`. The corresponding set of positives :math:`\forall i \in V` is:
+        b) a threshold is selected to maximize some imbalance-aware performance metric :math:`\mathcal{M}` estimated on the training data, as for instance the Fmax or the AUPRC. In other words, the threshold is selected to maximize the measure :math:`\mathcal{M}(j,t)` on the training data for the term :math:`j` with respect to the threshold :math:`t`. The corresponding set of positives for each :math:`i \in V` is:
 
         .. math::
 
             \phi_i := \{ j \in child(i) | \bar{y}_j > t_j^*,  t_j^* = \arg \max_{t} \mathcal{M}(j,t) \}
 
-        For instance :math:`t_j^*` can be selected from a set of :math:`t \in (0,1)` through internal cross-validation techniques.
+       Internal cross-validation is used to select :math:`t^*_j` within a set of possible thresholds :math:`t \in (0,1)`;
 
-The weighted TPR-DAG version (parameter ``bottom="weighted.threshold.free"``) can be designed by adding a weight :math:`w \in [0,1]` to balance between the contribution of the node :math:`i` and that of its positive children :math:`\phi`, through their convex combination:
+The weighted TPR-DAG version (parameter ``bottom="weighted.threshold.free"``) can be designed by adding a weight :math:`w \in [0,1]` to balance the contribution of the parent node :math:`i` and its positive children :math:`\phi`:
 
 .. math::
 
     \bar{y}_i := w \hat{y}_i + \frac{(1 - w)}{|\phi_i|} \sum_{j \in \phi_i} \bar{y}_j
 
-If :math:`w=1` no weight is attributed to the children and the TPR-DAG reduces to the HTD-DAG algorithm, since in this way only the prediction for node :math:`i` is used in the bottom-up step of the algorithm. If :math:`w=0` only the predictors associated to the children nodes vote to predict node :math:`i`. In the intermediate cases we attribute more importance to the predictor for the node :math:`i` or to its children depending on the values of :math:`w`.
+If :math:`w=1` no weight is attributed to the children and the TPR-DAG reduces to the HTD-DAG algorithm. If :math:`w=0` only the predictors associated to the children nodes vote to predict node :math:`i`. In the intermediate cases we attribute more importance to the predictor for the node :math:`i` or to its children depending on the values of :math:`w`.
 
 By combining the weighted and the threshold variant, we design the *weighted-threshold* variant (parameter ``bottom="weighted.threshold"``).
 
@@ -250,18 +250,20 @@ All the *vanilla* TPR-DAG variants use the HTD-DAG algorithm in the top-down ste
     > S.tprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="htd", t=0.5, w=0.5);
 
 DESCENS: Descendants Ensemble Classifier
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Since the contribution of the descendants of a given node decays exponentially with their distance from the node itself, to enhance the contribution of the most specific nodes to the overall decision of the ensemble we design the ensemble variant DESCENS. The novelty of DESCENS consists in strongly considering the contribution of all the descendants of each node instead of only that of its children (``positive="descendants"``). Therefore DESCENS predictions are more influenced by the information embedded in the leaves nodes, that are the classes containing the most informative and meaningful information from a biological and medical standpoint. For the choice of the *positive* descendants we use the same strategies adopted for the selection of the *positive* children shown above. Furthermore, we designed a variant specific only for DESCENS, that we named DESCENS-:math:`\tau` (parameter ``bottomup="tau"``). The DESCENS-:math:`\tau` variant balances the contribution between the *positives* children of a node :math:`i` and that of its *positives* descendants excluding its children by adding a weight :math:`\tau \in [0,1]`:
+------------------------------------------------
+As shown in [Valentini11]_ for tree-based hierarchies, the contribution of the descendants of a given node decays exponentially with their distance from the node itself and it is straightforward to see that this property also holds for DAG structured taxonomies. To overcame this limitation and in order to enhance the contribution of the most specific nodes to the overall decision of the ensemble we design the ensemble variant DESCENS. The novelty of DESCENS consists in strongly considering the contribution of all the descendants of each node instead of only that of its children (``positive="descendants"``). Therefore DESCENS predictions are more influenced by the information embedded in the leaves nodes, that are the classes containing the most informative and meaningful information from a biological and medical standpoint. DESCENS variants can be designed on the choice of the *positive* descendants :math:`\Delta_i`. The same strategies adopted for the choice of :math:`\phi_i` can be also adopted for the choice of :math:`\Delta_i`, simply by replacing :math:`\phi_i` with :math:`\Delta_i` and :math:`child(i)` with :math:`desc(i)` in the various formulas shown in :ref:`tpr`. Furthermore, we designed a variant specific only for DESCENS, that we named DESCENS-:math:`\tau` (parameter ``bottomup="tau"``). The DESCENS-:math:`\tau` variant balances the contribution between the *positives* children of a node :math:`i` and that of its *positives* descendants excluding its children by adding a weight :math:`\tau \in [0,1]`:
 
 .. math::
 
     \bar{y}_i := \frac{\tau}{1+|\phi_i|}(\hat{y}_i + \sum_{j \in \phi_i} \bar{y}_j) + \frac{1-\tau}{1+|\delta_i|}(\hat{y}_i + \sum_{j\in \delta_i} \bar{y}_j)
 
-where :math:`\phi_i` are the *positive* children of :math:`i` and :math:`\delta_i=\Delta_i \setminus \phi_i` the descendants of \eqn{i} without its children.
+where :math:`\phi_i` are the *positive* children of :math:`i` and :math:`\delta_i=\Delta_i \setminus \phi_i` the descendants of :math:`i` without its children.
 
 If :math:`\tau=1` we consider only the contribution of the *positive* children of :math:`i`; if :math:`\tau=0` only the descendants that are not children contribute to the score, while for intermediate values of :math:`\tau` we can balance the contribution of :math:`\phi_i` and :math:`\delta_i` positive nodes.
 
-Also the DESCENS variants adopt in the top-down step the HTD-DAG algorithm to assure the consistency of the predictions:
+.. [Valentini11] G. Valentini, "True Path Rule Hierarchical Ensembles for Genome-Wide Gene Function Prediction," in IEEE/ACM Transactions on Computational Biology and Bioinformatics, vol. 8, no. 3, pp. 832-847, May-June 2011, doi: 10.1109/TCBB.2010.38.
+
+All the DESCENS variants adopt in the second step the HTD-DAG algorithm to assure the consistency of the predictions:
 
 .. code-block:: R
 
@@ -272,8 +274,8 @@ Also the DESCENS variants adopt in the top-down step the HTD-DAG algorithm to as
     > S.descensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="htd", t=0.5);
 
 ISO-TPR: Isotonic Regression for DAG
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-By replacing the HTD-DAG top-down step (:ref:`htd`) with the GPAV approach (:ref:`gpav`) we design the ISO-TPR variant (parameter ``positive="children"`` and ``topdown="gpav"``). The most important feature of ISO-TPR is that it maintains the hierarchical constraints by construction and it selects the closest solution (in the least square sense) to the bottom-up predictions that obeys the *True Path Rule*.
+------------------------------------------------
+The ISO-TPR algorithms (parameter ``positive="children"`` and ``topdown="gpav"``) considering the **positive children** in the bottom-up step and adopt GPAV (:ref:`gpav`) instead of HTD-DAG (:ref:`htd`) in the consistency step. The most important feature of the ISO-TPR algorithms is that they maintain the hierarchical constraints by construction by selecting the closest solution (in the least square sense) to the bottom-up predictions that obey the *True Path Rule*:
 
 .. code-block:: R
 
@@ -283,8 +285,8 @@ By replacing the HTD-DAG top-down step (:ref:`htd`) with the GPAV approach (:ref
     > S.isotprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
 
 ISO-DESCENS: Isotonic Regression with Descendants Ensemble Classifier
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-By considering the **positive descendants** instead of **positive children** in the bottom-up step and by using the GPAV approach (instead of the HTD-DAG algorithm) to guarantee the consistency of the predictions, we merely design the ISO-DESCENS variants (parameter ``positive="descendants"`` and ``topdown="gpav"``):
+-------------------------------------------------------------------------
+The ISO-DESCENS variants (parameter ``positive="descendants"`` and ``topdown="gpav"``) considering the **positive descendants** instead of **positive children** in the bottom-up step and adopt GPAV (instead of the HTD-DAG algorithm) to guarantee the consistency of the predictions:
 
 .. code-block:: R
 
