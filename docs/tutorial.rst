@@ -1,6 +1,3 @@
-.. role:: R(code)
-   :language: R
-
 .. _tutorial:
 
 ================================
@@ -43,7 +40,7 @@ With the above command we loaded the flat scores matrix ``S``, that is a named 1
 
 Normalization
 ----------------
-Since RANKS **returns a score and not a probability**, we must normalize the scores of the matrix ``S`` to make the flat scores comparable with the hierarchical ones. In the case the flat classifier returns directly a probability there is no needed to normalize the flat scores matrix, since the flat scores can be directly compared with the hierarchical ones.
+Since RANKS **returns a score and not a probability**, we must normalize the scores of the matrix ``S`` to make the flat scores comparable with the hierarchical ones. In case the flat classifier returns directly a probability there is no needed to normalize the flat scores matrix, since the flat scores can be directly compared with the hierarchical ones.
 
 HEMDAG allows to normalize the flat scores according to two different procedures:
 
@@ -220,7 +217,7 @@ Different strategies to select the positive children :math:`\phi_i` can be appli
 
             \phi_i := \{ j \in child(i) | \bar{y}_j > \bar{t} \}, \forall i \in V
 
-        For instance if the predictions represent probabilities it could be meaningful to a priori select :math:`\bar{t}=0.5`.
+        For instance if the predictions represent probabilities it could be meaningful set :math:`\bar{t}=0.5`.
 
         b) a threshold is selected to maximize some imbalance-aware performance metric :math:`\mathcal{M}` estimated on the training data, as for instance the Fmax or the AUPRC. In other words, the threshold is selected to maximize the measure :math:`\mathcal{M}(j,t)` on the training data for the term :math:`j` with respect to the threshold :math:`t`. The corresponding set of positives for each :math:`i \in V` is:
 
@@ -324,9 +321,11 @@ Alternatively, the Obozinski's methods can be also called by properly setting th
     > S.and <- obozinski.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
     > S.or  <- obozinski.methods(S, g, heuristic="or",  norm=TRUE, norm.type="maxnorm");
 
-Hierarchical Constraints Check
+.. _conscheck:
+
+Check Hierarchical Constraints
 ==================================
-Predictions returned by a flat classifier **do not respect** the *True Path Rule* (since they neglecting the structural information between different ontology terms), whereas the predictions returned by a hierarchical ensemble methods **always obey** the *True Path Rule*. According to this rule a *positive* instance for a class implies *positive* instance for all the ancestors of that class. We can easily check this fact by using the function ``check.hierarchy``. Below (as an example) we check the consistency of the scores corrected according to the HTD-DAG strategy. Of course, all the flat scores corrected with any hierarchical ensemble variants included in HEMDAG, respect the **True Path Rule**. We leave to the reader the freedom to check the consistency of the scores matrix of the remaining 22 hierarchical ensemble variants encompassed in HEMDAG.
+Predictions returned by a flat classifier **do not respect** the *True Path Rule* (since they neglect the structural information between different ontology terms), whereas the predictions returned by a hierarchical ensemble methods **always obey** the *True Path Rule*. According to this rule a *positive* instance for a class implies *positive* instance for all the ancestors of that class. We can easily check this fact by using the function ``check.hierarchy``. Below (as an example) we check the consistency of the scores corrected according to the HTD-DAG strategy. Of course, all the scores matrices corrected with any hierarchical ensemble variants included in HEMDAG, respect the **True Path Rule**. We leave to the reader the freedom to check the consistency of the scores matrix of the remaining 22 hierarchical ensemble variants encompassed in HEMDAG.
 
 .. code-block:: R
 
@@ -335,6 +334,8 @@ Predictions returned by a flat classifier **do not respect** the *True Path Rule
 
     > check.hierarchy(S.htd, g, root)$status
     [1] "OK"
+
+.. _eval:
 
 Performance Evaluation
 ==========================
@@ -432,7 +433,7 @@ By looking at the results, it easy to see that the HTD-DAG outperforms the flat 
 
 Tuning of Hyper-Parameter(s)
 ===============================
-14 out of 18 of the TPR-DAG hierarchical algorithms are parametric. Instead of use a priori selected threshold (as done in :ref:`tpr` and variants), we can tune the hyper-parameter(s) of the parametric variants through the function ``tpr.dag.cv``. The hyper-parameter(s) can be maximize on the basis of ``AUPRC`` (parameter ``metric="prc"``) or ``Fmax`` (parameter ``metric="fmax"``). Below, as an example, we maximize the threshold of the parametric variant ISO-TPR-Threshold (``isotprT``) on the basis of ``AUPRC`` metric.
+14 out of 18 of the TPR-DAG hierarchical algorithms are parametric. Instead of use a fixed threshold (as done in :ref:`tpr`), we can tune the hyper-parameter(s) of the parametric variants through the function ``tpr.dag.cv``. The hyper-parameter(s) can be maximize on the basis of ``AUPRC`` (parameter ``metric="prc"``) or ``Fmax`` (parameter ``metric="fmax"``). Below, as an example, we maximize the threshold of the parametric variant ``isotprT`` on the basis of ``AUPRC`` metric.
 
 .. code-block:: R
 

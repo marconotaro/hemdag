@@ -1,6 +1,3 @@
-.. role:: R(code)
-   :language: R
-
 .. _usage:
 
 ====================
