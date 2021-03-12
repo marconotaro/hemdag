@@ -34,6 +34,7 @@ HEMDAG package:
 
     usage
     tutorial
+    call
 
 .. toctree::
     :caption: Tips & Tricks
