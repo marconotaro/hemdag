@@ -1,20 +1,21 @@
 #!/usr/bin/Rscript
 
-## elapsed time
-start.elapsed <- proc.time();
-
 ## load library
 library(HEMDAG);
 suppressPackageStartupMessages(library(graph)); ## silence biocgenerics masked messages...
 library(optparse);
 
 ## command line arguments
-## for a detailed description of input arguments, please see the manual: https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf
+## for a detailed description, please see the manual: https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf
 optionList <- list(
-    make_option(c("-o", "--organism"), type="character", default="7227.drome",
-        help="organism name in the form <taxon>.<name>"),
+    make_option(c("-o", "--organism"), type="character", default="7227_drome",
+        help="organism name in the form <taxon>_<name>"),
     make_option(c("-d", "--domain"), type="character", default="mf",
         help="go domain. It can be: bp, mf or cc"),
+    make_option(c("-e", "--exptype"), type="character", default="ho",
+        help="type of dataset on which run HEMDAG. It can be: ho (hold-out) or cv (cross-validated)"),
+    make_option(c("-f", "--flat"), type="character", default="svmlinear",
+        help="flat classifier"),
     make_option(c("-p", "--positive"), type="character", default="descendants",
         help="positive nodes selection. It can be: children or descendants. Skip this parameter if only topdown strategy is applied"),
     make_option(c("-b", "--bottomup"), type="character", default="tau",
@@ -47,7 +48,9 @@ optParser <- OptionParser(option_list=optionList);
 opt <- parse_args(optParser);
 
 prefix    <- opt$organism;
-organism  <- strsplit(prefix,"[.]")[[1]][2];
+organism  <- strsplit(prefix,"_")[[1]][2];
+exptype   <- opt$exptype;
+flat      <- opt$flat;
 positive  <- opt$positive;
 bottomup  <- opt$bottomup;
 topdown   <- opt$topdown;
@@ -108,29 +111,24 @@ if(bottomup=="none" && topdown=="htd")
     hemdag.name <- "htd";
 
 ## I/O directories
-data.dir <-"../data/ho/";
-res.dir <- "../res/ho/";
+data.dir <- paste0("../data/", exptype, "/");
+res.dir  <- paste0("../res/",  exptype, "/");
 if(!dir.exists(res.dir)){dir.create(res.dir, recursive=TRUE);}
 
 ## flat/ann/dag/testIndex files
 files <- list.files(data.dir);
-flat.file <- files[grep(paste0(organism, ".*", domain, ".scores"), files)];
+flat.file <- files[grep(paste0(organism, ".*", domain, ".scores.*", flat), files)];
 ann.file  <- files[grep(paste0(domain,".ann"), files)];
 dag.file  <- files[grep(paste0(domain,".dag"), files)];
-idx.file  <- files[grep(paste0(domain,".testindex"), files)];
-
-## outname
-fname <- unlist(strsplit(flat.file, split="[.]"));
-outname <- paste0(fname[-((length(fname)-1):length(fname))], collapse=".");
-if(norm==TRUE && !(is.null(normtype))){
-    outname <- paste0(outname,".",normtype);
-}
+if(exptype == "ho")
+    idx.file  <- files[grep(paste0(domain,".testindex"), files)];
 
 ## load data
 S <- get(load(paste0(data.dir, flat.file)));
 g <- get(load(paste0(data.dir, dag.file)));
 ann <- get(load(paste0(data.dir, ann.file)));
-testIndex <- get(load(paste0(data.dir, idx.file)));
+if(exptype == "ho")
+    testIndex <- get(load(paste0(data.dir, idx.file)));
 
 ## shrink graph g to terms of matrix S -- if number of nodes between g and S mismatch
 root <- root.node(g);
@@ -144,26 +142,52 @@ if(class.check){
     ann <- ann[, colnames(S)];
 }
 
+## elapsed time
+start.elapsed <- proc.time();
+
 ## HEMDAG calling
-if(bottomup=="none"){
-    if(topdown=="gpav"){
-        S.hier <- gpav.holdout(S=S, g=g, testIndex=testIndex, W=NULL, parallel=parallel,
-            ncores=cores, norm=norm, norm.type=normtype);
+if(exptype == "ho"){
+    if(bottomup=="none"){
+        if(topdown=="gpav"){
+            S.hier <- gpav.holdout(S=S, g=g, testIndex=testIndex, W=NULL, parallel=parallel,
+                ncores=cores, norm=norm, norm.type=normtype);
+        }else{
+            S.hier <- htd.holdout(S=S, g=g, testIndex=testIndex, norm=norm, norm.type=normtype);
+        }
     }else{
-        S.hier <- htd.holdout(S=S, g=g, testIndex=testIndex, norm=norm, norm.type=normtype);
+        S.hier <- tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=norm, norm.type=normtype,
+            positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, parallel=parallel, ncores=cores,
+            threshold=threshold, weight=weight, kk=kk, seed=seed, metric=metric, n.round=round);
     }
 }else{
-    S.hier <- tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=norm, norm.type=normtype,
-        positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, parallel=parallel, ncores=cores,
-        threshold=threshold, weight=weight, kk=kk, seed=seed, metric=metric, n.round=round);
+    if(bottomup=="none"){
+        if(topdown=="gpav"){
+            S.hier <- gpav.vanilla(S=S, g=g, W=NULL, parallel=parallel, ncores=cores, norm=norm, norm.type=normtype);
+        }else{
+            S.hier <- htd.vanilla(S=S, g=g, norm=norm, norm.type=normtype);
+        }
+    }else{
+        S.hier <- tpr.dag.cv(S, g, ann=ann, norm=norm, norm.type=normtype, positive=positive, bottomup=bottomup, 
+            topdown=topdown, W=NULL, parallel=parallel, ncores=cores, threshold=threshold, weight=weight, 
+            kk=kk, seed=seed, metric=metric, n.round=round);
+    }
 }
-
-## store results
-save(S.hier, file=paste0(res.dir, outname, ".", hemdag.name, ".holdout.rda"), compress=TRUE);
 
 stop.elapsed <- proc.time() - start.elapsed;
 timing.s <- stop.elapsed["elapsed"];
 timing.m <- round(timing.s/(60),4);
 timing.h <- round(timing.m/(60),4);
 cat("running time:", "seconds: ", timing.s, " *** minutes: ", timing.m, " *** hours: ", timing.h, "\n\n");
+
+## store results
+## outname
+fname <- unlist(strsplit(flat.file, split="[.,_]"));
+outname <- paste0(fname[-((length(fname)-1):length(fname))], collapse="_");
+if(norm==TRUE && !(is.null(normtype)))
+    outname <- paste0(outname,"_",normtype);
+if(exptype == "ho"){
+    save(S.hier, file=paste0(res.dir, outname, "_", hemdag.name, "_holdout.rda"), compress=TRUE);
+}else{
+    save(S.hier, file=paste0(res.dir, outname, "_", hemdag.name, ".rda"), compress=TRUE);
+}
 
