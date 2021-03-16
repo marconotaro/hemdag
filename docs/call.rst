@@ -8,9 +8,9 @@ HEMDAG programmatic call and evaluation
 ===========================================
 Here we explain how to apply the ensemble algorithms of the HEMDAG family in both cross-validated and hold-out experiments.
 
-HEMDAG can in principle boost the predictions of any flat learning methods by reconciling the flat predictions with the topology of the underlying ontology. Hence, to run HEMDAG we need the following *ingredients*:
+HEMDAG can in principle boost the predictions of any flat learning method by reconciling the flat predictions with the topology of the underlying ontology. Hence, to run HEMDAG we need the following *ingredients*:
 
-1) the label matrix ``M`` representing the proteins' annotations to functional terms;
+1) the label matrix ``M`` representing the protein annotations to functional terms;
 2) the graph ``g`` representing the hierarchy of the functional terms;
 3) the flat score matrix ``S`` representing a score or a probability that a gene/protein belongs to a given functional term;
 
@@ -45,7 +45,7 @@ Before executing the script be sure to have correctly installed the latest versi
 .. note::
 
     #. The output hierarchical score matrix of the called HEMDAG algorithm (whose name is saved in the output *.rda* file name) is stored in the folder ``~/hemdag/res/(ho|cv)`` depending on whether you chose to execute HEMDAG on either hold-out (ho) or cross-validated (cv) datasets. The HEMDAG elapsed time is printed on the shell.
-    #. By default, if no inputs parameters are specified in ``hemdag-call.R``, the script executes the ``isodescensTAU`` algorithm on the hold-out dataset by the tuning the parameter ``tau`` on the basis of AUPRC.
+    #. By default, if no inputs parameters are specified in ``hemdag-call.R``, the script executes the ``isodescensTAU`` algorithm on the hold-out dataset by tuning the parameter ``tau`` on the basis of AUPRC.
     #. The tuning of the hyper-parameters can take from few minutes up to few hours depending on the size of the dataset and on the adopted evaluation metric (Fmax is slower than AUPRC).
 
 Arguments Explanation
@@ -95,7 +95,7 @@ The following arguments are dataset-specific:
 
 Time-lapse hold-out experiments
 ====================================
-Here, to show how to use HEMDAG in time-lapse hold-out experiments, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) and, for simplicity, we consider the annotations of the GO domain molecular function (MF). To build the dataset we used the annotations of an old GO release (December 2017) as training test and the annotations of a more recent GO release (June 2020) as test set. The graph and the annotation matrix was built by adopting the `pipeline <https://github.com/marconotaro/godata-pipe#build-dataset-for-a-time-split-hold-out-procedure>`__. The flat score matrix was obtained by using the R interface of the machine learning library `LiblineaR <https://CRAN.R-project.org/package=LiblineaR>`__ with the default parameter settings. For further details on the dataset, please refer to *HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction*.
+Here, to show how to use HEMDAG in time-lapse hold-out experiments, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) and, for simplicity, we consider the annotations of the GO domain molecular function (MF). To build the dataset we used the annotations of an old GO release (December 2017) as training set and the annotations of a more recent GO release (June 2020) as test set. The graph and the annotation matrix was built by adopting the `pipeline <https://github.com/marconotaro/godata-pipe#build-dataset-for-a-time-split-hold-out-procedure>`__. The flat score matrix was obtained by using the R interface of the machine learning library `LiblineaR <https://CRAN.R-project.org/package=LiblineaR>`__ with the default parameter settings. For further details on the dataset, please refer to *HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction (submitted to Bioinformatics)*.
 
 Download Data
 ----------------
@@ -174,6 +174,7 @@ Check Hierarchical Constraints
 --------------------------------
 All the HEMDAG score matrices respect the hierarchical constraints imposed by the underlying ontology. The script below checks that all the 6 HEMDAG matrices obtained with the commands shown above, do not violate the between-term relationships in the GO MF hierarchy. For further details refer to :ref:`conscheck`.
 
+
 .. literalinclude:: playground/script/hemdag-checker.R
     :language: R
     :linenos:
@@ -199,6 +200,9 @@ To download and use the performance evaluation script:
     drome mf svmlinear+isodescensW check passed :)
     drome mf svmlinear+isodescensTAU check passed :)
 
+
+You can customize the R script ``hemdag-checker.R`` by extending the vectors *orgs, flats, algs, onts* with the values of your interest.
+
 .. _hemdageval:
 
 Evaluation
@@ -221,9 +225,6 @@ To download and use the HEMDAG evaluation script:
     ## call
     Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a gpav
 
-.. note::
-
-    You can customize the R script by extending the vectors *orgs, flats, algs, onts* with the values of your interest.
 
 Chunk evaluation (optional)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -238,6 +239,8 @@ The above R call evaluates the performance of an HEMDAG algorithm just on a sing
     :language: perl6
     :linenos:
 
+To download and use the Perl script that generates "chunks" of HEMDAG evaluation calls:
+
 .. code-block:: bash
 
     ## download the perl script
@@ -245,19 +248,19 @@ The above R call evaluates the performance of an HEMDAG algorithm just on a sing
     cd ~/hemdag/script/
     wget https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-chunk.pl
 
-    ## generate chunks of HEMDAG evaluation calls
+    ## generate chunk evaluation calls
     perl hemdag-chunk.pl -e ho -c 6 > hemdag-ho-eval.sh
 
     ## evaluate HEMDAG in chunks
     bash hemdag-ho-eval.sh > out
 
 
-You can customize the Perl script by extending the arrays *@orgs, @flats, @algs, @onts* with the values of your interest. For instance, by setting ``my @onts=  qw(bp mf cc)``, the call ``perl call-hemdag-perf-eval.pl -e ho -c 12`` returns in output 2 chunks of evaluation calls, the first made of 12 calls and the second one of 6 calls. Modify the script to see the output printed on the shell :raw-html:`&#128515;`.
+You can customize the Perl script ``hemdag-chunk.pl`` by extending the arrays *@orgs, @flats, @algs, @onts* with the values of your interest. For instance, by setting ``my @onts=  qw(bp mf cc)``, the call ``perl call-hemdag-perf-eval.pl -e ho -c 12`` returns in output 2 chunks of evaluation calls, the first made of 12 calls and the second one of 6 calls. Modify the script to see the output printed on the shell :raw-html:`&#128515;`.
 
 
 Cross-validated experiments
 ===============================================
-Here, to show how to use HEMDAG in cross-validated experiments, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) that covers the annotations of the GO domain molecular function (MF). The graph and protein-GO term associations belong to the GO release of December 2017. The graph and the annotation matrix was built by adopting the following `pipeline <https://github.com/marconotaro/godata-pipe##build-dataset-for-a-cross-validation-procedure>`__. The flat score matrix was obtained by using the random forest as flat learning method (model *ranger* in the R library `caret package <https://topepo.github.io/caret/>`__ with the default parameter settings). For further details on the dataset, please refer to *HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction*.
+Here, to show how to use HEMDAG in cross-validated experiments, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) that covers the annotations of the GO domain molecular function (MF). The graph and protein-GO term associations belong to the GO release of December 2017. The graph and the annotation matrix was built by adopting the following `pipeline <https://github.com/marconotaro/godata-pipe##build-dataset-for-a-cross-validation-procedure>`__. The flat score matrix was obtained by using the random forest as flat learning method (model *ranger* in the R library `caret package <https://topepo.github.io/caret/>`__ with the default parameter settings). For further details on the dataset, please refer to *HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction (submitted to Bioinformatics)*.
 
 Download Data
 -----------------
@@ -291,16 +294,28 @@ To execute any HEMDAG algorithm on cross-validated datasets, you must simply rep
     #. note that the flat classifier used here is not the *svm* (``-f svmlinear``), but the *random forest* (``-f ranger``);
     #. the output HEMDAG score matrices are stored in ``~/hemdag/res/cv/`` (note the shift of the last directory);
 
-For instance, to call the 6 HEMDAG the on cross-validated datasets just type:
+For instance, to call the 6 HEMDAG on cross-validated datasets just type:
 
 .. code-block:: bash
 
+    ## GPAV
     Rscript hemdag-call.R -o 7227_drome -d mf -e cv -f ranger -b none -t gpav -l -n 12
+
+    ## isotprTF
     Rscript hemdag-call.R -o 7227_drome -d mf -e cv -f ranger -p children -b threshold.free -t gpav -l -n 12
+
+    ## isotprW
     Rscript hemdag-call.R -o 7227_drome -d mf -e cv -f ranger -p children -b weighted.threshold.free -t gpav -w "seq(from=0.1, to=0.9, by=0.1)" -m auprc -s 23 -k 5 -l -n 12
+
+    ## isodescensTF
     Rscript hemdag-call.R -o 7227_drome -d mf -e cv -f ranger -p descendants -b threshold.free -t gpav -l -n 12
+
+    ## isodescensW
     Rscript hemdag-call.R -o 7227_drome -d mf -e cv -f ranger -p descendants -b weighted.threshold.free -t gpav -w "seq(from=0.1, to=0.9, by=0.1)" -m auprc -s 23 -k 5 -l -n 12
+
+    ## isodescensTAU
     Rscript hemdag-call.R -o 7227_drome -d mf -e cv -f ranger -p descendants -b tau -t gpav -c "seq(from=0.1, to=0.9, by=0.1)" -m auprc -s 23 -k 5 -l -n 12
+
 
 Check Hierarchical Constraints
 ---------------------------------
@@ -319,6 +334,10 @@ To evaluate HEMDAG in cross-validated experiments just replace ``-e ho`` with ``
     ## single evaluation call
     Rscript hemdag-eval.R -o 7227_drome -d mf -e cv -f ranger -a gpav
 
-    ## chunk evaluation call
-    perl call-hemdag-perf-eval.pl -e cv -c 6 > hemdag-cv-perf-eval.sh
+    ## generate chunk evaluation calls
+    perl hemdag-chunk.pl -e cv -c 6 > hemdag-cv-eval.sh
+
+    ## evaluate HEMDAG in chunks
+    bash hemdag-cv-eval.sh > out
+
 
