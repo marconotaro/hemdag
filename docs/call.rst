@@ -10,15 +10,16 @@ Here we explain how to apply the ensemble algorithms of the HEMDAG family in bot
 
 HEMDAG can in principle boost the predictions of any flat learning methods by reconciling the flat predictions with the topology of the underlying ontology. Hence, to run HEMDAG we need the following *ingredients*:
 
-1) the labels matrix ``M`` representing the proteins' annotations to functional terms;
+1) the label matrix ``M`` representing the proteins' annotations to functional terms;
 2) the graph ``g`` representing the hierarchy of the functional terms;
-3) the flat scores matrix ``S`` representing a score or a probability that a gene/protein belonging to a given functional term;
+3) the flat score matrix ``S`` representing a score or a probability that a gene/protein belongs to a given functional term;
 
-For instance, to build dataset for the GO term prediction you can use the following `pipeline <https://github.com/marconotaro/godata-pipe>`__. Instead to obtain the flat predictions you can use the `shogun library <https://www.shogun-toolbox.org/>`__ or the `caret package <https://topepo.github.io/caret/>`__ or any other software returning a score or a probability that a protein belong to a functional term.
+To build the graph, the label matrix and the protein-protein interaction network you can use this `pipeline <https://github.com/marconotaro/godata-pipe>`__.
+Instead, to obtain the flat score matrix you can use the `shogun library <https://www.shogun-toolbox.org/>`__ or the `caret package <https://topepo.github.io/caret/>`__ or any other software returning a score or a probability that a protein belongs to a functional term.
 
 .. note::
 
-    HEMDAG builds upon flat predictions. Consequently, the predictions returned by the adopted learning method **must violate** the hierarchical relationships between ontology terms, otherwise the application of HEMDAG is meaningless.
+    HEMDAG is built upon flat predictions. HEMDAG corrects all the violations of the hierarchical relationships between ontology terms.
 
 .. _hemdagscript:
 
@@ -43,7 +44,7 @@ Before executing the script be sure to have correctly installed the latest versi
 
 .. note::
 
-    #. The output hierarchical scores matrix of the called HEMDAG algorithm (whose name is saved in the output *.rda* file name) is stored in the folder ``~/hemdag/res/(ho|cv)`` according if you chose to execute HEMDAG on either hold-out (ho) or cross-validated (cv) datasets. The HEMDAG elapsed time is printed on the shell.
+    #. The output hierarchical score matrix of the called HEMDAG algorithm (whose name is saved in the output *.rda* file name) is stored in the folder ``~/hemdag/res/(ho|cv)`` depending on whether you chose to execute HEMDAG on either hold-out (ho) or cross-validated (cv) datasets. The HEMDAG elapsed time is printed on the shell.
     #. By default, if no inputs parameters are specified in ``hemdag-call.R``, the script executes the ``isodescensTAU`` algorithm on the hold-out dataset by the tuning the parameter ``tau`` on the basis of AUPRC.
     #. The tuning of the hyper-parameters can take from few minutes up to few hours depending on the size of the dataset and on the adopted evaluation metric (Fmax is slower than AUPRC).
 
@@ -75,26 +76,26 @@ To call a parametric HEMDAG algorithm the main required arguments are:
 
 * ``-b (--bottomup)`` :raw-html:`&rarr;` ``threshold.free|threshold|weighted.threshold.free|weighted.threshold|tau``
 * ``-t (--topdown)``  :raw-html:`&rarr;` ``gpav|htd``
-* ``-c (--cut-off)``  :raw-html:`&rarr;` ``0.5|"seq(from=0.1, to=0.9, by=0.1)"``. Note the use of double quotes for range of thresholds
-* ``-w (--weight)``   :raw-html:`&rarr;` ``0.5|"seq(from=0.1, to=0.9, by=0.1)"``. Note the use of double quotes for range of thresholds
+* ``-c (--cut-off)``  :raw-html:`&rarr;` ``0.5|"seq(from=0.1, to=0.9, by=0.1)"``. Note the use of double quotes for the range of thresholds
+* ``-w (--weight)``   :raw-html:`&rarr;` ``0.5|"seq(from=0.1, to=0.9, by=0.1)"``. Note the use of double quotes for the range of thresholds
 
 If a range of thresholds (or weights) is selected, the hyper-parameters are tuned on the basis of imbalance-aware performance metrics estimated on the training data -- ``-m (--metric)`` :raw-html:`&rarr;` ``auprc|fmax``. By default the number of folds ``-k (--fold)`` is set to 5 and the seed ``-s (--seed)`` for the random generator is set to 23. Furthermore, if ``-m (--metric)`` :raw-html:`&rarr;` ``fmax`` the parameter ``-r (--round)`` can be used to select the number of rounding digits to be applied for choosing the best Fmax (by default is set to 3).
 
-Decoy arguments
+Additional arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The following arguments are dataset-specific:
 
-* ``-o (--organism)`` specifies the organism name (in the form <taxon>_<name>) whose the dataset belong to;
+* ``-o (--organism)`` specifies the organism name (in the form <taxon>_<name>);
 * ``-d (--domain)``   specifies the GO domain: bp (biological process), mf (molecular function), cc(cellular component);
 * ``-e (--exptype)``  specifies the type of dataset where running HEMDAG: ho (holdout) or cv (cross-validated);
-* ``-f (--flat)``     specifies the name of the flat classifier. In case the flat learning method returns a score and not a probability, the flat scores matrix must be normalized before running HEMDAG. On the contrary, if the flat classifier already returns a probability there is no needed to normalize the flat scores matrix, since the flat scores can be directly compared with the hierarchical ones. To normalize the flat scores matrix we must "activate" the flag ``-z (--norm)`` (by default the flag ``-z`` is deactivate) and we need to choose a type of normalization (``-y (--normtype)`` :raw-html:`&rarr;` ``maxnorm|qnorm``). The name of the chosen normalization is stored in the *rda* output file name.
+* ``-f (--flat)``     specifies the name of the flat classifier. In case the flat learning method returns a score and not a probability, the flat score matrix must be normalized before running HEMDAG. On the contrary, if the flat classifier already returns a probability there is no needed to normalize the flat score matrix, since the flat scores can be directly compared with the hierarchical ones. To normalize the flat score matrix we must "activate" the flag ``-z (--norm)`` (by default the flag ``-z`` is deactivate) and we need to choose a type of normalization (``-y (--normtype)`` :raw-html:`&rarr;` ``maxnorm|qnorm``). The name of the chosen normalization is stored in the *rda* output file name.
 
 
 .. _timesplit:
 
 Time-lapse hold-out experiments
 ====================================
-Here to show how to use HEMDAG in time-lapse hold-out experiments, for the sake of simplicity, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) by considering the annotations of the GO domain molecular function (MF). To build the dataset we used the annotations of an old GO release (December 2017) as training test and the annotations of a more recent GO release (June 2020) as test set. The graph and the annotation matrix was built by adopting the following `pipeline <https://github.com/marconotaro/godata-pipe#build-dataset-for-a-time-split-hold-out-procedure>`__. The flat scores matrix was obtained by using the R interface of the machine learning library `LiblineaR <https://CRAN.R-project.org/package=LiblineaR>`__ with the default parameter settings. For further details on the dataset, please refer to !add here go-hemdag-paper when it will be out!.
+Here, to show how to use HEMDAG in time-lapse hold-out experiments, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) and, for simplicity, we consider the annotations of the GO domain molecular function (MF). To build the dataset we used the annotations of an old GO release (December 2017) as training test and the annotations of a more recent GO release (June 2020) as test set. The graph and the annotation matrix was built by adopting the `pipeline <https://github.com/marconotaro/godata-pipe#build-dataset-for-a-time-split-hold-out-procedure>`__. The flat score matrix was obtained by using the R interface of the machine learning library `LiblineaR <https://CRAN.R-project.org/package=LiblineaR>`__ with the default parameter settings. For further details on the dataset, please refer to *HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction*.
 
 Download Data
 ----------------
@@ -106,12 +107,12 @@ All the required *.rda* files can be downloaded by using the following commands,
     cd ~/hemdag/data/ho/
     curl -Ss https://github.com/marconotaro/hemdag/tree/master/docs/playground/data/ho |  grep -oP '(?<=href=").*?(?=\">)' | grep '.rda$' | perl -pe 's/blob\///' | perl -pe 's/^/https\:\/\/raw.githubusercontent.com/' | wget -nc -i -
 
-With command above we download the following datasets:
+With the command above, we download the following datasets:
 
 * ``7227_drome_go_mf_ann_20dec17_16jun20.rda``: the annotation matrix;
 * ``7227_drome_go_mf_dag_20dec17_16jun20.rda``: the graph;
 * ``7227_drome_go_mf_testindex_20dec17_16jun20.rda``: the indexes of the examples of the test set;
-* ``7227_drome_go_mf_scores_svmlinear_holdout.rda``: the flat scores matrix;
+* ``7227_drome_go_mf_scores_svmlinear_holdout.rda``: the flat score matrix;
 
 .. _hemdagcall:
 
@@ -121,9 +122,9 @@ Below we show some examples of how to call HEMDAG in time-lapse hold-out experim
 
 .. note::
 
-    #. the ``hemdag-call.R`` script must be call in ``~/hemdag/script/``;
-    #. for the examples show below the tuning of hyper-parameters takes few minutes;
-    #. the output HEMDAG scores matrices are stored in ``~/hemdag/res/ho/``.
+    #. the ``hemdag-call.R`` script must be called in ``~/hemdag/script/``;
+    #. for the examples shown below, the tuning of hyper-parameters takes few minutes;
+    #. the output HEMDAG score matrices are stored in ``~/hemdag/res/ho/``.
 
 
 ``GPAV`` call (parallel version):
@@ -171,7 +172,7 @@ Below we show some examples of how to call HEMDAG in time-lapse hold-out experim
 
 Check Hierarchical Constraints
 --------------------------------
-All the HEMDAG scores matrices respect the hierarchical constraints imposed by the underlying ontology. The script below checks that all the 6 HEMDAG matrices obtained with the commands shown above, do not violate the between-term relationships in the GO MF hierarchy. For further details refer to :ref:`conscheck`.
+All the HEMDAG score matrices respect the hierarchical constraints imposed by the underlying ontology. The script below checks that all the 6 HEMDAG matrices obtained with the commands shown above, do not violate the between-term relationships in the GO MF hierarchy. For further details refer to :ref:`conscheck`.
 
 .. literalinclude:: playground/script/hemdag-checker.R
     :language: R
@@ -251,12 +252,12 @@ The above R call evaluates the performance of an HEMDAG algorithm just on a sing
     bash hemdag-ho-eval.sh > out
 
 
-You can customize the Perl script by extending the arrays *@orgs, @flats, @algs, @onts* with the values of your interest. For instance, setting ``my @onts=  qw(bp mf cc)``, the calling ``perl call-hemdag-perf-eval.pl -e ho -c 12`` returns in output 2 chunks of evaluation calls, the first made of 12 calls and the second one of 6 calls. Modify the script to see the output printed on the shell :raw-html:`&#128515;`.
+You can customize the Perl script by extending the arrays *@orgs, @flats, @algs, @onts* with the values of your interest. For instance, by setting ``my @onts=  qw(bp mf cc)``, the call ``perl call-hemdag-perf-eval.pl -e ho -c 12`` returns in output 2 chunks of evaluation calls, the first made of 12 calls and the second one of 6 calls. Modify the script to see the output printed on the shell :raw-html:`&#128515;`.
 
 
 Cross-validated experiments
 ===============================================
-Also to show how to use HEMDAG in cross-validated experiments, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) that covers the annotations of the GO domain molecular function (MF). The graph and protein-GO term associations belong to the GO release of December 2017. The graph and the annotation matrix was built by adopting the following `pipeline <https://github.com/marconotaro/godata-pipe##build-dataset-for-a-cross-validation-procedure>`__. The flat scores matrix was obtained by using the random forest as flat learning method (model *ranger* in the R library `caret package <https://topepo.github.io/caret/>`__ with the default parameter settings). For further details on the dataset, please refer to !add here go-hemdag-paper when it will be out!.
+Here, to show how to use HEMDAG in cross-validated experiments, we use a pre-built dataset of the organism *Drosophila melanogaster* (DROME) that covers the annotations of the GO domain molecular function (MF). The graph and protein-GO term associations belong to the GO release of December 2017. The graph and the annotation matrix was built by adopting the following `pipeline <https://github.com/marconotaro/godata-pipe##build-dataset-for-a-cross-validation-procedure>`__. The flat score matrix was obtained by using the random forest as flat learning method (model *ranger* in the R library `caret package <https://topepo.github.io/caret/>`__ with the default parameter settings). For further details on the dataset, please refer to *HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction*.
 
 Download Data
 -----------------
@@ -270,27 +271,27 @@ All the required *.rda* files can be downloaded by using the following commands:
 
 .. note::
 
-    Note the change of the last directory from ``ho/`` to ``cv/`` respect to the data download for the :ref:`timesplit`.
+    Note the change of the last directory from ``ho/`` to ``cv/`` compared to the data downloaded in the :ref:`timesplit`.
 
-With command above we download the following datasets:
+With the command above, we download the following datasets:
 
 * ``7227_drome_go_mf_ann_20dec17.rda``: the annotation matrix;
 * ``7227_drome_go_mf_dag_20dec17.rda``: the graph;
-* ``7227_drome_go_mf_scores_pearson_100_feature_ranger_5fcv.rda``: the flat scores matrix;
+* ``7227_drome_go_mf_scores_pearson_100_feature_ranger_5fcv.rda``: the flat score matrix;
 
 
 Programmatic Call
 ---------------------
-To execute any HEMDAG algorithm on cross-validated datasets, you must simply replace ``-e ho`` with ``-e cv`` in the various call shown in section :ref:`hemdagcall` for the time-split hold-out experiments.
+To execute any HEMDAG algorithm on cross-validated datasets, you must simply replace ``-e ho`` with ``-e cv`` in the various calls shown in section :ref:`hemdagcall` for the time-split hold-out experiments.
 
 .. note::
 
-    #. the ``hemdag-call.R`` script must be call in ``~/hemdag/script/``;
-    #. for the examples show below the tuning of hyper-parameters takes around one hour;
-    #. note that the flat classifier used here is the *svm* (``-f svmlinear``), but the *random forest* (``-f ranger``);
-    #. the output HEMDAG scores matrices are stored in ``~/hemdag/res/cv/`` (note the shift of the last directory);
+    #. the ``hemdag-call.R`` script must be called in ``~/hemdag/script/``;
+    #. for the examples shown below the tuning of hyper-parameters takes around one hour;
+    #. note that the flat classifier used here is not the *svm* (``-f svmlinear``), but the *random forest* (``-f ranger``);
+    #. the output HEMDAG score matrices are stored in ``~/hemdag/res/cv/`` (note the shift of the last directory);
 
-For instance, to call the 6 HEMDAG  the on cross-validated datasets just type:
+For instance, to call the 6 HEMDAG the on cross-validated datasets just type:
 
 .. code-block:: bash
 

@@ -9,7 +9,7 @@ In this tutorial we show a step-by-step application of HEMDAG to the hierarchica
     * any flat score matrix, achieved by using any flat classifier ranging from linear, to probabilistic methods, to neural networks, to gradient boosting and many others;
     * any annotation matrix.
 
-Of course, the number of terms among the graph, the flat scores matrix and the annotation matrix must match.
+Of course, the number of terms among the graph, the flat score matrix and the annotation matrix must match.
 
 .. note::
 
@@ -30,17 +30,17 @@ In their more general form, the hierarchical ensemble methods adopt a two-step l
     * the first step consists in the flat learning of the ontology terms;
     * the second step *reconciles* the flat predictions by considering the topology of the underlying ontology.
 
-Consequently, the first *ingredient* that we need in a hierarchical ensemble classification is the flat scores matrix. For the sake of simplicity, in the examples shown below we use the pre-built dataset available in the HEMDAG library. To load the flat scores matrix, type in the the R environment:
+Consequently, the first *ingredient* that we need in a hierarchical ensemble classification is the flat score matrix. For the sake of simplicity, in the examples shown below we use the pre-built dataset available in the HEMDAG library. To load the flat score matrix, type in the the R environment:
 
 .. code-block:: R
 
     > data(scores);
 
-With the above command we loaded the flat scores matrix ``S``, that is a named 100 X 23 matrix. Rows correspond to genes (Entrez GeneID) and columns to HPO terms/classes. The scores represent the likelihood that a given gene belongs to a given class: the higher the value, the higher the likelihood that a gene belongs to a given class. This flat scores matrix was obtained by running the RANKS package (`link <https://cran.rstudio.com/web/packages/RANKS/>`__).
+With the above command we loaded the flat score matrix ``S``, that is a named 100 X 23 matrix. Rows correspond to genes (Entrez GeneID) and columns to HPO terms/classes. The scores represent the likelihood that a given gene belongs to a given class: the higher the value, the higher the likelihood that a gene belongs to a given class. This flat score matrix was obtained by running the RANKS package (`link <https://cran.rstudio.com/web/packages/RANKS/>`__).
 
 Normalization
 ----------------
-Since RANKS **returns a score and not a probability**, we must normalize the scores of the matrix ``S`` to make the flat scores comparable with the hierarchical ones. In case the flat classifier returns directly a probability there is no needed to normalize the flat scores matrix, since the flat scores can be directly compared with the hierarchical ones.
+Since RANKS **returns a score and not a probability**, we must normalize the scores of the matrix ``S`` to make the flat scores comparable with the hierarchical ones. In case the flat classifier returns directly a probability there is no needed to normalize the flat score matrix, since the flat scores can be directly compared with the hierarchical ones.
 
 HEMDAG allows to normalize the flat scores according to two different procedures:
 
@@ -60,7 +60,7 @@ Be sure to install the *preprocessCore* package before running the above command
 
 .. note::
 
-    For the sake of simplicity, in all the examples shown in section :ref:`hem`, the input flat scores matrix was normalized according to the ``maxnorm`` normalization:
+    For the sake of simplicity, in all the examples shown in section :ref:`hem`, the input flat score matrix was normalized according to the ``maxnorm`` normalization:
 
     .. code-block:: R
 
@@ -74,7 +74,7 @@ In order to know how the hierarchical structure of the HPO terms, we need to loa
 
     > data(graph);
 
-With the above command we loaded the graph ``g``, an object of class ``graphNEL``. The graph ``g`` has 23 nodes and 30 edges and represents the *ancestors view* of the HPO term ``Camptodactyly of finger`` (`HP:0100490 <https://hpo.jax.org/app/browse/term/HP:0100490>`_). Nodes of the graph ``g`` correspond to terms of the flat scores matrix ``S``.
+With the above command we loaded the graph ``g``, an object of class ``graphNEL``. The graph ``g`` has 23 nodes and 30 edges and represents the *ancestors view* of the HPO term ``Camptodactyly of finger`` (`HP:0100490 <https://hpo.jax.org/app/browse/term/HP:0100490>`_). Nodes of the graph ``g`` correspond to terms of the flat score matrix ``S``.
 
 Plot the Graph (optional)
 -----------------------------
@@ -133,7 +133,7 @@ The node levels correspond to their maximum path length from the root. To call t
 
     > S.htd <- htd(S.norm, g, root);
 
-Alternatively, we can call the ``htd.vanilla`` function (instead of ``htd``), which it allows to normalize the flat scores matrix ``S`` (according to **maxnorm** or **qnorm** normalization) *on the fly*:
+Alternatively, we can call the ``htd.vanilla`` function (instead of ``htd``), which it allows to normalize the flat score matrix ``S`` (according to **maxnorm** or **qnorm** normalization) *on the fly*:
 
 run a normalization method (between **maxnorm** and **qnrom**) *on the fly*:
 
@@ -143,7 +143,7 @@ run a normalization method (between **maxnorm** and **qnrom**) *on the fly*:
 
 .. note::
 
-    In ``htd.vanilla``, if ``norm=FALSE`` and ``norm.type=NULL`` the flat scores matrix ``S`` is not normalized.
+    In ``htd.vanilla``, if ``norm=FALSE`` and ``norm.type=NULL`` the flat score matrix ``S`` is not normalized.
 
 .. _gpav:
 
@@ -174,7 +174,7 @@ It is worth noting that there is also a parallel version of the GPAV algorithm:
 
     > S.gpav <- gpav.parallel(S.norm, g, W=NULL, ncores=8);
 
-Similarly to HTD-DAG also for GPAV, we can use the function ``gpav.vanilla`` (instead of ``gpav.over.examples`` or ``gpav.parallel``) to normalize the flat scores matrix ``S`` (according to **maxnorm** or **qnorm** normalization) *on the fly*:
+Similarly to HTD-DAG also for GPAV, we can use the function ``gpav.vanilla`` (instead of ``gpav.over.examples`` or ``gpav.parallel``) to normalize the flat score matrix ``S`` (according to **maxnorm** or **qnorm** normalization) *on the fly*:
 
 .. code-block:: R
 
@@ -364,7 +364,7 @@ With the above command we loaded the annotations table ``L``, that is a named ``
 
 Flat vs Hierarchical
 ------------------------
-Before computing performance metrics we should remove the root node from the annotation matrix, the flat scores matrix and the hierarchical scores matrix. Indeed, it does not make sense to take into account the predictions of the root node, since it is a *fake* node added to the ontology for practical reasons (e.g. some graph-based software may require a single root node to work). In R this can be accomplished in one line of code.
+Before computing performance metrics we should remove the root node from the annotation matrix, the flat score matrix and the hierarchical scores matrix. Indeed, it does not make sense to take into account the predictions of the root node, since it is a *fake* node added to the ontology for practical reasons (e.g. some graph-based software may require a single root node to work). In R this can be accomplished in one line of code.
 
 .. code-block:: R
 
@@ -372,7 +372,7 @@ Before computing performance metrics we should remove the root node from the ann
     > if(root %in% colnames(L))
     +    L <- L[,-which(colnames(L)==root)];
 
-    ## remove root node from the normalized flat scores matrix
+    ## remove root node from the normalized flat score matrix
     > if(root %in% colnames(S.norm))
     +    S.norm <- S.norm[,-which(colnames(S.norm)==root)];
 
