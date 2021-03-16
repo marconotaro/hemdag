@@ -117,10 +117,11 @@ With command above we download the following datasets:
 
 Programmatic Call
 -------------------
-Below we show some examples of how to call HEMDAG in time-lapse hold-out experiments, but we leave the user to experiment with any another ensemble algorithm of the HEMDAG family.
+Below we show some examples of how to call HEMDAG in time-lapse hold-out experiments, but we leave the user the freedom to experiment with any another ensemble algorithm of the HEMDAG family.
 
 .. note::
 
+    #. the ``hemdag-call.R`` script must be call in ``~/hemdag/script/``;
     #. for the examples show below the tuning of hyper-parameters takes few minutes;
     #. the output HEMDAG scores matrices are stored in ``~/hemdag/res/ho/``.
 
@@ -265,7 +266,7 @@ All the required *.rda* files can be downloaded by using the following commands:
 
     mkdir -p ~/hemdag/data/cv/
     cd ~/hemdag/data/cv/
-    curl -Ss https://github.com/marconotaro/hemdag/tree/master/docs/playground/data/ho |  grep -oP '(?<=href=").*?(?=\">)' | grep '.rda$' | perl -pe 's/blob\///' | perl -pe 's/^/https\:\/\/raw.githubusercontent.com/' | wget -nc -i -
+    curl -Ss https://github.com/marconotaro/hemdag/tree/master/docs/playground/data/cv |  grep -oP '(?<=href=").*?(?=\">)' | grep '.rda$' | perl -pe 's/blob\///' | perl -pe 's/^/https\:\/\/raw.githubusercontent.com/' | wget -nc -i -
 
 .. note::
 
@@ -284,8 +285,10 @@ To execute any HEMDAG algorithm on cross-validated datasets, you must simply rep
 
 .. note::
 
+    #. the ``hemdag-call.R`` script must be call in ``~/hemdag/script/``;
     #. for the examples show below the tuning of hyper-parameters takes around one hour;
-    #. the output HEMDAG scores matrices are stored in ``~/hemdag/res/cv/`` (note the change of the last directory).
+    #. note that the flat classifier used here is the *svm* (``-f svmlinear``), but the *random forest* (``-f ranger``);
+    #. the output HEMDAG scores matrices are stored in ``~/hemdag/res/cv/`` (note the shift of the last directory);
 
 For instance, to call the 6 HEMDAG  the on cross-validated datasets just type:
 
