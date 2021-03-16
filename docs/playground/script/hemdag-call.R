@@ -9,39 +9,39 @@ library(optparse);
 ## for a detailed description, please see the manual: https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf
 optionList <- list(
     make_option(c("-o", "--organism"), type="character", default="7227_drome",
-        help="organism name in the form <taxon>_<name>"),
+        help="organism name in the form <taxon>_<name> (def. 7227_drome)"),
     make_option(c("-d", "--domain"), type="character", default="mf",
-        help="go domain. It can be: bp, mf or cc"),
+        help="go domain. It can be: bp, mf or cc (def. mf)"),
     make_option(c("-e", "--exptype"), type="character", default="ho",
-        help="type of dataset on which run HEMDAG. It can be: ho (hold-out) or cv (cross-validated)"),
+        help="type of dataset on which run HEMDAG. It can be: ho (hold-out) or cv (cross-validated) -- def. ho"),
     make_option(c("-f", "--flat"), type="character", default="svmlinear",
         help="flat classifier"),
     make_option(c("-p", "--positive"), type="character", default="descendants",
-        help="positive nodes selection. It can be: children or descendants. Skip this parameter if only topdown strategy is applied"),
+        help="positive nodes selection. It can be: children or descendants. Skip this parameter if only topdown strategy is applied (def. descendants)"),
     make_option(c("-b", "--bottomup"), type="character", default="tau",
-        help="bottomup strategy. It can be: none, threshold.free, threshold, weighted.threshold.free, weighted.threshold or tau. If none only topdown strategy is applied"),
+        help="bottomup strategy. It can be: none, threshold.free, threshold, weighted.threshold.free, weighted.threshold or tau. If none only topdown strategy is applied (def. tau)"),
     make_option(c("-t", "--topdown"), type="character", default="gpav",
-        help="topdown strategy. It can be: htd or gpav"),
+        help="topdown strategy. It can be: htd or gpav (def. gpav)"),
     make_option(c("-c", "--threshold"), type="character", default="seq(from=0.1, to=0.9, by=0.1)",
-        help="threshold for the choice of positive nodes. It can be a fixed value or an array of values"),
+        help="threshold for the choice of positive nodes. It can be a fixed value or an array of values (def. seq(from=0.1, to=0.9, by=0.1))"),
     make_option(c("-w", "--weight"), type="character", default="NULL",
-        help="weight for the choice of positive nodes. It can be a fixed value or an array of values"),
+        help="weight for the choice of positive nodes. It can be a fixed value or an array of values (def. NULL)"),
     make_option(c("-m", "--metric"), type="character", default="auprc",
-        help="performance metric on which maximize the parametric ensemble algorithms. It can be: auprc or fmax"),
+        help="performance metric on which maximize the parametric ensemble algorithms. It can be: auprc or fmax (def. auprc)"),
     make_option(c("-r", "--round"), type="integer", default="3",
-        help="number of rounding digits to be applied for choosing the best Fmax. To be used only if metric is set to fmax"),
+        help="number of rounding digits to be applied for choosing the best Fmax. To be used only if metric is set to fmax (def. 3)"),
     make_option(c("-s", "--seed"), type="integer", default="23",
-        help="seed for the random generator to create folds"),
+        help="seed for the random generator to create folds (def. 23)"),
     make_option(c("-k", "--fold"), type="integer", default="5",
-        help="number of folds for the cross validation"),
+        help="number of folds for the cross validation (def. 5)"),
     make_option(c("-l", "--parallel"), type="logical", default=FALSE, action="store_true",
-        help="should the sequential or parallel version of gpav be run? If flag -p is \"on\" the gpav parallel version is run. NB: only gpav can be run in parallel"),
+        help="should the sequential or parallel version of gpav be run? If flag -p is \"on\" the gpav parallel version is run. NB: only gpav can be run in parallel (def. FALSE)"),
     make_option(c("-n", "--cores"), type="integer", default="1",
-        help="number of cores to use for the parallel execution of gpav"),
+        help="number of cores to use for the parallel execution of gpav (def. 1)"),
     make_option(c("-z", "--norm"), type="logical", default=FALSE, action="store_true",
-        help="should the flat score matrix be normalized? If flag -p is \"on\" the input flat scores is normalized"),
+        help="should the flat score matrix be normalized? If flag -p is \"on\" the input flat scores is normalized (def. FALSE)"),
     make_option(c("-y", "--normtype"), type="character", default="none",
-        help="type of normalization. It can be maxnorm or qnorm")
+        help="type of normalization. It can be maxnorm or qnorm (def. none)")
 );
 
 optParser <- OptionParser(option_list=optionList);
@@ -177,7 +177,7 @@ stop.elapsed <- proc.time() - start.elapsed;
 timing.s <- stop.elapsed["elapsed"];
 timing.m <- round(timing.s/(60),4);
 timing.h <- round(timing.m/(60),4);
-cat("running time:", "seconds: ", timing.s, " *** minutes: ", timing.m, " *** hours: ", timing.h, "\n\n");
+cat(hemdag.name, "running time:", timing.s["elapsed"], "(seconds)", "|", timing.m["elapsed"], "(minutes)", "|" , timing.h["elapsed"], "(hours)", "\n\n");
 
 ## store results
 ## outname

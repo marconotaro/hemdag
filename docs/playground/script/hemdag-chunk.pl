@@ -16,7 +16,7 @@ print "tot_start=\$(date +%s)\n\n";
 my @orgs=  qw(7227_drome); ## organism(s) list
 my @flats= qw(svmlinear);  ## flat classifier(s) list
 my @algs=  qw(gpav isotprTF isotprW isodescensTF isodescensW isodescensTAU);  ## HEMDAG algorithm(s) list
-my @onts=  qw(bp mf cc);  ## GO domain(s) list (bp mf cc)
+my @onts=  qw(mf);  ## GO domain(s) list (bp mf cc)
 
 my $k=0;  ## cpu number on which binding a task
 foreach my $org (@orgs){
@@ -25,7 +25,7 @@ foreach my $org (@orgs){
             foreach my $ont (@onts){
                 $k++;
                 my $cpu= $k-1;
-                print "taskset -c $cpu Rscript hemdag-perf-eval.R -o $org -d $ont -e $exp -f $flat -a $alg > $org.$flat.$alg.go.$ont.perfmeas.out 2> /dev/null &\n";
+                print "taskset -c $cpu Rscript hemdag-eval.R -o $org -d $ont -e $exp -f $flat -a $alg > $org"."_go_"."$ont"."_"."$flat"."_"."$alg"."_perfmeas.out 2> /dev/null \n";
                 if($k % $chk ==0){
                     print "\n";
                     print "wait\n";

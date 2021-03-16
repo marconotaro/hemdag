@@ -7,7 +7,7 @@ library(optparse);
 
 optionList <- list(
     make_option(c("-e", "--exptype"), type="character", default="ho",
-        help="type of dataset on which run HEMDAG. It can be: ho (hold-out) or cv (cross-validated)")
+        help="type of dataset on which run HEMDAG. It can be: ho (hold-out) or cv (cross-validated) -- def. ho")
 );
 
 optParser <- OptionParser(option_list=optionList);
@@ -37,9 +37,9 @@ for(org in orgs){
                 g <- build.subgraph(colnames(S.hier), g);
                 check <- check.hierarchy(S.hier, g, root);
                 if(check$status=="OK"){
-                    cat(org, ont, paste0(alg,'+',met), "check passed :)","\n");
+                    cat(org, ont, paste0(flat,'+',alg), "check passed :)","\n");
                 }else{
-                    cat(org, ont, paste0(alg,'+',met), "check failed :(","\n");
+                    cat(org, ont, paste0(flat,'+',alg), "check failed :(","\n");
                 }
             }
         }
