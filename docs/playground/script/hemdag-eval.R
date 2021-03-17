@@ -56,7 +56,7 @@ if(exptype == "ho")
     testIndex <- get(load(paste0(data.dir, idx.file)));
 
 ## if number of nodes between g and S mismatch -> shrink graph g to terms of matrix S
-## eg. during flat learning you removed from S all those terms having less than N annotations 
+## eg. during flat learning you removed from S all those terms having less than N annotations
 root <- root.node(g);
 nd <- colnames(S);
 class.check <- ncol(S) != graph::numNodes(g);

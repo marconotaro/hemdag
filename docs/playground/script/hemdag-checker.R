@@ -29,7 +29,7 @@ for(org in orgs){
     for(flat in flats){
         for(alg in algs){
             for(ont in onts){
-                dag.file  <- data.files[grep(paste0(ont,".dag"), data.files)];     
+                dag.file  <- data.files[grep(paste0(ont,".dag"), data.files)];
                 hier.file <- res.files[grep(paste0(org, ".*", ont, ".scores.*", flat, ".", alg), res.files)];
                 g <- get(load(paste0(data.dir, dag.file)));
                 S.hier <- get(load(paste0(res.dir, hier.file)));
