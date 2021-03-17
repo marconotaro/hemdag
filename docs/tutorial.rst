@@ -149,7 +149,7 @@ run a normalization method (between **maxnorm** and **qnrom**) *on the fly*:
 
 GPAV: Generalized Pool-Adjacent-Violators
 --------------------------------------------
-Burdakov et al. in [Burdakov06]_ proposed an approximate algorithm, named GPAV, to solve the *isotonic regression* (IR) or *monotonic regression* (MR) problem in its general case (i.e. partial order of the constraints). GPAV algorithm combines both low computational complexity (estimated to be :math:`\mathcal{O}(|V|^2`), where :math:`V` is the number of nodes of the graph) and high accuracy. Formally, given a vector of observed values :math:`\hat{y} \in R^n`, a strictly positive vector of weights :math:`w \in R^n` and a dag :math:`G(V,E)`, GPAV finds the vector of fitted values :math:`\bar{y} \in \mathbb{R}^n` that solves the following convex quadratic program:
+Burdakov et al. in :cite:`Burdakov06` proposed an approximate algorithm, named GPAV, to solve the *isotonic regression* (IR) or *monotonic regression* (MR) problem in its general case (i.e. partial order of the constraints). GPAV algorithm combines both low computational complexity (estimated to be :math:`\mathcal{O}(|V|^2`), where :math:`V` is the number of nodes of the graph) and high accuracy. Formally, given a vector of observed values :math:`\hat{y} \in R^n`, a strictly positive vector of weights :math:`w \in R^n` and a dag :math:`G(V,E)`, GPAV finds the vector of fitted values :math:`\bar{y} \in \mathbb{R}^n` that solves the following convex quadratic program:
 
 .. math::
 
@@ -160,7 +160,6 @@ Burdakov et al. in [Burdakov06]_ proposed an approximate algorithm, named GPAV, 
     \end{array}
   \end{equation}
 
-.. [Burdakov06] O. Sysoev, A. Grimvall, and O. Burdakov, Data preordering in generalized pav algorithm for monotonic regression, Journal of Computational Mathematics, vol. 24, no. 6, pp. 771–790, 2006
 
 To call the GPAV algorithm just type:
 
@@ -191,7 +190,7 @@ TPR-DAG is a family of algorithms on the basis of the choice of the **bottom-up*
 
 .. note::
 
-    Levels (both in the first and second step) are defined in terms of the maximum path length from the root node. Please refer to our `BMC Bioinformatics paper <https://doi.org/10.1186/s12859-017-1854-y>`_ for further details.
+    Levels (both in the first and second step) are defined in terms of the maximum path length from the root node. Please refer to :cite:`Notaro17` for further details.
 
 The *vanilla* TPR-DAG adopts a per-level bottom-up traversal of the DAG to modify the flat predictions :math:`\hat{y}_i` according to the following formula:
 
@@ -248,7 +247,7 @@ All the *vanilla* TPR-DAG variants use the HTD-DAG algorithm in the top-down ste
 
 DESCENS: Descendants Ensemble Classifier
 ------------------------------------------------
-As shown in [Valentini11]_ for tree-based hierarchies, the contribution of the descendants of a given node decays exponentially with their distance from the node itself and it is straightforward to see that this property also holds for DAG structured taxonomies. To overcame this limitation and in order to enhance the contribution of the most specific nodes to the overall decision of the ensemble we design the ensemble variant DESCENS. The novelty of DESCENS consists in strongly considering the contribution of all the descendants of each node instead of only that of its children (``positive="descendants"``). Therefore DESCENS predictions are more influenced by the information embedded in the leaves nodes, that are the classes containing the most informative and meaningful information from a biological and medical standpoint. DESCENS variants can be designed on the choice of the *positive* descendants :math:`\Delta_i`. The same strategies adopted for the choice of :math:`\phi_i` can be also adopted for the choice of :math:`\Delta_i`, simply by replacing :math:`\phi_i` with :math:`\Delta_i` and :math:`child(i)` with :math:`desc(i)` in the various formulas shown in :ref:`tpr`. Furthermore, we designed a variant specific only for DESCENS, that we named DESCENS-:math:`\tau` (parameter ``bottomup="tau"``). The DESCENS-:math:`\tau` variant balances the contribution between the *positives* children of a node :math:`i` and that of its *positives* descendants excluding its children by adding a weight :math:`\tau \in [0,1]`:
+As shown in :cite:`Valentini11` for tree-based hierarchies, the contribution of the descendants of a given node decays exponentially with their distance from the node itself and it is straightforward to see that this property also holds for DAG structured taxonomies. To overcame this limitation and in order to enhance the contribution of the most specific nodes to the overall decision of the ensemble we design the ensemble variant DESCENS. The novelty of DESCENS consists in strongly considering the contribution of all the descendants of each node instead of only that of its children (``positive="descendants"``). Therefore DESCENS predictions are more influenced by the information embedded in the leaves nodes, that are the classes containing the most informative and meaningful information from a biological and medical standpoint. DESCENS variants can be designed on the choice of the *positive* descendants :math:`\Delta_i`. The same strategies adopted for the choice of :math:`\phi_i` can be also adopted for the choice of :math:`\Delta_i`, simply by replacing :math:`\phi_i` with :math:`\Delta_i` and :math:`child(i)` with :math:`desc(i)` in the various formulas shown in :ref:`tpr`. Furthermore, we designed a variant specific only for DESCENS, that we named DESCENS-:math:`\tau` (parameter ``bottomup="tau"``). The DESCENS-:math:`\tau` variant balances the contribution between the *positives* children of a node :math:`i` and that of its *positives* descendants excluding its children by adding a weight :math:`\tau \in [0,1]`:
 
 .. math::
 
@@ -258,7 +257,6 @@ where :math:`\phi_i` are the *positive* children of :math:`i` and :math:`\delta_
 
 If :math:`\tau=1` we consider only the contribution of the *positive* children of :math:`i`; if :math:`\tau=0` only the descendants that are not children contribute to the score, while for intermediate values of :math:`\tau` we can balance the contribution of :math:`\phi_i` and :math:`\delta_i` positive nodes.
 
-.. [Valentini11] G. Valentini, "True Path Rule Hierarchical Ensembles for Genome-Wide Gene Function Prediction," in IEEE/ACM Transactions on Computational Biology and Bioinformatics, vol. 8, no. 3, pp. 832-847, May-June 2011, doi: 10.1109/TCBB.2010.38.
 
 All the DESCENS variants adopt in the second step the HTD-DAG algorithm to assure the consistency of the predictions:
 
@@ -295,7 +293,7 @@ The ISO-DESCENS variants (parameter ``positive="descendants"`` and ``topdown="gp
 
 Obozinski Heuristic Methods
 --------------------------------
-HEMDAG includes also the three heuristics ensemble methods (And, Max, Or) proposed in [Obozinski08]_:
+HEMDAG includes also the three heuristics ensemble methods (And, Max, Or) proposed in :cite:`Obozinski08`:
 
 1. **Max**: reports the largest logistic regression (LR) value of self and all descendants: :math:`p_i = max_{j \in descendants(i)} \hat{p_j}`;
 
@@ -303,7 +301,6 @@ HEMDAG includes also the three heuristics ensemble methods (And, Max, Or) propos
 
 3. **Or**: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data, all predictions are independent: :math:`1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})`;
 
-.. [Obozinski08] Obozinski G, Lanckriet G, Grant C, M J, Noble WS. Consistent probabilistic output for protein function prediction. Genome Biology. 2008;9:135–142. doi:10.1186/gb-2008-9-s1-s6.
 
 To call Obozinski's heuristic methods, just type:
 
@@ -343,14 +340,12 @@ To know the behavior of the hierarchical ensemble methods, the HEMDAG library pr
 
 - ``AUPRC``: area under the precision-recall curve;
 - ``AUROC``: area under the ROC curve;
-- ``Fmax`` : maximum hierarchical F-score [Jiang2016]_;
+- ``Fmax`` : maximum hierarchical F-score :cite:`Jiang16`;
 - ``PXR``  : precision at different recall levels;
 
 .. note::
     a) HEMDAG allows to compute all the aforementioned performance metrics either **one-shot** or **averaged** across k fold. Depending on the dataset size, the metrics ``Fmax`` and ``PXR`` could take a while to finish. Please refer to HEMDAG `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_  for further information about the input arguments of these functions.
     b) For computing the *term-centric* metrics (``AUROC``, ``AUPRC`` and ``PXR``), HEMDAG makes use of the R package *precrec* (`link <https://CRAN.R-project.org/package=precrec>`__).
-
-.. [Jiang2016] Y. Jiang et al., An expanded evaluation of protein function prediction methods shows an improvement in accuracy, Genome Biology, vol. 17, p. 184, 2016
 
 Load the Annotation Matrix
 ------------------------------
@@ -521,3 +516,9 @@ For all the hierarchical ensemble algorithms encompassed in the HEMDAG library t
     * ``obozinski.holdout``;
 
 For the sake of space we do not show here experiments by using the hold-out version of the hierarchical functions. Please refer to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_, for further details on these functions.
+
+
+.. rubric:: References
+
+.. bibliography:: refs.bib
+    :style: plain

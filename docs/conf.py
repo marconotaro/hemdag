@@ -41,6 +41,7 @@ release = ''
 extensions = [
     'sphinx.ext.todo',
     'sphinx.ext.githubpages',
+    'sphinxcontrib.bibtex',
     'm2r',
 ]
 
