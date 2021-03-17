@@ -89,7 +89,7 @@ If you want to visualize the *ancestors view* of the term ``HP:0100490``, just t
     > plot(g);
 
 .. figure:: pictures/graph.png
-   :scale: 85 %
+   :scale: 100 %
    :alt: The DAG of graph g
    :align: center
 
