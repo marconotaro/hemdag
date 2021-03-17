@@ -2,7 +2,7 @@
 
 ## load library
 library(HEMDAG);
-suppressPackageStartupMessages(library(graph)); ## silence biocgenerics masked messages...
+suppressPackageStartupMessages(library(graph)); ## silence biocgenerics mask messages...
 library(optparse);
 
 ## command line arguments
@@ -18,18 +18,17 @@ optionList <- list(
         help="flat classifier"),
     make_option(c("-p", "--positive"), type="character", default="descendants",
         help="positive nodes selection. It can be: children or descendants.
-        Skip this parameter if only topdown strategy is applied (def. descendants)"),
+                Skip this parameter if only topdown strategy is applied (def. descendants)"),
     make_option(c("-b", "--bottomup"), type="character", default="tau",
         help="bottomup strategy. It can be: none, threshold.free, threshold, weighted.threshold.free, weighted.threshold or tau.
-        If none only topdown strategy is applied (def. tau)"),
+                If none only topdown strategy is applied (def. tau)"),
     make_option(c("-t", "--topdown"), type="character", default="gpav",
         help="topdown strategy. It can be: htd or gpav (def. gpav)"),
     make_option(c("-c", "--threshold"), type="character", default="seq(from=0.1, to=0.9, by=0.1)",
         help="threshold for the choice of positive nodes.
-        It can be a fixed value or an array of values (def. seq(from=0.1, to=0.9, by=0.1))"),
+                It can be a fixed value or an array of values (def. seq(from=0.1, to=0.9, by=0.1))"),
     make_option(c("-w", "--weight"), type="character", default="NULL",
-        help="weight for the choice of positive nodes.
-        It can be a fixed value or an array of values (def. NULL)"),
+        help="weight for the choice of positive nodes. It can be a fixed value or an array of values (def. NULL)"),
     make_option(c("-m", "--metric"), type="character", default="auprc",
         help="performance metric on which maximize the parametric ensemble algorithms. It can be: auprc or fmax (def. auprc)"),
     make_option(c("-r", "--round"), type="integer", default="3",
@@ -39,8 +38,8 @@ optionList <- list(
     make_option(c("-k", "--fold"), type="integer", default="5",
         help="number of folds for the cross validation (def. 5)"),
     make_option(c("-l", "--parallel"), type="logical", default=FALSE, action="store_true",
-        help="should the sequential or parallel version of gpav be run? If flag -p is 'on' the gpav parallel version is run.
-        NB: only gpav can be run in parallel (def. FALSE)"),
+        help="should the sequential or parallel version of gpav be run?
+                If flag -p is 'on' the gpav parallel version is run. NB: only gpav can be run in parallel (def. FALSE)"),
     make_option(c("-n", "--cores"), type="integer", default="1",
         help="number of cores to use for the parallel execution of gpav (def. 1)"),
     make_option(c("-z", "--norm"), type="logical", default=FALSE, action="store_true",
