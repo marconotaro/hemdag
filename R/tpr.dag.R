@@ -137,7 +137,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
     }
     if(bottomup=="weighted.threshold.free")
         t <-0;
-    if(t==1 || w==1)
+    if((t==1 || w==1) && topdown=="htd")
         warning("when t or w is equal to 1, tpr-dag is reduced to htd-dag");
     if(topdown=="gpav" && parallel==TRUE && ncores<2)
         warning("increase number of cores to exploit the gpav parallel version");
@@ -529,7 +529,7 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 #' \enumerate{
 #'  \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
-#'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+#'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}});
 #'  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 #' }
 #' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold
