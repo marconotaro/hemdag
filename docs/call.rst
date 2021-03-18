@@ -329,6 +329,10 @@ Evaluation
 -------------------
 To evaluate HEMDAG in cross-validated experiments just replace ``-e ho`` with ``-e cv`` in the :ref:`hemdageval` script:
 
+.. note::
+
+    the evaluation of the cross-validated dataset used here takes around 30 minutes -- the slowest metric is ``PXR``.
+
 .. code-block:: bash
 
     ## single evaluation call
