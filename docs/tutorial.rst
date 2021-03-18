@@ -13,7 +13,7 @@ Of course, the number of terms among the graph, the flat score matrix and the an
 
 .. note::
 
-    For the experiments shown below, we used the latest version of HEMDAG package, the R version 3.6.3 and on a machine having Ubuntu 18.04 as operative system.
+    For the experiments shown below, we used the latest version of HEMDAG package, the R version 4.0.4 and on a machine having Ubuntu 20.04 as operative system.
 
 Load the HEMDAG Library
 ==============================
@@ -21,7 +21,7 @@ To load the HEMDAG library, open the R environment and type:
 
 .. code-block:: R
 
-    > library(HEMDAG);
+    library(HEMDAG);
 
 Load the Flat Scores Matrix
 ================================
@@ -34,7 +34,7 @@ Consequently, the first *ingredient* that we need in a hierarchical ensemble cla
 
 .. code-block:: R
 
-    > data(scores);
+    data(scores);
 
 With the above command we loaded the flat score matrix ``S``, that is a named 100 X 23 matrix. Rows correspond to genes (Entrez GeneID) and columns to HPO terms/classes. The scores represent the likelihood that a given gene belongs to a given class: the higher the value, the higher the likelihood that a gene belongs to a given class. This flat score matrix was obtained by running the RANKS package (`link <https://cran.rstudio.com/web/packages/RANKS/>`__).
 
@@ -48,13 +48,13 @@ HEMDAG allows to normalize the flat scores according to two different procedures
 
 .. code-block:: R
 
-    > S.maxnorm <- scores.normalization(norm.type="maxnorm", S);
+    S.maxnorm <- scores.normalization(norm.type="maxnorm", S);
 
 2. **qnorm**: Quantile normalization: quantile normalization of the *preprocessCore* package is used:
 
 .. code-block:: R
 
-    > S.qnorm <- scores.normalization(norm.type="qnorm", S);
+    S.qnorm <- scores.normalization(norm.type="qnorm", S);
 
 Be sure to install the *preprocessCore* package before running the above command. Yo can install it by conda (``conda install -c bioconda bioconductor-preprocesscore``) or by Bioconductor (`link <https://bioconductor.org/packages/release/bioc/html/preprocessCore.html>`_)
 
@@ -72,7 +72,7 @@ In order to know how the hierarchical structure of the HPO terms, we need to loa
 
 .. code-block:: R
 
-    > data(graph);
+    data(graph);
 
 With the above command we loaded the graph ``g``, an object of class ``graphNEL``. The graph ``g`` has 23 nodes and 30 edges and represents the *ancestors view* of the HPO term ``Camptodactyly of finger`` (`HP:0100490 <https://hpo.jax.org/app/browse/term/HP:0100490>`_). Nodes of the graph ``g`` correspond to terms of the flat score matrix ``S``.
 
@@ -85,13 +85,13 @@ If you want to visualize the *ancestors view* of the term ``HP:0100490``, just t
 
 .. code-block:: R
 
-    > library(Rgraphviz);
-    > plot(g);
+    library(Rgraphviz);
+    plot(g);
 
 .. figure:: pictures/graph.png
-   :scale: 100 %
-   :alt: The DAG of graph g
-   :align: center
+    :scale: 100 %
+    :alt: The DAG of graph g
+    :align: center
 
 Utility Functions for Graphs (optional)
 ------------------------------------------
@@ -105,7 +105,7 @@ First of all, we need to find the root node (i.e. node that is at the top-level 
 
 .. code-block:: R
 
-    > root <- root.node(g);
+    root <- root.node(g);
 
 in this way we store in the variable ``root`` the root node of the graph ``g``.
 
@@ -131,7 +131,7 @@ The node levels correspond to their maximum path length from the root. To call t
 
 .. code-block:: R
 
-    > S.htd <- htd(S.norm, g, root);
+    S.htd <- htd(S.norm, g, root);
 
 Alternatively, we can call the ``htd.vanilla`` function (instead of ``htd``), which it allows to normalize the flat score matrix ``S`` (according to **maxnorm** or **qnorm** normalization) *on the fly*:
 
@@ -139,7 +139,7 @@ run a normalization method (between **maxnorm** and **qnrom**) *on the fly*:
 
 .. code-block:: R
 
-    > S.htd <- htd.vanilla(S, g, norm=TRUE, norm.type="max.norm");
+    S.htd <- htd.vanilla(S, g, norm=TRUE, norm.type="maxnorm");
 
 .. note::
 
@@ -165,19 +165,19 @@ To call the GPAV algorithm just type:
 
 .. code-block:: R
 
-    > S.gpav <- gpav.over.examples(S.norm, g, W=NULL);
+    S.gpav <- gpav.over.examples(S.norm, g, W=NULL);
 
 It is worth noting that there is also a parallel version of the GPAV algorithm:
 
 .. code-block:: R
 
-    > S.gpav <- gpav.parallel(S.norm, g, W=NULL, ncores=8);
+    S.gpav <- gpav.parallel(S.norm, g, W=NULL, ncores=8);
 
 Similarly to HTD-DAG also for GPAV, we can use the function ``gpav.vanilla`` (instead of ``gpav.over.examples`` or ``gpav.parallel``) to normalize the flat score matrix ``S`` (according to **maxnorm** or **qnorm** normalization) *on the fly*:
 
 .. code-block:: R
 
-    > S.gpav <- gpav.vanilla(S, g, W=NULL, parallel=FALSE, ncores=8, norm=TRUE, norm.type="maxnorm");
+    S.gpav <- gpav.vanilla(S, g, W=NULL, parallel=TRUE, ncores=8, norm=TRUE, norm.type="maxnorm");
 
 .. _tpr:
 
@@ -240,10 +240,10 @@ All the *vanilla* TPR-DAG variants use the HTD-DAG algorithm in the top-down ste
 
 .. code-block:: R
 
-    > S.tprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="htd");
-    > S.tprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="htd", t=0.5);
-    > S.tprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
-    > S.tprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="htd", t=0.5, w=0.5);
+    S.tprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="htd");
+    S.tprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="htd", t=0.5);
+    S.tprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
+    S.tprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="htd", t=0.5, w=0.5);
 
 DESCENS: Descendants Ensemble Classifier
 ------------------------------------------------
@@ -262,11 +262,11 @@ All the DESCENS variants adopt in the second step the HTD-DAG algorithm to assur
 
 .. code-block:: R
 
-    > S.descensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="htd");
-    > S.descensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="htd", t=0.5);
-    > S.descensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
-    > S.descensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="htd", t=0.5, w=05);
-    > S.descensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="htd", t=0.5);
+    S.descensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="htd");
+    S.descensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="htd", t=0.5);
+    S.descensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="htd", w=0.5);
+    S.descensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="htd", t=0.5, w=05);
+    S.descensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="htd", t=0.5);
 
 ISO-TPR: Isotonic Regression for DAG
 ------------------------------------------------
@@ -274,10 +274,10 @@ The ISO-TPR algorithms (parameter ``positive="children"`` and ``topdown="gpav"``
 
 .. code-block:: R
 
-    > S.isotprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
-    > S.isotprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
-    > S.isotprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    > S.isotprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    S.isotprTF <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold.free", topdown="gpav");
+    S.isotprT  <- tpr.dag(S.norm, g, root, positive="children", bottomup="threshold", topdown="gpav", t=0.5);
+    S.isotprW  <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    S.isotprWT <- tpr.dag(S.norm, g, root, positive="children", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
 
 ISO-DESCENS: Isotonic Regression with Descendants Ensemble Classifier
 -------------------------------------------------------------------------
@@ -285,11 +285,11 @@ The ISO-DESCENS variants (parameter ``positive="descendants"`` and ``topdown="gp
 
 .. code-block:: R
 
-    > S.isodescensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
-    > S.isodescensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
-    > S.isodescensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
-    > S.isodescensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
-    > S.isodescensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
+    S.isodescensTF  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold.free", topdown="gpav");
+    S.isodescensT   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="threshold", topdown="gpav", t=0.5);
+    S.isodescensW   <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold.free", topdown="gpav", w=0.5);
+    S.isodescensWT  <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="weighted.threshold", topdown="gpav", t=0.5, w=0.5);
+    S.isodescensTAU <- tpr.dag(S.norm, g, root, positive="descendants", bottomup="tau", topdown="gpav", t=0.5);
 
 Obozinski Heuristic Methods
 --------------------------------
@@ -306,17 +306,17 @@ To call Obozinski's heuristic methods, just type:
 
 .. code-block:: R
 
-    > S.max <- obozinski.max(S.norm, g, root);
-    > S.and <- obozinski.and(S.norm, g, root);
-    > S.or  <- obozinski.or(S.norm, g, root);
+    S.max <- obozinski.max(S.norm, g, root);
+    S.and <- obozinski.and(S.norm, g, root);
+    S.or  <- obozinski.or(S.norm, g, root);
 
 Alternatively, the Obozinski's methods can be also called by properly setting the parameter ``heuristic`` of the function ``obozinski.methods``:
 
 .. code-block:: R
 
-    > S.max <- obozinski.methods(S, g, heuristic="max", norm=TRUE, norm.type="maxnorm");
-    > S.and <- obozinski.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
-    > S.or  <- obozinski.methods(S, g, heuristic="or",  norm=TRUE, norm.type="maxnorm");
+    S.max <- obozinski.methods(S, g, heuristic="max", norm=TRUE, norm.type="maxnorm");
+    S.and <- obozinski.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
+    S.or  <- obozinski.methods(S, g, heuristic="or",  norm=TRUE, norm.type="maxnorm");
 
 .. _conscheck:
 
@@ -326,11 +326,11 @@ Predictions returned by a flat classifier **do not respect** the *True Path Rule
 
 .. code-block:: R
 
-    > check.hierarchy(S, g, root)$status
-    [1] "NOTOK"
+    check.hierarchy(S, g, root)$status
+    "NOTOK"
 
-    > check.hierarchy(S.htd, g, root)$status
-    [1] "OK"
+    check.hierarchy(S.htd, g, root)$status
+    "OK"
 
 .. _eval:
 
@@ -344,8 +344,8 @@ To know the behavior of the hierarchical ensemble methods, the HEMDAG library pr
 - ``PXR``  : precision at different recall levels;
 
 .. note::
-    a) HEMDAG allows to compute all the aforementioned performance metrics either **one-shot** or **averaged** across k fold. Depending on the dataset size, the metrics ``Fmax`` and ``PXR`` could take a while to finish. Please refer to HEMDAG `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_  for further information about the input arguments of these functions.
-    b) For computing the *term-centric* metrics (``AUROC``, ``AUPRC`` and ``PXR``), HEMDAG makes use of the R package *precrec* (`link <https://CRAN.R-project.org/package=precrec>`__).
+    #. HEMDAG allows to compute all the aforementioned performance metrics either **one-shot** or **averaged** across k fold. Depending on the dataset size, the metrics ``Fmax`` and ``PXR`` could take a while to finish. Please refer to HEMDAG `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_  for further information about the input arguments of these functions.
+    #. For computing the *term-centric* metrics (``AUROC``, ``AUPRC`` and ``PXR``), HEMDAG makes use of the R package *precrec* (`link <https://CRAN.R-project.org/package=precrec>`__).
 
 Load the Annotation Matrix
 ------------------------------
@@ -353,7 +353,7 @@ To compare the hierarchical ensemble methods against the flat approach, we need 
 
 .. code-block:: R
 
-    > data(labels);
+    data(labels);
 
 With the above command we loaded the annotations table ``L``, that is a named ``100 X 23`` matrix. Rows correspond to genes (``Entrez GeneID``) and columns to HPO terms/classes. ``L[i, j] = 1`` means that the gene ``i`` belong to class ``j``, ``L[i, j] = 0`` means that the gene ``i`` does not belong to class ``j``.
 
@@ -364,62 +364,62 @@ Before computing performance metrics we should remove the root node from the ann
 .. code-block:: R
 
     ## remove root node from annotation matrix
-    > if(root %in% colnames(L))
-    +    L <- L[,-which(colnames(L)==root)];
+    if(root %in% colnames(L))
+        L <- L[,-which(colnames(L)==root)];
 
     ## remove root node from the normalized flat score matrix
-    > if(root %in% colnames(S.norm))
-    +    S.norm <- S.norm[,-which(colnames(S.norm)==root)];
+    if(root %in% colnames(S.norm))
+        S.norm <- S.norm[,-which(colnames(S.norm)==root)];
 
     ## remove root node from hierarchical scores matrix (eg S.htd)
-    > if(root %in% colnames(S.htd))
-    +    S.htd <- S.htd[,-which(colnames(S.htd)==root)];
+    if(root %in% colnames(S.htd))
+        S.htd <- S.htd[,-which(colnames(S.htd)==root)];
 
 Now we can compare the flat approach RANKS versus the HTD-DAG strategy, by averaging (for instance) the performance across 3 folds:
 
 .. code-block:: R
 
     ## RANKS
-    > prc.flat  <- auprc.single.over.classes(L, S.norm, folds=3, seed=23);
-    > auc.flat  <- auroc.single.over.classes(L, S.norm, folds=3, seed=23);
-    > pxr.flat  <- precision.at.given.recall.levels.over.classes(L, S.norm, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
-    > fmax.flat <- compute.fmax(L, S.norm, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
+    prc.flat  <- auprc.single.over.classes(L, S.norm, folds=3, seed=23);
+    auc.flat  <- auroc.single.over.classes(L, S.norm, folds=3, seed=23);
+    pxr.flat  <- precision.at.given.recall.levels.over.classes(L, S.norm, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
+    fmax.flat <- compute.fmax(L, S.norm, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
     ## HTD-DAG
-    > prc.htd  <- auprc.single.over.classes(L, S.htd, folds=3, seed=23);
-    > auc.htd  <- auroc.single.over.classes(L, S.htd, folds=3, seed=23);
-    > pxr.htd  <- precision.at.given.recall.levels.over.classes(L, S.htd, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
-    > fmax.htd <- compute.fmax(L, S.htd, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
+    prc.htd  <- auprc.single.over.classes(L, S.htd, folds=3, seed=23);
+    auc.htd  <- auroc.single.over.classes(L, S.htd, folds=3, seed=23);
+    pxr.htd  <- precision.at.given.recall.levels.over.classes(L, S.htd, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
+    fmax.htd <- compute.fmax(L, S.htd, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
 By looking at the results, it easy to see that the HTD-DAG outperforms the flat classifier RANKS:
 
 .. code-block:: R
 
-   ## AUC performance: RANKS VS HTD-DAG
-    > auc.flat$average
-    [1] 0.8297
-    > auc.htd$average
-    [1] 0.8336
+    ## AUC performance: RANKS VS HTD-DAG
+    auc.flat$average
+    0.8297
+    auc.htd$average
+    0.8336
 
     ## PRC performance: RANKS VS HTD-DAG
-    > prc.flat$average
-    [1] 0.4333
-    > prc.htd$average
-    [1] 0.4627
+    prc.flat$average
+    0.4333
+    prc.htd$average
+    0.4627
 
     ## Fmax performance: RANKS VS HTD-DAG
-    > fmax.flat$average
+    fmax.flat$average
         P      R      S      F    avF      A      T
     0.5042 0.8639 0.4485 0.6368 0.5269 0.6612 0.5720
-    > fmax.htd$average
+    fmax.htd$average
         P      R      S      F    avF      A      T
     0.5576 0.7745 0.6519 0.6484 0.5617 0.7521 0.6487
 
     ## PXR: RANKS VS HTD-DAG
-    > pxr.flat$average
+    pxr.flat$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.5821 0.5821 0.5821 0.5531 0.5531 0.4483 0.4388 0.4388 0.4388 0.4388
-    > pxr.htd$average
+    pxr.htd$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.6218 0.6218 0.6218 0.5941 0.5941 0.4798 0.4668 0.4668 0.4668 0.4668
 
@@ -432,21 +432,23 @@ Tuning of Hyper-Parameter(s)
 
 .. code-block:: R
 
-    > threshold <- seq(0.1, 0.9, 0.1);
+    threshold <- seq(0.1, 0.9, 0.1);
 
-    > S.isotprT <- tpr.dag.cv(S, g, ann=L, norm=TRUE, norm.type="maxnorm", positive="children",
-                              bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE,
-                              ncores=1, threshold=threshold, weight=0, kk=3, seed=23,
-                              metric="prc", n.round=NULL);
+    S.isotprT <- tpr.dag.cv(S, g, ann=L, norm=TRUE, norm.type="maxnorm", positive="children",
+                            bottomup="threshold", topdown="gpav", W=NULL, parallel=FALSE,
+                            ncores=1, threshold=threshold, weight=0, kk=3, seed=23,
+                            metric="auprc", n.round=NULL);
 
     ## stdout
     maxnorm normalization: done
-    training fold:  1   top prc avg found:  0.4536119   best threshold: 0.1
-    training fold:  1   top prc avg found:  0.4592147   best threshold: 0.4
-    training fold:  2   top prc avg found:  0.2190192   best threshold: 0.1
-    training fold:  2   top prc avg found:  0.2193331   best threshold: 0.6
-    training fold:  2   top prc avg found:  0.2208776   best threshold: 0.7
-    training fold:  3   top prc avg found:  0.8148121   best threshold: 0.1
+    training fold:  1   top auprc avg found:    0.4743567   best threshold: 0.1
+    training fold:  1   top auprc avg found:    0.4883769   best threshold: 0.5
+    training fold:  2   top auprc avg found:    0.2249245   best threshold: 0.1
+    training fold:  2   top auprc avg found:    0.2274687   best threshold: 0.3
+    training fold:  2   top auprc avg found:    0.2469059   best threshold: 0.4
+    training fold:  3   top auprc avg found:    0.8167777   best threshold: 0.1
+    training fold:  3   top auprc avg found:    0.8264204   best threshold: 0.3
+    training fold:  3   top auprc avg found:    0.8329289   best threshold: 0.7
     tpr-dag correction done
 
 Evaluating ``isotprT`` by computing *term-* and *protein-* centric performance (always averaging the performance across 3 folds), it easy to see how this ensemble variant outperform both the flat classifier RANKS and the hierarchical algorithm HTD-DAG:
@@ -454,49 +456,49 @@ Evaluating ``isotprT`` by computing *term-* and *protein-* centric performance (
 .. code-block:: R
 
     ## remove root node before computing performance
-    > if(root %in% colnames(S.isotprT))
-    +    S.isotprT <- S.isotprT[,-which(colnames(S.isotprT)==root)];
+    if(root %in% colnames(S.isotprT))
+        S.isotprT <- S.isotprT[,-which(colnames(S.isotprT)==root)];
 
-    > prc.isotprT  <- auprc.single.over.classes(L, S.isotprT, folds=3, seed=23);
-    > auc.isotprT  <- auroc.single.over.classes(L, S.isotprT, folds=3, seed=23);
-    > pxr.isotprT  <- precision.at.given.recall.levels.over.classes(L, S.isotprT, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
-    > fmax.isotprT <- compute.fmax(L, S.isotprT, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
+    prc.isotprT  <- auprc.single.over.classes(L, S.isotprT, folds=3, seed=23);
+    auc.isotprT  <- auroc.single.over.classes(L, S.isotprT, folds=3, seed=23);
+    pxr.isotprT  <- precision.at.given.recall.levels.over.classes(L, S.isotprT, recall.levels=seq(from=0.1, to=1, by=0.1), folds=3, seed=23);
+    fmax.isotprT <- compute.fmax(L, S.isotprT, n.round=3, verbose=FALSE, b.per.example=TRUE, folds=3, seed=23);
 
     ## AUC performance: RANKS VS HTD-DAG vs isotprT
-    > auc.flat$average
-    [1] 0.8297
-    > auc.htd$average
-    [1] 0.8336
-    > auc.isotprT$average
-    [1] 0.8446
+    auc.flat$average
+    0.8297
+    auc.htd$average
+    0.8336
+    auc.isotprT$average
+    0.8446
 
     ## PRC performance: RANKS VS HTD-DAG vs isotprT
-    > prc.flat$average
-    [1] 0.4333
-    > prc.htd$average
-    [1] 0.4627
-    > prc.isotprT$average
-    [1] 0.5346
+    prc.flat$average
+    0.4333
+    prc.htd$average
+    0.4627
+    prc.isotprT$average
+    0.5346
 
     ## Fmax performance: RANKS VS HTD-DAG vs isotprT
-    > fmax.flat$average
+    fmax.flat$average
         P      R      S      F    avF      A      T
     0.5042 0.8639 0.4485 0.6368 0.5269 0.6612 0.5720
-    > fmax.htd$average
+    fmax.htd$average
         P      R      S      F    avF      A      T
     0.5576 0.7745 0.6519 0.6484 0.5617 0.7521 0.6487
-    > fmax.isotprT$average
+    fmax.isotprT$average
         P      R      S      F    avF      A      T
     0.5896 0.8306 0.5283 0.6896 0.6106 0.7066 0.6340
 
     ## PXR: RANKS VS HTD-DAG vs isotprT
-    > pxr.flat$average
+    pxr.flat$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.5821 0.5821 0.5821 0.5531 0.5531 0.4483 0.4388 0.4388 0.4388 0.4388
-    > pxr.htd$average
+    pxr.htd$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.6218 0.6218 0.6218 0.5941 0.5941 0.4798 0.4668 0.4668 0.4668 0.4668
-    > pxr.isotprT$average
+    pxr.isotprT$average
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.6848 0.6848 0.6848 0.6697 0.6697 0.5417 0.5027 0.5027 0.5027 0.5027
 
