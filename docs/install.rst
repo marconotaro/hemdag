@@ -36,14 +36,14 @@ Alternatively, you can install the HEMDAG library by typing in the R environment
 
 .. code-block:: R
 
-	install.packages("HEMDAG");
+    install.packages("HEMDAG");
 
 Another possibility to install the development version of HEMDAG is by using the *devtools* package (`link <https://CRAN.R-project.org/package=devtools>`_):
 
 .. code-block:: R
 
     library(devtools);
-	install_github("marconotaro/hemdag");
+    install_github("marconotaro/hemdag");
 
 Dependencies
 =======================
@@ -84,7 +84,7 @@ On a Linux environment, download the package source from the `CRAN repo <https:/
 
  .. code-block:: console
 
-	R CMD INSTALL pippo/HEMDAG_<pkg-version-number>.tar.gz
+    R CMD INSTALL pippo/HEMDAG_<pkg-version-number>.tar.gz
 
 .. note::
 
