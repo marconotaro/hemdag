@@ -27,8 +27,8 @@ optionList <- list(
     make_option(c("-c", "--threshold"), type="character", default="seq(from=0.1, to=0.9, by=0.1)",
         help="threshold for the choice of positive nodes.
                 It can be a fixed value or an array of values (def. seq(from=0.1, to=0.9, by=0.1))"),
-    make_option(c("-w", "--weight"), type="character", default="NULL",
-        help="weight for the choice of positive nodes. It can be a fixed value or an array of values (def. NULL)"),
+    make_option(c("-w", "--weight"), type="character", default="0",
+        help="weight for the choice of positive nodes. It can be a fixed value or an array of values (def. 0)"),
     make_option(c("-m", "--metric"), type="character", default="auprc",
         help="performance metric on which maximize the parametric ensemble algorithms. It can be: auprc or fmax (def. auprc)"),
     make_option(c("-r", "--round"), type="integer", default="3",
@@ -146,6 +146,10 @@ if(class.check){
     ann <- ann[, colnames(S)];
 }
 
+## address case when (iso)descensW is called with a fixed value of w to enter in the right branch
+if(bottomup=="weighted.threshold.free" && length(weight)==1)
+    threshold <- 0;
+
 ## elapsed time
 start.elapsed <- proc.time();
 
@@ -158,10 +162,44 @@ if(exptype == "ho"){
         }else{
             S.hier <- htd.holdout(S=S, g=g, testIndex=testIndex, norm=norm, norm.type=normtype);
         }
-    }else{
-        S.hier <- tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=norm, norm.type=normtype,
-            positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, parallel=parallel, ncores=cores,
-            threshold=threshold, weight=weight, kk=kk, seed=seed, metric=metric, n.round=round);
+    }else{ ## branch to call HEMDAG by tuning the parameters
+        if(length(threshold)>1 || length(weight)>1){
+            S.hier <- tpr.dag.holdout(S, g, ann=ann, testIndex=testIndex, norm=norm, norm.type=normtype,
+                positive=positive, bottomup=bottomup, topdown=topdown, W=NULL, parallel=parallel, ncores=cores,
+                threshold=threshold, weight=weight, kk=kk, seed=seed, metric=metric, n.round=round);
+        }else{ ## branch to call HEMDAG with fixed the parameters
+            ## add root node if it does not exist
+            if(!(root %in% colnames(S))){
+                max.score <- max(S);
+                z <- rep(max.score,nrow(S));
+                S <- cbind(z,S);
+                colnames(S)[1] <- root;
+            }
+            ## normalization
+            if(norm){
+                S <- scores.normalization(norm.type=normtype, S);
+                cat(normtype, "normalization done\n");
+            }
+            ## shrink S to test indexes
+            S.test <- S[testIndex,];
+            ## degenerate case when test set has just one row/example
+            if(!is.matrix(S.test)){
+                test.sample <- rownames(S)[testIndex];
+                S.test <- matrix(S.test, ncol=length(S.test), dimnames=list(test.sample, names(S.test)));
+            }
+            ## tpr-dag correction
+            S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown,
+                t=threshold, w=weight, W=NULL, parallel=parallel, ncores=cores);
+            ## print chosen parameters
+            if(bottomup=="weighted.threshold.free"){
+                cat("weight: ", weight, "\n");
+            }else if(bottomup=="weighted.threshold"){
+                cat("weight: ", weight, "threshold: ", threshold, "\n");
+            }else{
+                cat("threshold: ", threshold, "\n");
+            }
+            cat("tpr-dag correction done\n");
+        }
     }
 }else{
     if(bottomup=="none"){
@@ -170,10 +208,36 @@ if(exptype == "ho"){
         }else{
             S.hier <- htd.vanilla(S=S, g=g, norm=norm, norm.type=normtype);
         }
-    }else{
-        S.hier <- tpr.dag.cv(S, g, ann=ann, norm=norm, norm.type=normtype, positive=positive, bottomup=bottomup,
-            topdown=topdown, W=NULL, parallel=parallel, ncores=cores, threshold=threshold, weight=weight,
-            kk=kk, seed=seed, metric=metric, n.round=round);
+    }else{  ## branch to call HEMDAG by tuning the parameters
+        if(length(threshold)>1 || length(weight)>1){
+            S.hier <- tpr.dag.cv(S, g, ann=ann, norm=norm, norm.type=normtype, positive=positive, bottomup=bottomup,
+                topdown=topdown, W=NULL, parallel=parallel, ncores=cores, threshold=threshold, weight=weight,
+                kk=kk, seed=seed, metric=metric, n.round=round);
+        }else{  ## branch to call HEMDAG with fixed parameters
+            ## add root node if it does not exist
+            if(!(root %in% colnames(S))){
+                max.score <- max(S);
+                z <- rep(max.score,nrow(S));
+                S <- cbind(z,S);
+                colnames(S)[1] <- root;
+            }
+            ## normalization
+            if(norm){
+                S <- scores.normalization(norm.type=normtype, S);
+                cat(normtype, "normalization done\n");
+            }
+            S.hier <- tpr.dag(S, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown,
+                t=threshold, w=weight, W=NULL, parallel=parallel, ncores=cores);
+            ## print chosen parameters
+            if(bottomup=="weighted.threshold.free"){
+                cat("weight: ", weight, "\n");
+            }else if(bottomup=="weighted.threshold"){
+                cat("weight: ", weight, "threshold: ", threshold, "\n");
+            }else{
+                cat("threshold: ", threshold, "\n");
+            }
+            cat("tpr-dag correction done\n");
+        }
     }
 }
 
