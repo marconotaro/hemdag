@@ -124,8 +124,15 @@ files <- list.files(data.dir);
 flat.file <- files[grep(paste0(organism, ".*", domain, ".scores.*", flat), files)];
 ann.file  <- files[grep(paste0(domain,".ann"), files)];
 dag.file  <- files[grep(paste0(domain,".dag"), files)];
-if(exptype == "ho")
+if(exptype == "ho"){
     idx.file  <- files[grep(paste0(domain,".testindex"), files)];
+    if(length(idx.file)==0)
+    stop("no index file found\n");
+}
+
+## check if flat|ann|dag exists
+if(length(flat.file)==0 || length(ann.file)==0 || length(dag.file)==0)
+    stop("no flat|ann|dag file found\n");
 
 ## load data
 S <- get(load(paste0(data.dir, flat.file)));
@@ -192,11 +199,11 @@ if(exptype == "ho"){
                 t=threshold, w=weight, W=NULL, parallel=parallel, ncores=cores);
             ## print chosen parameters
             if(bottomup=="weighted.threshold.free"){
-                cat("weight: ", weight, "\n");
+                cat("fixed weight:", weight, "\n");
             }else if(bottomup=="weighted.threshold"){
-                cat("weight: ", weight, "threshold: ", threshold, "\n");
+                cat("fixed weight:", weight, "fixed threshold:", threshold, "\n");
             }else{
-                cat("threshold: ", threshold, "\n");
+                cat("fixed threshold:", threshold, "\n");
             }
             cat("tpr-dag correction done\n");
         }
