@@ -138,21 +138,21 @@ Below we show some examples of how to call HEMDAG in time-lapse hold-out experim
 
 .. code-block:: bash
 
-    Rscript hemdag-call.R -o 7227_drome -d mf -e ho -f svmlinear  -p children -b threshold.free -t gpav -l -n 12
+    Rscript hemdag-call.R -o 7227_drome -d mf -e ho -f svmlinear -p children -b threshold.free -t gpav -l -n 12
 
 
 ``isotprW`` call:
 
 .. code-block:: bash
 
-    Rscript hemdag-call.R -o 7227_drome -d mf -e ho -f svmlinear  -p children -b weighted.threshold.free -t gpav -w "seq(from=0.1, to=0.9, by=0.1)" -m auprc -s 23 -k 5 -l -n 12
+    Rscript hemdag-call.R -o 7227_drome -d mf -e ho -f svmlinear -p children -b weighted.threshold.free -t gpav -w "seq(from=0.1, to=0.9, by=0.1)" -m auprc -s 23 -k 5 -l -n 12
 
 
 ``isodescensTF`` call:
 
 .. code-block:: bash
 
-    Rscript hemdag-call.R -o 7227_drome -d mf -e ho -f svmlinear  -p descendants -b threshold.free -t gpav -l -n 12
+    Rscript hemdag-call.R -o 7227_drome -d mf -e ho -f svmlinear -p descendants -b threshold.free -t gpav -l -n 12
 
 
 ``isodescensW`` call:
