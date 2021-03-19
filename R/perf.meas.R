@@ -458,7 +458,7 @@ setMethod("F.measure.multilabel", signature(target="matrix", predicted="matrix")
 
 #' @title Best hierarchical F-score
 #' @description Select the best hierarchical F-score by choosing an appropriate threshold in the scores.
-#' @details All the examples having no positive annotations are discarded. The predicted scores matrix (\code{predicted}) is rounded
+#' @details All the examples having no positive annotations are discarded. The predicted score matrix (\code{predicted}) is rounded
 #' according to parameter \code{n.round} and all the values of \code{predicted} are divided by \code{max(predicted)}.
 #' Then all the thresholds corresponding to all the different values included in \code{predicted} are attempted, and the threshold
 #' leading to the maximum F-measure is selected.

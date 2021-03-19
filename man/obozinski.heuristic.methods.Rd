@@ -14,7 +14,7 @@ obozinski.and(S, g, root = "00")
 obozinski.or(S, g, root = "00")
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns.}
+\item{S}{a named flat score matrix with examples on rows and classes on columns.}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 

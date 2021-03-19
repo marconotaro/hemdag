@@ -13,13 +13,13 @@ scores.normalization(norm.type = "maxnorm", S)
  \item qnorm: a quantile normalization is applied. Package preprocessCore is used;
 }}
 
-\item{S}{A named flat scores matrix with examples on rows and classes on columns.}
+\item{S}{A named flat score matrix with examples on rows and classes on columns.}
 }
 \value{
 The matrix of the scores flat normalized w.r.t. \code{maxnorm} or \code{qnorm}.
 }
 \description{
-Normalize a scores matrix w.r.t. max normalization (\code{maxnorm}) or quantile normalization (\code{qnorm})
+Normalize a score matrix w.r.t. max normalization (\code{maxnorm}) or quantile normalization (\code{qnorm})
 }
 \details{
 To apply the quantile normalization the \pkg{preprocessCore} package must be properly installed.

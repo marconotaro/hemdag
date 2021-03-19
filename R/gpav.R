@@ -114,7 +114,7 @@ gpav <- function(Y, W=NULL, adj){
 #' @title GPAV over examples
 #' @description Compute \code{GPAV} across all the examples.
 #' @seealso \code{\link{gpav.parallel}}
-#' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
+#' @param S a named flat score matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
@@ -128,7 +128,7 @@ gpav.over.examples <- function(S, g, W=NULL){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
     adj <- adj.upper.tri(g);
     M <- c();
     for(i in 1:nrow(S))
@@ -139,7 +139,7 @@ gpav.over.examples <- function(S, g, W=NULL){
 }
 #' @title GPAV over examples -- parallel implementation
 #' @description Compute \code{GPAV} across all the examples (parallel implementation).
-#' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
+#' @param S a named flat score matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
@@ -157,7 +157,7 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
     prnames <- rownames(S);
     adj <- adj.upper.tri(g);
     if(ncores == 0){
@@ -180,7 +180,7 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
 
 #' @title GPAV vanilla
 #' @description Correct the computed scores in a hierarchy according to the \code{GPAV} algorithm.
-#' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
+#' @param S a named flat score matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
@@ -240,9 +240,9 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 
 #' @title GPAV holdout
 #' @description Correct the computed scores in a hierarchy according to the \code{GPAV} algorithm by applying a classical holdout procedure.
-#' @param S a named flat scores matrix with examples on rows and classes on columns (root node included).
+#' @param S a named flat score matrix with examples on rows and classes on columns (root node included).
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
+#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the score matrix \code{S} to be used in the test set.
 #' @param W vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 #' \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).
 #' @param parallel a boolean value. Should the parallel version \code{GPAV} be run?
@@ -290,7 +290,7 @@ gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm
         S <- cbind(z,S);
         colnames(S)[1] <- root;
     }
-    ## shrink flat scores matrix to test test
+    ## shrink flat score matrix to test test
     S <- S[testIndex,];
     ## gpav correction
     if(parallel){

@@ -7,11 +7,11 @@
 htd.holdout(S, g, testIndex, norm = FALSE, norm.type = NULL)
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns.}
+\item{S}{a named flat score matrix with examples on rows and classes on columns.}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.}
+\item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the score matrix \code{S} to be used in the test set.}
 
 \item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}

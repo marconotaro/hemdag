@@ -3,9 +3,9 @@
 ###########################
 
 #' @title Max normalization
-#' @description Normalize the scores of a scores matrix by dividing the score values of each class for the maximum score of the class.
-#' @param S a scores matrix. Rows are examples and columns are classes.
-#' @return A scores matrix with the scores normalized.
+#' @description Normalize the scores of a score matrix by dividing the score values of each class for the maximum score of the class.
+#' @param S a score matrix. Rows are examples and columns are classes.
+#' @return A score matrix with the scores normalized.
 #' @export
 #' @examples
 #' data(scores);
@@ -22,14 +22,14 @@ normalize.max <- function(S){
 }
 
 #' @title Scores normalization function
-#' @description Normalize a scores matrix w.r.t. max normalization (\code{maxnorm}) or quantile normalization (\code{qnorm})
+#' @description Normalize a score matrix w.r.t. max normalization (\code{maxnorm}) or quantile normalization (\code{qnorm})
 #' @details To apply the quantile normalization the \pkg{preprocessCore} package must be properly installed.
 #' @param norm.type can be one of the following two values:
 #' \itemize{
 #'  \item maxnorm (\code{def.}): each score is divided w.r.t. the max of each class;
 #'  \item qnorm: a quantile normalization is applied. Package preprocessCore is used;
 #' }
-#' @param S A named flat scores matrix with examples on rows and classes on columns.
+#' @param S A named flat score matrix with examples on rows and classes on columns.
 #' @return The matrix of the scores flat normalized w.r.t. \code{maxnorm} or \code{qnorm}.
 #' @export
 #' @examples

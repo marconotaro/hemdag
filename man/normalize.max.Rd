@@ -7,13 +7,13 @@
 normalize.max(S)
 }
 \arguments{
-\item{S}{a scores matrix. Rows are examples and columns are classes.}
+\item{S}{a score matrix. Rows are examples and columns are classes.}
 }
 \value{
-A scores matrix with the scores normalized.
+A score matrix with the scores normalized.
 }
 \description{
-Normalize the scores of a scores matrix by dividing the score values of each class for the maximum score of the class.
+Normalize the scores of a score matrix by dividing the score values of each class for the maximum score of the class.
 }
 \examples{
 data(scores);

@@ -26,7 +26,7 @@ tpr.dag.holdout(
 )
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns.}
+\item{S}{a named flat score matrix with examples on rows and classes on columns.}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
@@ -34,7 +34,7 @@ tpr.dag.holdout(
 class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric \code{TPR-DAG} ensemble
 variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.}
 
-\item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.}
+\item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the score matrix \code{S} to be used in the test set.}
 
 \item{norm}{a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.}
@@ -98,11 +98,11 @@ without seed initialization. If \code{bottomup=threshold.free}, set \code{seed=N
 \item{metric}{a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 \enumerate{
  \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
- \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+ \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}});
  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 }}
 
-\item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold
+\item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical score matrix for choosing the best threshold
 on the basis of the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.}
 }
 \value{

@@ -49,7 +49,7 @@ Two different outputs respect to the input parameter \code{b.per.example}:
 Select the best hierarchical F-score by choosing an appropriate threshold in the scores.
 }
 \details{
-All the examples having no positive annotations are discarded. The predicted scores matrix (\code{predicted}) is rounded
+All the examples having no positive annotations are discarded. The predicted score matrix (\code{predicted}) is rounded
 according to parameter \code{n.round} and all the values of \code{predicted} are divided by \code{max(predicted)}.
 Then all the thresholds corresponding to all the different values included in \code{predicted} are attempted, and the threshold
 leading to the maximum F-measure is selected.

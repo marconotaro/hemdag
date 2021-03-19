@@ -675,12 +675,12 @@ tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
 }
 
 #' @name build.scores.matrix
-#' @title Build scores matrix
-#' @description Build a scores matrix from file
+#' @title Build score matrix
+#' @description Build a score matrix from file
 #' @param file name of the text file to be read. The matrix of the input file can be either a list (e.g in the form \code{example nodeX|score}),
 #' or a tupla (i.e. in the form \code{example nodeX score}).The file extension can be plain (".txt") or compressed (".gz").
 #' @param split character vector containing a regular expression use for splitting.
-#' @return A named scores matrix.
+#' @return A named score matrix.
 #' @export
 #' @examples
 #' file.list  <- system.file("extdata/scores.list.txt.gz", package="HEMDAG");
@@ -726,7 +726,7 @@ build.scores.matrix.from.list <- function(file="scores.list.txt", split="[(\t,|)
             }
         }
     }
-    ## build the hierarchical scores matrix in R
+    ## build the hierarchical score matrix in R
     samplename <- m[,1];
     charcheck <- any(suppressWarnings(is.na(as.numeric(samplename))));
     if(charcheck){
@@ -737,7 +737,7 @@ build.scores.matrix.from.list <- function(file="scores.list.txt", split="[(\t,|)
     ngene <- length(genes);
     feat  <- sort(unique(m[,2]));
     nfeat <- length(feat);
-    ## return scores matrix
+    ## return score matrix
     S <- matrix(0, nrow=ngene, ncol=nfeat);
     dimnames(S) <- list(genes, feat);
     S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
@@ -763,7 +763,7 @@ build.scores.matrix.from.tupla <- function(file="scores.tupla.txt"){
     terms <- sort(unique(as.vector(as.matrix(m[,2]))));
     n.prs <- length(prs);
     n.obo <- length(terms);
-    # building scores matrix
+    # building score matrix
     S <- matrix(0, nrow=n.prs, ncol=n.obo);
     dimnames(S) <- list(prs,terms);
     S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);

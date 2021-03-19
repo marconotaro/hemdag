@@ -77,7 +77,7 @@
 #' The most important feature of \code{ISO-TPR} is that it maintains the hierarchical constraints by construction and it selects the closest
 #' solution (in the least square sense) to the bottom-up predictions that obeys the \emph{True Path Rule}.
 #' @seealso \code{\link{gpav}}, \code{\link{htd}}
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that it is on the top-level of the hierarchy (\code{def. root="00"}).
 #' @param positive choice of the \emph{positive} nodes to be considered in the bottom-up strategy. Can be one of the following values:
@@ -155,7 +155,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
     ## computing graph levels
     levels <- graph.levels(g,root);
     ## bottom-up visit: positive children selection
@@ -272,7 +272,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' @title TPR-DAG cross-validation experiments
 #' @description Correct the computed scores in a hierarchy according to the a \code{TPR-DAG} ensemble variant.
 #' @details The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric}.
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param ann an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to
 #' class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric
@@ -330,7 +330,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
 #'  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 #' }
-#' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold on the basis of
+#' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical score matrix for choosing the best threshold on the basis of
 #' the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.
 #' @return A named matrix with the scores of the functional terms corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 #' @export
@@ -473,12 +473,12 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' @title TPR-DAG holdout experiments
 #' @description Correct the computed scores in a hierarchy according to the selected \code{TPR-DAG} ensemble variant by applying a classical holdout procedure.
 #' @details The parametric hierarchical ensemble variants are cross-validated maximizing the parameter on the metric selected in \code{metric},
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param ann an annotation matrix: rows correspond to examples and columns to classes. \eqn{ann[i,j]=1} if example \eqn{i} belongs to
 #' class \eqn{j}, \eqn{ann[i,j]=0} otherwise. \code{ann} matrix is necessary to maximize the hyper-parameter(s) of the chosen parametric \code{TPR-DAG} ensemble
 #' variant respect to the metric selected in \code{metric}. For the parametric-free ensemble variant set \code{ann=NULL}.
-#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
+#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the score matrix \code{S} to be used in the test set.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
@@ -532,7 +532,7 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}});
 #'  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 #' }
-#' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold
+#' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical score matrix for choosing the best threshold
 #' on the basis of the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.
 #' @return A named matrix with the scores of the classes corrected according to the chosen \code{TPR-DAG} ensemble algorithm.
 #' Rows of the matrix are shrunk to \code{testIndex}.

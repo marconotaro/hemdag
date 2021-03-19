@@ -4,7 +4,7 @@
 \alias{build.scores.matrix}
 \alias{build.scores.matrix.from.list}
 \alias{build.scores.matrix.from.tupla}
-\title{Build scores matrix}
+\title{Build score matrix}
 \usage{
 build.scores.matrix.from.list(file = "scores.list.txt", split = "[(\\t,|)]")
 
@@ -17,10 +17,10 @@ or a tupla (i.e. in the form \code{example nodeX score}).The file extension can 
 \item{split}{character vector containing a regular expression use for splitting.}
 }
 \value{
-A named scores matrix.
+A named score matrix.
 }
 \description{
-Build a scores matrix from file
+Build a score matrix from file
 }
 \examples{
 file.list  <- system.file("extdata/scores.list.txt.gz", package="HEMDAG");
