@@ -358,7 +358,7 @@ To know the behavior of the hierarchical ensemble methods, the HEMDAG library pr
 - ``PXR``  : precision at different recall levels;
 
 .. note::
-    #. HEMDAG allows to compute all the aforementioned performance metrics either **one-shot** or **averaged** across k fold. Depending on the dataset size, the metrics ``Fmax`` and ``PXR`` could take a while to finish. Please refer to HEMDAG `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_  for further information about the input arguments of these functions.
+    #. HEMDAG allows to compute all the aforementioned performance metrics either **one-shot** or **averaged** across k fold. Depending on the dataset size, the metrics ``Fmax`` and ``PXR`` could take a while to finish. Please refer to HEMDAG `reference manual <https://raw.githubusercontent.com/marconotaro/hemdag/master/inst/HEMDAG_2.7.4.pdf>`_  for further information about the input arguments of these functions.
     #. For computing the *term-centric* metrics (``AUROC``, ``AUPRC`` and ``PXR``), HEMDAG makes use of the R package *precrec* (`link <https://CRAN.R-project.org/package=precrec>`__).
 
 Load the Annotation Matrix
@@ -516,7 +516,7 @@ Evaluating ``isotprT`` by computing *term-* and *protein-* centric performance (
        0.1    0.2    0.3    0.4    0.5    0.6    0.7    0.8    0.9    1
     0.6848 0.6848 0.6848 0.6697 0.6697 0.5417 0.5027 0.5027 0.5027 0.5027
 
-By properly setting the parameters ``positive``, ``bottomup`` and ``topdown`` of the function ``tpr.dag.cv``, it is easy to make experiments with all the 18 TPR-DAG ensemble variants. For further details on the other input arguments of the function ``tpr.dag.cv``, please refer to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_.
+By properly setting the parameters ``positive``, ``bottomup`` and ``topdown`` of the function ``tpr.dag.cv``, it is easy to make experiments with all the 18 TPR-DAG ensemble variants. For further details on the other input arguments of the function ``tpr.dag.cv``, please refer to the `reference manual <https://raw.githubusercontent.com/marconotaro/hemdag/master/inst/HEMDAG_2.7.4.pdf>`_.
 
 .. note::
 
@@ -531,7 +531,7 @@ For all the hierarchical ensemble algorithms encompassed in the HEMDAG library t
     * ``tpr.dag.holdout``;
     * ``obozinski.holdout``;
 
-For the sake of space we do not show here experiments by using the hold-out version of the hierarchical functions. Please refer to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_, for further details on these functions.
+For the sake of space we do not show here experiments by using the hold-out version of the hierarchical functions. Please refer to the `reference manual <https://raw.githubusercontent.com/marconotaro/hemdag/master/inst/HEMDAG_2.7.4.pdf>`_, for further details on these functions.
 
 
 .. rubric:: References

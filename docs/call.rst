@@ -57,7 +57,7 @@ For the usage of the script, type in the shell under the ``~/hemdag/script/`` fo
     Rscript hemdag-call.R -h
 
 
-For a detailed description of the input arguments *positive, bottomup, topdown, threshold, weight, metric, round, seed, fold, parallel, cores, norm, normtype*, please refer to the description of the input variables of the functions ``(gpav|htd|tpr.dag).(holdout|cv)`` in the `HEMDAG reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`__.
+For a detailed description of the input arguments *positive, bottomup, topdown, threshold, weight, metric, round, seed, fold, parallel, cores, norm, normtype*, please refer to the description of the input variables of the functions ``(gpav|htd|tpr.dag).(holdout|cv)`` in the `HEMDAG reference manual <https://raw.githubusercontent.com/marconotaro/hemdag/master/inst/HEMDAG_2.7.4.pdf>`__.
 
 Parametric-free arguments
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
