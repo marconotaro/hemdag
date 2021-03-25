@@ -7,7 +7,7 @@
 specific.annotation.matrix(file = "gene2pheno.txt.gz")
 }
 \arguments{
-\item{file}{text file representing the associations gene-OBO terms. The file must be written as sequence of rows.
+\item{file}{text file representing the associations gene-ontology terms. The file must be written as sequence of rows.
 Each row represents a gene/protein and all its associations with an ontology term (pipe separated), i.e. in the form \emph{e.g.: gene1 |obo1|obo2|...|oboN}.}
 }
 \value{
@@ -18,9 +18,9 @@ Let's denote \eqn{M} the labels matrix. If \eqn{M[i,j]=1}, means that the gene \
 Build the annotation matrix of the most specific functional terms.
 }
 \details{
-The input plain text file (representing the associations gene-OBO terms) can be obtained by cloning the GitHub repository
-\href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and
-their gene annotation file (gaf file).
+The input plain text file (representing the associations gene-ontology terms) can be obtained by cloning the GitHub repository
+\href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo files and
+their gene annotation files (gaf file).
 }
 \examples{
 gene2pheno <- system.file("extdata/gene2pheno.txt.gz", package="HEMDAG");
