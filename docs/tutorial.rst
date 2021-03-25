@@ -95,7 +95,21 @@ If you want to visualize the *ancestors view* of the term ``HP:0100490``, just t
 
 Utility Functions for Graphs (optional)
 ------------------------------------------
-HEMDAG library includes several utility functions to process and analyze graphs as well as I/O functions to import a graph as object of class ``graphNEL`` or to export a graph as object of class ``graphNEL`` in a plain text file (in the classical tupla format). For more details on these functions, please have a look to the `reference manual <https://cran.r-project.org/web/packages/HEMDAG/HEMDAG.pdf>`_.
+HEMDAG includes 33 utility functions (listed below) to process and analyze graphs as well as I/O functions to import a graph as object of class ``graphNEL`` or to export a graph as object of class ``graphNEL`` in a plain text file (in the classical tupla format). For more details on these functions, refer to the `reference manual <https://raw.githubusercontent.com/marconotaro/hemdag/master/inst/HEMDAG_2.7.4.pdf>`_.
+
+.. code-block:: R
+
+    build.ancestors                         build.parents                              constraints.matrix
+    build.ancestors.bottom.up               build.parents.bottom.up                    distances.from.leaves
+    build.ancestors.per.level               build.parents.top.down                     find.leaves
+    build.children                          build.parents.topological.sorting          graph.levels
+    build.children.bottom.up                build.scores.matrix.from.list              lexicographical.topological.sort
+    build.children.top.down                 build.scores.matrix.from.tupla             read.graph
+    build.consistent.graph                  build.subgraph                             read.undirected.graph
+    build.descendants                       check.dag.integrity                        root.node
+    build.descendants.bottom.up             check.hierarchy                            tupla.matrix
+    build.descendants.per.level             check.hierarchy.single.sample              weighted.adjacency.matrix
+    build.edges.from.hpo.obo                compute.flipped.graph                      write.graph
 
 .. _hem:
 
