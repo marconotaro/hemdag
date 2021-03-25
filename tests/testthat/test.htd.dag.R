@@ -22,7 +22,7 @@ test_that("htd works",{
 
     ## test class mismatch
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(htd(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+    expect_error(htd(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
 })
 
 test_that("htd.vanilla works",{

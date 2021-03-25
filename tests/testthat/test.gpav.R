@@ -48,7 +48,7 @@ test_that("gpav.over.examples works", {
     expect_equal(S.gpav, S.check);
 
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(gpav.over.examples(S.error, g, W=NULL), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+    expect_error(gpav.over.examples(S.error, g, W=NULL), "mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
 })
 
 test_that("gpav.parallel works", {
@@ -67,7 +67,7 @@ test_that("gpav.parallel works", {
     }
 
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(gpav.parallel(S.error, g, W=NULL), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+    expect_error(gpav.parallel(S.error, g, W=NULL), "mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
 
     ## gpav.parallel with ncores>2
     ## R CMD check allows a maximum of two cores -> see a 'NB:...' in the R Packages Book (http://r-pkgs.had.co.nz/check.html)
