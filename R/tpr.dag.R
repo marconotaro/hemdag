@@ -10,10 +10,8 @@
 #' Indeed, in their more general form the \code{TPR-DAG} algorithms adopt a two step learning strategy:
 #' \enumerate{
 #'  \item in the first step they compute a \emph{per-level bottom-up} visit from leaves to root to propagate \emph{positive} predictions across the hierarchy;
-#'  \item in the second step they compute a \emph{per-level top-down} visit from root to leaves in order to assure the consistency of the predictions.
+#'  \item in the second step they guarantee the consistency of the predictions.
 #' }
-#' It is worth noting that levels (both in the first and second step) are defined in terms of the maximum distance from
-#' the root node (see \code{\link{graph.levels}}).
 #' @details The \emph{vanilla} \code{TPR-DAG} adopts a per-level bottom-up traversal of the DAG to correct the flat predictions
 #' \eqn{\hat{y}_i} according to the following formula:
 #' \deqn{
@@ -327,7 +325,7 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' @param metric a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 #' \enumerate{
 #'  \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
-#'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+#'  \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}});
 #'  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 #' }
 #' @param n.round number of rounding digits (def. \code{3}) to be applied to the hierarchical score matrix for choosing the best threshold on the basis of

@@ -95,7 +95,7 @@ initialization. If \code{bottomup=threshold.free}, set \code{seed=NULL}.}
 \item{metric}{a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 \enumerate{
  \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
- \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+ \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}});
  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 }}
 
