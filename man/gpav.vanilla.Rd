@@ -15,7 +15,7 @@ gpav.vanilla(
 )
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns (root node included).}
+\item{S}{a named flat score matrix with examples on rows and classes on columns (root node included).}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 

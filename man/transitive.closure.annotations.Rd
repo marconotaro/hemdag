@@ -12,7 +12,7 @@ transitive.closure.annotations(ann.spec, anc)
 \item{anc}{the ancestor list.}
 }
 \value{
-The annotation table T: rows correspond to genes and columns to OBO terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
+The annotation table T: rows correspond to genes and columns to ontology terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
 \eqn{T[i,j]=0} means that gene \eqn{i} is not annotated for the term \eqn{j}.
 }
 \description{

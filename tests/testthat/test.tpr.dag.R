@@ -115,7 +115,7 @@ test_that("tpr.dag works",{
     ## class mismatch
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
     expect_error(tpr.dag(S.error, g, root, positive="children", bottomup="threshold.free", topdown="htd"),
-        "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        "mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
 
     ## stop/warnings messages
     expect_error(tpr.dag(S, g, root, positive="child", bottomup="threshold.free", topdown="htd"),

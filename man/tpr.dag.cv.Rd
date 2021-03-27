@@ -25,7 +25,7 @@ tpr.dag.cv(
 )
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns.}
+\item{S}{a named flat score matrix with examples on rows and classes on columns.}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
@@ -95,11 +95,11 @@ initialization. If \code{bottomup=threshold.free}, set \code{seed=NULL}.}
 \item{metric}{a string character specifying the performance metric on which maximizing the parametric ensemble variant. It can be one of the following values:
 \enumerate{
  \item \code{auprc} (def.): the parametric ensemble variant is maximized on the basis of AUPRC (\code{\link{auprc}});
- \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}};
+ \item \code{fmax}: the parametric ensemble variant is maximized on the basis of Fmax (\code{\link{multilabel.F.measure}});
  \item \code{NULL}: \code{threshold.free} variant is parameter-free, so none optimization is needed.
 }}
 
-\item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical scores matrix for choosing the best threshold on the basis of
+\item{n.round}{number of rounding digits (def. \code{3}) to be applied to the hierarchical score matrix for choosing the best threshold on the basis of
 the best Fmax. If \code{bottomup==threshold.free} or \code{metric="auprc"}, set \code{n.round=NULL}.}
 }
 \value{

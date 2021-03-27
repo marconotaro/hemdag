@@ -22,7 +22,7 @@ test_that("obozinski.max works", {
 
     ## test class mismatch
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(obozinski.max(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+    expect_error(obozinski.max(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
 })
 
 test_that("obozinski.and works", {
@@ -44,7 +44,7 @@ test_that("obozinski.and works", {
 
     ## test class mismatch
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(obozinski.and(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+    expect_error(obozinski.and(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
 })
 
 test_that("obozinski.or works", {
@@ -66,7 +66,7 @@ test_that("obozinski.or works", {
 
     ## test class mismatch
     S.error <- S[,-which(colnames(S) %in% c("D","H"))];
-    expect_error(obozinski.or(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+    expect_error(obozinski.or(S.error, g, root), "mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
 })
 
 test_that("obozinski.methods works", {

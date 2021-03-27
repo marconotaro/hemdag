@@ -4,10 +4,10 @@
 
 #' @title Specific annotation matrix
 #' @description Build the annotation matrix of the most specific functional terms.
-#' @details The input plain text file (representing the associations gene-OBO terms) can be obtained by cloning the GitHub repository
-#' \href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo file and
-#' their gene annotation file (gaf file).
-#' @param file text file representing the associations gene-OBO terms. The file must be written as sequence of rows.
+#' @details The input plain text file (representing the associations gene-ontology terms) can be obtained by cloning the GitHub repository
+#' \href{https://github.com/marconotaro/obogaf-parser}{obogaf-parser}, a perl5 module specifically designed to handle HPO and GO obo files and
+#' their gene annotation files (gaf file).
+#' @param file text file representing the associations gene-ontology terms. The file must be written as sequence of rows.
 #' Each row represents a gene/protein and all its associations with an ontology term (pipe separated), i.e. in the form \emph{e.g.: gene1 |obo1|obo2|...|oboN}.
 #' @return The annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms (such as GO or HPO).
 #' Let's denote \eqn{M} the labels matrix. If \eqn{M[i,j]=1}, means that the gene \eqn{i} is annotated with the class \eqn{j}, otherwise \eqn{M[i,j]=0}.
@@ -74,7 +74,7 @@ specific.annotation.list <- function(ann){
 #' The annotations are propagated from bottom to top, enriching the most specific annotations table. Rows correspond to genes and columns to functional terms.
 #' @param ann.spec the annotation matrix of the most specific annotations (0/1): rows are genes and columns are functional terms.
 #' @param anc the ancestor list.
-#' @return The annotation table T: rows correspond to genes and columns to OBO terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
+#' @return The annotation table T: rows correspond to genes and columns to ontology terms. \eqn{T[i,j]=1} means that gene \eqn{i} is annotated for the term \eqn{j},
 #' \eqn{T[i,j]=0} means that gene \eqn{i} is not annotated for the term \eqn{j}.
 #' @export
 #' @examples

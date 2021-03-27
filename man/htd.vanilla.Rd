@@ -7,7 +7,7 @@
 htd.vanilla(S, g, norm = FALSE, norm.type = NULL)
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns.}
+\item{S}{a named flat score matrix with examples on rows and classes on columns.}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 

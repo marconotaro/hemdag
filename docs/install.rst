@@ -26,37 +26,28 @@ from the `Bioconda <https://bioconda.github.io>`_ channel.
 
 Global Installation
 ========================
-You can directly install the library via R by typing
+You can directly install the library via R by typing in your terminal:
 
 .. code-block:: console
 
     $ R -e 'install.packages("HEMDAG", repos="http://cran.us.r-project.org")'
 
-in your terminal. But be sure to install R properly before that command.
-
 Alternatively, you can install the HEMDAG library by typing in the R environment:
 
- .. code-block:: R
+.. code-block:: R
 
-	install.packages("HEMDAG");
+    install.packages("HEMDAG");
 
-Another possibility to install the development version of HEMDAG is by using the *devtools* package:
+Another possibility to install the development version of HEMDAG is by using the *devtools* package (`link <https://CRAN.R-project.org/package=devtools>`_):
 
- .. code-block:: R
+.. code-block:: R
 
-	library(devtools);
-	install_github("marconotaro/hemdag");
+    library(devtools);
+    install_github("marconotaro/hemdag");
 
-Before running the above commands be sure to have correctly installed the *devtools* package (`link <https://CRAN.R-project.org/package=devtools>`_)
-
-Installing from Source
+Dependencies
 =======================
-This section describes how to build HEMDAG from scratch.
-
-Prerequisite
----------------
-
-For building HEMDAG, you will need the following dependencies
+To install or build HEMDAG the following dependencies are required:
 
  - R (≥ 2.10)
 
@@ -70,13 +61,30 @@ For building HEMDAG, you will need the following dependencies
     - foreach
     - doParallel
 
+.. note::
+
+    CRAN does not automatically install Bioconductor packages. To install them:
+
+    .. code-block:: R
+
+        if(!requireNamespace("BiocManager", quietly=TRUE))
+            install.packages("BiocManager")
+
+        BiocManager::install("graph")
+        BiocManager::install("rbgl")
+        BiocManager::install("preprocessCore")
+
+Installing from Source
+=======================
+Here we describe how to build HEMDAG from scratch.
+
 Package from CRAN
 -----------------------------------
 On a Linux environment, download the package source from the `CRAN repo <https://CRAN.R-project.org/package=HEMDAG>`_ and save it (for instance) in the folder ``pippo``. Then type:
 
  .. code-block:: console
 
-	R CMD INSTALL pippo/HEMDAG_<pkg-version-number>.tar.gz
+    R CMD INSTALL pippo/HEMDAG_<pkg-version-number>.tar.gz
 
 .. note::
 

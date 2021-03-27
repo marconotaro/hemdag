@@ -16,11 +16,11 @@ gpav.holdout(
 )
 }
 \arguments{
-\item{S}{a named flat scores matrix with examples on rows and classes on columns (root node included).}
+\item{S}{a named flat score matrix with examples on rows and classes on columns (root node included).}
 
 \item{g}{a graph of class \code{graphNEL}. It represents the hierarchy of the classes.}
 
-\item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.}
+\item{testIndex}{a vector of integer numbers corresponding to the indexes of the elements (rows) of the score matrix \code{S} to be used in the test set.}
 
 \item{W}{vector of weight relative to a single example. If \code{W=NULL} (def.) it is assumed that
 \code{W} is a unitary vector of the same length of the columns' number of the matrix \code{S} (root node included).}

@@ -18,7 +18,7 @@
 #'  \right.
 #' }
 #' The node levels correspond to their maximum path length from the root.
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that it is the top-level of the hierarchy (\code{def:00}).
 #' @return A matrix with the scores of the classes corrected according to the \code{HTD-DAG} algorithm.
@@ -40,7 +40,7 @@ htd <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
     # nodes are scanned from top to bottom: a list par.tod with the parents for each node (ordered from top to bottom) is obtained
     par.tod <- build.parents.top.down(g,levels,root)
     for(i in 1:length(par.tod)){
@@ -59,7 +59,7 @@ htd <- function(S, g, root="00"){
 
 #' @title HTD-DAG vanilla
 #' @description Correct the computed scores in a hierarchy according to the \code{HTD-DAG} algorithm.
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
@@ -95,9 +95,9 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 
 #' @title HTD-DAG holdout
 #' @description Correct the computed scores in a hierarchy according to the \code{HTD-DAG} algorithm applying a classical holdout procedure.
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
+#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the score matrix \code{S} to be used in the test set.
 #' @param norm a boolean value. Should the flat score matrix be normalized? By default \code{norm=FALSE}.
 #' If \code{norm=TRUE} the matrix \code{S} is normalized according to the normalization type selected in \code{norm.type}.
 #' @param norm.type a string character. It can be one of the following values:
@@ -124,7 +124,7 @@ htd.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL){
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done\n");
     }
-    ## shrinking scores matrix to test test
+    ## shrinking score matrix to test test
     S <- S[testIndex,];
     ## hierarchical top-down
     root <- root.node(g);

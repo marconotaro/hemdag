@@ -1,5 +1,5 @@
 docs/_build/
-docs/_static/
+docs/playground/res/
 extra/
 .Rd2pdf*/
 src/gpav.o

@@ -17,7 +17,7 @@
 #'  \item \bold{Or}: computes the probability that at least one of the descendant terms is "on" assuming again that, conditional on the data,
 #'   all predictions are independent: \eqn{1 - p_i = \prod_{j \in descendants(i)} (1 - \hat{p_j})};
 #' }
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param root name of the class that it is the top-level of the hierarchy (\code{def:00}).
 #' @return A matrix with the scores of the classes corrected according to the chosen Obozinski's heuristic algorithm.
@@ -39,7 +39,7 @@ obozinski.max <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
     desc <- build.descendants(g);
     for(i in 1:length(desc)){
         m <- as.matrix(S[,desc[[i]]]);
@@ -60,7 +60,7 @@ obozinski.and <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
     S.hier <- S;
     anc <- build.ancestors(g);
     for(i in 1:length(anc)){
@@ -85,7 +85,7 @@ obozinski.or <- function(S, g, root="00"){
     ## check consistency between nodes of g and classes of S
     class.check <- ncol(S)!=numNodes(g);
     if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the scores matrix S");
+        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
     S.hier <- S;
     desc <- build.descendants(g);
     for(i in 1:length(desc)){
@@ -100,7 +100,7 @@ obozinski.or <- function(S, g, root="00"){
 
 #' @title Obozinski's heuristic methods calling
 #' @description Compute the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008}).
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
 #' @param heuristic a string character. It can be one of the following three values:
 #' \enumerate{
@@ -150,9 +150,9 @@ obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
 #' @title Obozinski's heuristic methods -- holdout
 #' @description Compute the Obozinski's heuristic methods \code{Max}, \code{And}, \code{Or} (\cite{Obozinski et al., Genome Biology, 2008})
 #' applying a classical holdout procedure.
-#' @param S a named flat scores matrix with examples on rows and classes on columns.
+#' @param S a named flat score matrix with examples on rows and classes on columns.
 #' @param g a graph of class \code{graphNEL}. It represents the hierarchy of the classes.
-#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the scores matrix \code{S} to be used in the test set.
+#' @param testIndex a vector of integer numbers corresponding to the indexes of the elements (rows) of the score matrix \code{S} to be used in the test set.
 #' @param heuristic a string character. It can be one of the following three values:
 #' \enumerate{
 #'  \item "max": run the method \code{heuristic.max};
@@ -187,7 +187,7 @@ obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm
         S <- scores.normalization(norm.type=norm.type, S);
         cat(norm.type, "normalization: done\n");
     }
-    ## shrinking scores matrix to test test
+    ## shrinking score matrix to test test
     S <- S[testIndex,];
     ## Obozinski's hierarchical heuristic methods
     root <- root.node(g);
