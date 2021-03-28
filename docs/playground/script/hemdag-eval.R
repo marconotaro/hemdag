@@ -10,9 +10,9 @@ optionList <- list(
         help="organism name in the form <taxon>_<name> (def 7227_drome)"),
     make_option(c("-d", "--domain"),  type="character", default="mf",
         help="gene ontology domain -- bp, mf, cc (def. mf)"),
-     make_option(c("-e", "--exptype"), type="character", default="cv",
+     make_option(c("-e", "--exptype"), type="character", default="ho",
         help="type of dataset on which run HEMDAG. It can be: ho (hold-out) or cv (cross-validated) -- def. ho"),
-    make_option(c("-f", "--flat"), type="character", default="ranger",
+    make_option(c("-f", "--flat"), type="character", default="svmlinear",
         help="flat classifier (def. svmlinear)"),
     make_option(c("-a", "--algorithm"), type="character", default="isodescensTAU",
         help="hierarchical correction algorithm (def. isodescensTAU)")
@@ -40,8 +40,15 @@ files <- list.files(data.dir);
 flat.file <- files[grep(paste0(organism, ".*", domain, ".scores.*", flat), files)];
 ann.file  <- files[grep(paste0(domain,".ann"), files)];
 dag.file  <- files[grep(paste0(domain,".dag"), files)];
-if(exptype == "ho")
+## check if flat|ann|dag exists
+if(length(flat.file)==0 || length(ann.file)==0 || length(dag.file)==0)
+    stop("no flat|ann|dag file found\n");
+
+if(exptype == "ho"){
     idx.file  <- files[grep(paste0(domain,".testindex"), files)];
+    if(length(idx.file)==0)
+        stop("no idx file found\n");
+}
 
 ## hier file
 files <- list.files(res.dir);
@@ -68,14 +75,16 @@ if(class.check){
     ann <- ann[, colnames(S)];
 }
 
-## remove root node S nad S.hier score matrix (if any)
+## remove root node S and S.hier score matrix (if any)
 root <- root.node(g);
-if((root %in% colnames(S)) && (root %in% colnames(S.hier))){
-	S <- S[,-which(colnames(S)==root)];
-    S.hier <- S.hier[,-which(colnames(S.hier)==root)];
-	cat("root node removed from flat and hierarchical score matrix\n");
+if(root %in% colnames(S)){
+    S <- S[,-which(colnames(S)==root)];
+    cat("root node removed from flat score matrix\n");
 }
-
+if(root %in% colnames(S.hier)){
+    S.hier <- S.hier[,-which(colnames(S.hier)==root)];
+    cat("root node removed from hierarchical score matrix\n");
+}
 ## remove root node from annotation matrix (if any)
 if(root %in% colnames(ann)){
     ann <- ann[,-which(colnames(ann)==root)];
