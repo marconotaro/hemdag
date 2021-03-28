@@ -5,18 +5,22 @@ use warnings;
 use Getopt::Long 'HelpMessage';
 
 GetOptions(
-    'exp=s' => \(my $exp='ho'),
-    'chk=i' => \(my $chk='12'),
-    'help'  => sub {HelpMessage(0)},
+    "org=s"  => \(my @orgs=""),
+    "flat=s" => \(my @flats=""),
+    "alg=s"  => \(my @algs=""),
+    "dmn=s"  => \(my @onts=""),
+    'exp=s'  => \(my $exp='ho'),
+    'chk=i'  => \(my $chk='12'),
+    'help'   => sub {HelpMessage(0)},
 ) or HelpMessage(1);
+
+@orgs=  split(/,/,join(',',@orgs));
+@flats= split(/,/,join(',',@flats));
+@algs=  split(/,/,join(',',@algs));
+@onts=  split(/,/,join(',',@onts));
 
 print "#!/bin/sh\n\n";
 print "tot_start=\$(date +%s)\n\n";
-
-my @orgs=  qw(7227_drome); ## organism(s) list
-my @flats= qw(svmlinear);  ## flat classifier(s) list
-my @algs=  qw(gpav isotprTF isotprW isodescensTF isodescensW isodescensTAU);  ## HEMDAG algorithm(s) list
-my @onts=  qw(mf);  ## GO domain(s) list (bp mf cc)
 
 my $k=0;  ## cpu number on which binding a task
 foreach my $org (@orgs){
@@ -25,7 +29,7 @@ foreach my $org (@orgs){
             foreach my $ont (@onts){
                 $k++;
                 my $cpu= $k-1;
-                print "taskset -c $cpu Rscript hemdag-eval.R -o $org -d $ont -e $exp -f $flat -a $alg > $org"."_go_"."$ont"."_"."$flat"."_"."$alg"."_perfmeas.out 2> /dev/null \n";
+                print "taskset -c $cpu Rscript hemdag-eval.R -o $org -d $ont -e $exp -f $flat -a $alg > $org"."_go_"."$ont"."_"."$flat"."_"."$alg"."_perfmeas.out 2> /dev/null &\n";
                 if($k % $chk ==0){
                     print "\n";
                     print "wait\n";
@@ -53,13 +57,17 @@ __END__
 
 =head1 NAME
 
-call-hemdag-per-eval - generate HEMDAG evaluation calls chunks
+call-hemdag-chunk - generate HEMDAG evaluation calls chunks
 
 =head1 SYNOPSIS
 
-  --exp,-e   type of dataset on which evaluate HEMDAG. It can be: ho or cv (by def. ho)
-  --blk,-b   number of parallel evaluations to be computed before going to the next block (by def 12)
-  --help,-h  print this help
+    --org,-o    organism list. The list can have one or more elements. The elements must be comma separated (7227_drome,9031_chick,..)
+    --flt,-f    flat classifier list. The list can have one or more elements. The elements must be comma separated (svmlinear,ranger,..)
+    --alg,-a    hierarchical correction algorithm list. The list can have one or more elements. The elements must be comma separated (gpav,isodescensTF,isodescensTAU,..)
+    --dmn,-d    gene ontology domain list. The list can have one or more elements. The elements must be comma separated (bp,mf,cc)
+    --exp,-e    type of dataset on which evaluate HEMDAG. It can be: ho or cv (def. ho)
+    --chk,-c    number of parallel evaluations to be computed before going to the next block (def 12)
+    --help,-h   print this help
 
 =cut
 
