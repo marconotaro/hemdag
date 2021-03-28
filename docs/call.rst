@@ -21,6 +21,14 @@ Instead, to obtain the flat score matrix you can use the `shogun library <https:
 
     HEMDAG is built upon flat predictions. HEMDAG corrects all the violations of the hierarchical relationships between ontology terms.
 
+.. note::
+
+    To run the experiments shown below, make sure you have installed the following requirements:
+
+        - HEMDAG >= 2.7.4
+        - R >= 4.0.4
+        - Ubuntu >= 16.04
+
 .. _hemdagscript:
 
 HEMDAG Call Script
@@ -37,10 +45,9 @@ You can download the script as follow:
 
     mkdir -p ~/hemdag/script/
     cd ~/hemdag/script/
-    wget https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-call.R
+    wget -nc https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-call.R
 
 Before executing the script be sure to have correctly installed the latest version of the HEMDAG package (and all its dependencies -- see :ref:`installation`) and the package `optparse <https://cran.r-project.org/web/packages/optparse/>`__.
-
 
 .. note::
 
@@ -187,7 +194,7 @@ To download and use the performance evaluation script:
     ## download
     mkdir -p ~/hemdag/script/
     cd ~/hemdag/script/
-    wget https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-checker.R
+    wget -nc https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-checker.R
 
     ## call
     Rscript hemdag-checker.R -e ho
@@ -220,7 +227,7 @@ To download and use the HEMDAG evaluation script:
     ## download
     mkdir -p ~/hemdag/script/
     cd ~/hemdag/script/
-    wget https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-eval.R
+    wget -nc https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-eval.R
 
     ## call
     Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a gpav
@@ -246,7 +253,7 @@ To download and use the Perl script that generates "chunks" of HEMDAG evaluation
     ## download the perl script
     mkdir -p ~/hemdag/script/
     cd ~/hemdag/script/
-    wget https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-chunk.pl
+    wget -nc https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-chunk.pl
 
     ## generate chunk evaluation calls
     perl hemdag-chunk.pl -e ho -c 6 > hemdag-ho-eval.sh

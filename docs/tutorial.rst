@@ -13,7 +13,11 @@ Of course, the number of terms among the graph, the flat score matrix and the an
 
 .. note::
 
-    For the experiments shown below, we used the latest version of HEMDAG package, the R version 4.0.4 and on a machine having Ubuntu 20.04 as operative system.
+    To run the experiments shown in this page, make sure you have installed the following requirements:
+
+        - HEMDAG >= 2.7.4
+        - R >= 3.4.4
+        - Ubuntu >= 16.04
 
 Load the HEMDAG Library
 ==============================
