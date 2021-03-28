@@ -187,7 +187,7 @@ All the HEMDAG score matrices respect the hierarchical constraints imposed by th
     :linenos:
 
 
-To download and use the performance evaluation script:
+To download and use the hierarchical constraints script:
 
 .. code-block:: bash
 
@@ -197,24 +197,34 @@ To download and use the performance evaluation script:
     wget -nc https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-checker.R
 
     ## call
-    Rscript hemdag-checker.R -e ho
+    Rscript hemdag-checker.R -o 7227_drome -d mf -e cv -f ranger -a isodescensTAU
+
+
+You can call ``hemdag-checker.R`` by looping through more hierarchical ensemble methods:
+
+.. code-block:: bash
+
+    algotihms=("gpav" "isotprTF" "isotprW" "isodescensTF" "isodescensW" "isodescensTAU")
+
+    for ((i=0; i<${#algotihms[@]}; i++)); do
+        Rscript hemdag-checker.R -o 7227_drome -d mf -e ho -f svmlinear -a ${algotihms[$i]}
+    done;
 
     ## example of stdout
-    drome mf svmlinear+gpav check passed :)
-    drome mf svmlinear+isotprTF check passed :)
-    drome mf svmlinear+isotprW check passed :)
-    drome mf svmlinear+isodescensTF check passed :)
-    drome mf svmlinear+isodescensW check passed :)
-    drome mf svmlinear+isodescensTAU check passed :)
+    7227 drome mf ranger+gpav check passed :)
+    7227 drome mf ranger+isotprTF check passed :)
+    7227 drome mf ranger+isotprW check passed :)
+    7227 drome mf ranger+isodescensTF check passed :)
+    7227 drome mf ranger+isodescensW check passed :)
+    7227 drome mf ranger+isodescensTAU check passed :)
 
-
-You can customize the R script ``hemdag-checker.R`` by extending the vectors *orgs, flats, algs, onts* with the values of your interest.
+Of course, you can loop ``hemdag-checker.R`` also through the arguments ``-o, -d, -e, -f`` according with the values of your interest.
 
 .. _hemdageval:
 
 Evaluation
 -------------------
-To evaluate the generalization performance of HEDMAG in time-lapse hold-out experiments, you can use the *term-centric* and/or *protein-centric* evaluation metrics provided by the HEMDAG package itself. For further details on the implemented performance metric refer to section :ref:`eval` of the HEMDAG tutorial.
+To evaluate the generalization performance of HEDMAG in the time-lapse hold-out experiments performed above, you can use the *term-centric* and/or *protein-centric* evaluation metrics provided by the HEMDAG package itself. For further details on the implemented performance metric refer to section :ref:`eval` of the HEMDAG tutorial.
 
 .. literalinclude:: playground/script/hemdag-eval.R
     :language: R
@@ -256,13 +266,54 @@ To download and use the Perl script that generates "chunks" of HEMDAG evaluation
     wget -nc https://raw.githubusercontent.com/marconotaro/hemdag/master/docs/playground/script/hemdag-chunk.pl
 
     ## generate chunk evaluation calls
-    perl hemdag-chunk.pl -e ho -c 6 > hemdag-ho-eval.sh
+    perl hemdag-chunk.pl -o 7227_drome -d mf -f svmlinear -a gpav,isotprTF,isotprW,isodescensTF,isodescensW,isodescensTAU -e ho -c 6 > hemdag-ho-eval.sh
 
     ## evaluate HEMDAG in chunks
-    bash hemdag-ho-eval.sh > out
+    bash hemdag-ho-eval.sh > out &
 
+You can generate the calls that you wish, simply by extending the arguments of the arrays *@orgs, @flats, @algs, @onts* with the wanted values. For instance, by setting ``-d bp,mf,cc``, the Perl script ``hemdag-chunk.pl`` returns 2 chunks of evaluation calls, the first made of 12 calls and the second one of 6 calls:
 
-You can customize the Perl script ``hemdag-chunk.pl`` by extending the arrays *@orgs, @flats, @algs, @onts* with the values of your interest. For instance, by setting ``my @onts=  qw(bp mf cc)``, the call ``perl call-hemdag-perf-eval.pl -e ho -c 12`` returns in output 2 chunks of evaluation calls, the first made of 12 calls and the second one of 6 calls. Modify the script to see the output printed on the shell :raw-html:`&#128515;`.
+.. code-block:: bash
+
+    ## call
+    perl hemdag-chunk.pl -o 7227_drome -d bp,mf,cc -f svmlinear -a gpav,isotprTF,isotprW,isodescensTF,isodescensW,isodescensTAU -e ho -c 12
+
+    ## stdout
+
+    #!/bin/sh
+
+    tot_start=$(date +%s)
+
+    taskset -c 0 Rscript hemdag-eval.R -o 7227_drome -d bp -e ho -f svmlinear -a gpav > 7227_drome_go_bp_svmlinear_gpav_perfmeas.out 2> /dev/null &
+    taskset -c 1 Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a gpav > 7227_drome_go_mf_svmlinear_gpav_perfmeas.out 2> /dev/null &
+    taskset -c 2 Rscript hemdag-eval.R -o 7227_drome -d cc -e ho -f svmlinear -a gpav > 7227_drome_go_cc_svmlinear_gpav_perfmeas.out 2> /dev/null &
+    taskset -c 3 Rscript hemdag-eval.R -o 7227_drome -d bp -e ho -f svmlinear -a isotprTF > 7227_drome_go_bp_svmlinear_isotprTF_perfmeas.out 2> /dev/null &
+    taskset -c 4 Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a isotprTF > 7227_drome_go_mf_svmlinear_isotprTF_perfmeas.out 2> /dev/null &
+    taskset -c 5 Rscript hemdag-eval.R -o 7227_drome -d cc -e ho -f svmlinear -a isotprTF > 7227_drome_go_cc_svmlinear_isotprTF_perfmeas.out 2> /dev/null &
+    taskset -c 6 Rscript hemdag-eval.R -o 7227_drome -d bp -e ho -f svmlinear -a isotprW > 7227_drome_go_bp_svmlinear_isotprW_perfmeas.out 2> /dev/null &
+    taskset -c 7 Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a isotprW > 7227_drome_go_mf_svmlinear_isotprW_perfmeas.out 2> /dev/null &
+    taskset -c 8 Rscript hemdag-eval.R -o 7227_drome -d cc -e ho -f svmlinear -a isotprW > 7227_drome_go_cc_svmlinear_isotprW_perfmeas.out 2> /dev/null &
+    taskset -c 9 Rscript hemdag-eval.R -o 7227_drome -d bp -e ho -f svmlinear -a isodescensTF > 7227_drome_go_bp_svmlinear_isodescensTF_perfmeas.out 2> /dev/null &
+    taskset -c 10 Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a isodescensTF > 7227_drome_go_mf_svmlinear_isodescensTF_perfmeas.out 2> /dev/null &
+    taskset -c 11 Rscript hemdag-eval.R -o 7227_drome -d cc -e ho -f svmlinear -a isodescensTF > 7227_drome_go_cc_svmlinear_isodescensTF_perfmeas.out 2> /dev/null &
+
+    wait
+
+    taskset -c 0 Rscript hemdag-eval.R -o 7227_drome -d bp -e ho -f svmlinear -a isodescensW > 7227_drome_go_bp_svmlinear_isodescensW_perfmeas.out 2> /dev/null &
+    taskset -c 1 Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a isodescensW > 7227_drome_go_mf_svmlinear_isodescensW_perfmeas.out 2> /dev/null &
+    taskset -c 2 Rscript hemdag-eval.R -o 7227_drome -d cc -e ho -f svmlinear -a isodescensW > 7227_drome_go_cc_svmlinear_isodescensW_perfmeas.out 2> /dev/null &
+    taskset -c 3 Rscript hemdag-eval.R -o 7227_drome -d bp -e ho -f svmlinear -a isodescensTAU > 7227_drome_go_bp_svmlinear_isodescensTAU_perfmeas.out 2> /dev/null &
+    taskset -c 4 Rscript hemdag-eval.R -o 7227_drome -d mf -e ho -f svmlinear -a isodescensTAU > 7227_drome_go_mf_svmlinear_isodescensTAU_perfmeas.out 2> /dev/null &
+    taskset -c 5 Rscript hemdag-eval.R -o 7227_drome -d cc -e ho -f svmlinear -a isodescensTAU > 7227_drome_go_cc_svmlinear_isodescensTAU_perfmeas.out 2> /dev/null &
+
+    tot_end=$(date +%s)
+    tot_elapsed_s=$((tot_end-tot_start))
+    tot_elapsed_m=$((tot_elapsed_s/60))
+    tot_elapsed_h=$((tot_elapsed_m/60))
+    printf "grand total elapsed time:   $((tot_elapsed_s)) SECONDS  $((tot_elapsed_m)) MINUTES  $((tot_elapsed_h)) HOURS"
+    echo
+
+    echo "compute performance done"
 
 
 Cross-validated experiments
@@ -292,13 +343,13 @@ With the command above, we download the following datasets:
 
 Programmatic Call
 ---------------------
-To execute any HEMDAG algorithm on cross-validated datasets, you must simply replace ``-e ho`` with ``-e cv`` in the various calls shown in section :ref:`hemdagcall` for the time-split hold-out experiments.
+To execute any HEMDAG algorithm on cross-validated datasets, basically you must replace ``-e ho`` with ``-e cv`` in the various calls shown in section :ref:`hemdagcall` for the time-split hold-out experiments.
 
 .. note::
 
     #. the ``hemdag-call.R`` script must be called in ``~/hemdag/script/``;
     #. for the examples shown below the tuning of hyper-parameters takes around one hour;
-    #. note that the flat classifier used here is not the *svm* (``-f svmlinear``), but the *random forest* (``-f ranger``);
+    #. the flat classifier adopted for the cross-validated experiments performed here is not the *svm* (``-f svmlinear``), but the *random forest* (``-f ranger``);
     #. the output HEMDAG score matrices are stored in ``~/hemdag/res/cv/`` (note the shift of the last directory);
 
 For instance, to call the 6 HEMDAG on cross-validated datasets just type:
@@ -326,15 +377,19 @@ For instance, to call the 6 HEMDAG on cross-validated datasets just type:
 
 Check Hierarchical Constraints
 ---------------------------------
-To check that HEMDAG does not violate hierarchical constraints imposed by the GO MF hierarchy in cross-validated datasets, just replace replace ``-e ho`` with ``-e cv`` in the :ref:`hemdagcheck` script:
+To check that HEMDAG does not violate hierarchical constraints imposed by the GO MF hierarchy in the cross-validated datasets obtained above, just replace replace ``-e ho`` with ``-e cv`` and ``-f svmlinear`` with ``-f ranger`` in the :ref:`hemdagcheck` script:
 
 .. code-block:: bash
 
-    Rscript hemdag-checker.R -e cv
+    algotihms=("gpav" "isotprTF" "isotprW" "isodescensTF" "isodescensW" "isodescensTAU")
+
+    for ((i=0; i<${#algotihms[@]}; i++)); do
+        Rscript hemdag-checker.R -o 7227_drome -d mf -e cv -f ranger -a ${algotihms[$i]}
+    done;
 
 Evaluation
 -------------------
-To evaluate HEMDAG in cross-validated experiments just replace ``-e ho`` with ``-e cv`` in the :ref:`hemdageval` script:
+To evaluate HEMDAG in the cross-validated experiments performed above, just replace replace ``-e ho`` with ``-e cv`` and ``-f svmlinear`` with ``-f ranger`` in the :ref:`hemdageval` script:
 
 .. note::
 
@@ -346,9 +401,9 @@ To evaluate HEMDAG in cross-validated experiments just replace ``-e ho`` with ``
     Rscript hemdag-eval.R -o 7227_drome -d mf -e cv -f ranger -a gpav
 
     ## generate chunk evaluation calls
-    perl hemdag-chunk.pl -e cv -c 6 > hemdag-cv-eval.sh
+    perl hemdag-chunk.pl -o 7227_drome -d mf -f ranger -a gpav,isotprTF,isotprW,isodescensTF,isodescensW,isodescensTAU -e cv -c 6 > hemdag-cv-eval.sh
 
     ## evaluate HEMDAG in chunks
-    bash hemdag-cv-eval.sh > out
+    bash hemdag-cv-eval.sh > out &
 
 
