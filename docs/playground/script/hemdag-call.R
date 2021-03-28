@@ -127,7 +127,7 @@ dag.file  <- files[grep(paste0(domain,".dag"), files)];
 if(exptype == "ho"){
     idx.file  <- files[grep(paste0(domain,".testindex"), files)];
     if(length(idx.file)==0)
-    stop("no index file found\n");
+        stop("no index file found\n");
 }
 
 ## check if flat|ann|dag exists
