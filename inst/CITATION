@@ -1,6 +1,30 @@
 citHeader("To cite 'HEMDAG' package in publications use:")
 
 citEntry(entry = "Article",
+  title = "HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction",
+  author = c(person("Marco", "Notaro"),
+             person("Marco", "Frasca"),
+             person("Alessandro", "Petrini"),
+             person("Jessica", "Gliozzo"),
+             person("Elena", "Casiraghi"),
+             person("Peter N.", "Robinson"),
+             person("Giorgio", "Valentini")
+            ),
+  journal = "Bioinformatics",
+  year    = "2021",
+  volume  = "37",
+  number  = "23",
+  pages   = "4526-4533",
+  issn    = "1367-4803",
+  doi     = "10.1093/bioinformatics/btab485",
+  url     = "https://doi.org/10.1093/bioinformatics/btab485",
+
+  textVersion  = paste("Marco Notaro, Marco Frasca, Alessandro Petrini, Jessica Gliozzo, Elena Casiraghi, Peter N Robinson, Giorgio Valentini",
+  "HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction,",
+  "Bioinformatics,", "Volume 37, Issue 23,", "10.1093/bioinformatics/btab485")
+)
+
+citEntry(entry = "Article",
   title  = "Prediction of Human Phenotype Ontology terms by means of Hierarchical Ensemble methods",
   author =  c(person("Marco", "Notaro"),
               person("Peter N.", "Robinson"),
@@ -16,7 +40,7 @@ citEntry(entry = "Article",
   doi     = "10.1186/s12859-017-1854-y",
   url     = "https://doi.org/10.1186/s12859-017-1854-y",
 
-  textVersion  = paste("Marco Notaro, Max Schubach, Peter N. Robinson, Giorgio Valentini", 
+  textVersion  = paste("Marco Notaro, Max Schubach, Peter N. Robinson, Giorgio Valentini",
   "Prediction of Human Phenotype Ontology terms by means of Hierarchical Ensemble methods,",
   "BMC Bioinformatics 2017,", "18(1):449,", "doi:10.1186/s12859-017-1854-y")
 )

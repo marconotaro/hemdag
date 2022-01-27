@@ -26,9 +26,13 @@
 ## Documentation
 Please get a look to the [documentation](https://hemdag.readthedocs.io "HEMDAG’s documentation") to know how to download, install and make experiments with the **HEMDAG** package.
 ## Cite HEMDAG
-If you use HEMDAG, please cite our [BMC Bioinformatics article](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1854-y):
+If you use HEMDAG, please cite our [Bioinformatics article](https://doi.org/10.1093/bioinformatics/btab485) or [BMC Bioinformatics article](https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1854-y):
 
 ```
+Marco Notaro, Marco Frasca, Alessandro Petrini, Jessica Gliozzo, Elena Casiraghi, Peter N Robinson, Giorgio Valentini
+HEMDAG: a family of modular and scalable hierarchical ensemble methods to improve Gene Ontology term prediction,
+Bioinformatics, Volume 37, Issue 23, 1 December 2021, Pages 4526–4533
+
 M. Notaro, M. Schubach, P. N. Robinson, and G Valentini.
 Prediction of Human Phenotype Ontology terms by means of hierarchical ensemble methods.
 BMC Bioinformatics, 18(1):449, 2017
