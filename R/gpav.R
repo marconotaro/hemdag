@@ -16,35 +16,35 @@
 #' data(graph);
 #' adj <- adj.upper.tri(g);
 adj.upper.tri <- function(g){
-    ## 0. write the graph g as pair parent-child (source- destination)
-    num.ed <- numEdges(g);
-    num.nd <- numNodes(g);
-    m <- matrix(character(num.ed*2), ncol=2);
-    ed <- edges(g);
-    count <- 0;
-    par <- names(ed);
-    for(i in 1:num.nd){
-        children <- ed[[i]];
-        len.x <- length(children);
-        if(len.x!=0){
-            for(j in 1:len.x){
-                count <- count + 1;
-                m[count,] <- c(par[i], children[j]);
-            }
-        }
+  ## 0. write the graph g as pair parent-child (source- destination)
+  num.ed <- numEdges(g);
+  num.nd <- numNodes(g);
+  m <- matrix(character(num.ed*2), ncol=2);
+  ed <- edges(g);
+  count <- 0;
+  par <- names(ed);
+  for(i in 1:num.nd){
+    children <- ed[[i]];
+    len.x <- length(children);
+    if(len.x!=0){
+      for(j in 1:len.x){
+        count <- count + 1;
+        m[count,] <- c(par[i], children[j]);
+      }
     }
-    ## 1. topological sorting: nodes are ordering in a linear way such as vertex u comes before v.
-    tsort.nd <- tsort(g);
-    ## 2. map each node of the graph to a integer number (in a decreasing order)
-    source <- mapvalues(m[,1], from=tsort.nd[1:length(tsort.nd)], to=length(tsort.nd):1, warn_missing=F);
-    destination  <- mapvalues(m[,2], from=tsort.nd[1:length(tsort.nd)], to=length(tsort.nd):1, warn_missing=F);
-    ## 3. build upper triangular logical adjacency constraints matrix. this matrix should be sparse
-    eM <- cbind(from=as.numeric(destination), to=as.numeric(source));
-    adj <- matrix(0, nrow=num.nd, ncol=num.nd);
-    rev.nd <- tsort.nd[num.nd:1];  ## reverse topological sorting for a right mapping with number
-    dimnames(adj) <- list(rev.nd, rev.nd);
-    adj[eM] <- 1;
-    return(adj);
+  }
+  ## 1. topological sorting: nodes are ordering in a linear way such as vertex u comes before v.
+  tsort.nd <- tsort(g);
+  ## 2. map each node of the graph to a integer number (in a decreasing order)
+  source <- mapvalues(m[,1], from=tsort.nd[1:length(tsort.nd)], to=length(tsort.nd):1, warn_missing=F);
+  destination  <- mapvalues(m[,2], from=tsort.nd[1:length(tsort.nd)], to=length(tsort.nd):1, warn_missing=F);
+  ## 3. build upper triangular logical adjacency constraints matrix. this matrix should be sparse
+  eM <- cbind(from=as.numeric(destination), to=as.numeric(source));
+  adj <- matrix(0, nrow=num.nd, ncol=num.nd);
+  rev.nd <- tsort.nd[num.nd:1];  ## reverse topological sorting for a right mapping with number
+  dimnames(adj) <- list(rev.nd, rev.nd);
+  adj[eM] <- 1;
+  return(adj);
 }
 
 #' @title Generalized Pool-Adjacent Violators (GPAV)
@@ -84,31 +84,31 @@ adj.upper.tri <- function(g){
 #' adj <- adj.upper.tri(g);
 #' Y.gpav <- gpav(Y,W=NULL,adj);
 gpav <- function(Y, W=NULL, adj){
-    if(is.null(W))
-        W <- rep(1,ncol(adj));
-    nW <- length(W);
-    nY <- length(Y);
-    nadj <- ncol(adj);
-    Ynames <- names(Y);
-    if(nY!=nadj)
-        stop("mismatch between the number of classes between Y and adj");
-    if(nW!=nadj)
-        stop("mismatch between the number of classes between Y and adj");
-    ## sort nodes in the same order of adj matrix (i.e. in a topologically ordered)
-    Y <- Y[colnames(adj)];
-    ## just for clearnnes: we play with index and not with name...
-    Y <- unname(Y);
-    W <- unname(W);
-    ## assign to each term an integer number, i.e. index's term
-    N <- ncol(adj);
-    corr <- 1:N;
-    gpavres <- .C("gpav_cpp", as.double(W), as.double(adj), as.integer(N), as.double(Y), as.integer(corr));
-    YFit <- gpavres[[4]];
-    corr <- gpavres[[5]];
-    YFit <- YFit[corr];
-    names(YFit) <- colnames(adj);
-    YFit <- YFit[Ynames];
-    return(YFit);
+  if(is.null(W))
+    W <- rep(1,ncol(adj));
+  nW <- length(W);
+  nY <- length(Y);
+  nadj <- ncol(adj);
+  Ynames <- names(Y);
+  if(nY!=nadj)
+    stop("mismatch between the number of classes between Y and adj");
+  if(nW!=nadj)
+    stop("mismatch between the number of classes between Y and adj");
+  ## sort nodes in the same order of adj matrix (i.e. in a topologically ordered)
+  Y <- Y[colnames(adj)];
+  ## just for clearnnes: we play with index and not with name...
+  Y <- unname(Y);
+  W <- unname(W);
+  ## assign to each term an integer number, i.e. index's term
+  N <- ncol(adj);
+  corr <- 1:N;
+  gpavres <- .C("gpav_cpp", as.double(W), as.double(adj), as.integer(N), as.double(Y), as.integer(corr));
+  YFit <- gpavres[[4]];
+  corr <- gpavres[[5]];
+  YFit <- YFit[corr];
+  names(YFit) <- colnames(adj);
+  YFit <- YFit[Ynames];
+  return(YFit);
 }
 
 #' @title GPAV over examples
@@ -125,17 +125,17 @@ gpav <- function(Y, W=NULL, adj){
 #' data(scores);
 #' S.gpav <- gpav.over.examples(S,W=NULL,g);
 gpav.over.examples <- function(S, g, W=NULL){
-    ## check consistency between nodes of g and classes of S
-    class.check <- ncol(S)!=numNodes(g);
-    if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
-    adj <- adj.upper.tri(g);
-    M <- c();
-    for(i in 1:nrow(S))
-        M <- rbind(M, gpav(S[i,], W=W, adj));
-    rownames(M) <- rownames(S);
-    S <- M; rm(M);
-    return(S);
+  ## check consistency between nodes of g and classes of S
+  class.check <- ncol(S)!=numNodes(g);
+  if(class.check)
+    stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
+  adj <- adj.upper.tri(g);
+  M <- c();
+  for(i in 1:nrow(S))
+    M <- rbind(M, gpav(S[i,], W=W, adj));
+  rownames(M) <- rownames(S);
+  S <- M; rm(M);
+  return(S);
 }
 #' @title GPAV over examples -- parallel implementation
 #' @description Compute \code{GPAV} across all the examples (parallel implementation).
@@ -154,28 +154,28 @@ gpav.over.examples <- function(S, g, W=NULL){
 #'    S.gpav <- gpav.parallel(S,W=NULL,g,ncores=2);
 #' }
 gpav.parallel <- function(S, g, W=NULL, ncores=8){
-    ## check consistency between nodes of g and classes of S
-    class.check <- ncol(S)!=numNodes(g);
-    if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
-    prnames <- rownames(S);
-    adj <- adj.upper.tri(g);
-    if(ncores == 0){
-        n.cores <- detectCores();
-        if(n.cores > 3)
-            ncores <- n.cores - 1;
-    }
-    registerDoParallel(cores=ncores);
-    res.list <- foreach(i=1:nrow(S), .inorder=FALSE) %dopar% {
-        res <- gpav(S[i,], W=W, adj);
-        list(protein=prnames[i], scores=res);
-    }
-    prnames <- unlist(lapply(res.list, '[[', 1));
-    hierscores <- lapply(res.list, '[[', 2);
-    S <- do.call(rbind, hierscores);
-    rownames(S) <- prnames;
-    rm(res.list);
-    return(S);
+  ## check consistency between nodes of g and classes of S
+  class.check <- ncol(S)!=numNodes(g);
+  if(class.check)
+    stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
+  prnames <- rownames(S);
+  adj <- adj.upper.tri(g);
+  if(ncores == 0){
+    n.cores <- detectCores();
+    if(n.cores > 3)
+      ncores <- n.cores - 1;
+  }
+  registerDoParallel(cores=ncores);
+  res.list <- foreach(i=1:nrow(S), .inorder=FALSE) %dopar% {
+    res <- gpav(S[i,], W=W, adj);
+    list(protein=prnames[i], scores=res);
+  }
+  prnames <- unlist(lapply(res.list, '[[', 1));
+  hierscores <- lapply(res.list, '[[', 2);
+  S <- do.call(rbind, hierscores);
+  rownames(S) <- prnames;
+  rm(res.list);
+  return(S);
 }
 
 #' @title GPAV vanilla
@@ -206,36 +206,36 @@ gpav.parallel <- function(S, g, W=NULL, ncores=8){
 #' data(scores);
 #' S.gpav <- gpav.vanilla(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, norm.type=NULL);
 gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, norm.type=NULL){
-    ## parameters check
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
-    if(parallel==TRUE && ncores<2)
-        warning("increase number of cores to exploit the gpav parallel version");
-    if(parallel==FALSE && ncores>=2)
-        warning("set parallel to TRUE to exploit the gpav parallel version");
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done\n");
-    }
-    ## check root scores before running gpav
-    root <- root.node(g);
-    if(!(root %in% colnames(S))){
-        max.score <- max(S);
-        z <- rep(max.score, nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
-    }
-    ## gpav correction
-    if(parallel){
-        S <- gpav.parallel(S, g, W=W, ncores=ncores);
-    }else{
-        S <- gpav.over.examples(S, g, W=W);
-    }
-    cat("gpav correction: done\n");
-    return(S);
+  ## parameters check
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
+  if(parallel==TRUE && ncores<2)
+    warning("increase number of cores to exploit the gpav parallel version");
+  if(parallel==FALSE && ncores>=2)
+    warning("set parallel to TRUE to exploit the gpav parallel version");
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization: done\n");
+  }
+  ## check root scores before running gpav
+  root <- root.node(g);
+  if(!(root %in% colnames(S))){
+    max.score <- max(S);
+    z <- rep(max.score, nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## gpav correction
+  if(parallel){
+    S <- gpav.parallel(S, g, W=W, ncores=ncores);
+  }else{
+    S <- gpav.over.examples(S, g, W=W);
+  }
+  cat("gpav correction: done\n");
+  return(S);
 }
 
 #' @title GPAV holdout
@@ -268,36 +268,36 @@ gpav.vanilla <- function(S, g, W=NULL, parallel=FALSE, ncores=1, norm=FALSE, nor
 #' data(test.index);
 #' S.gpav <- gpav.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL);
 gpav.holdout <- function(S, g, testIndex, W=NULL, parallel=FALSE, ncores=1, norm=TRUE, norm.type=NULL){
-    ## parameters check
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
-    if(parallel==TRUE && ncores<2)
-        warning("increase number of cores to exploit the gpav parallel version");
-    if(parallel==FALSE && ncores>=2)
-        warning("set parallel to TRUE to exploit the gpav parallel version");
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done\n");
-    }
-    ## check root scores before running gpav
-    root <- root.node(g);
-    if(!(root %in% colnames(S))){
-        max.score <- max(S);
-        z <- rep(max.score, nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
-    }
-    ## shrink flat score matrix to test test
-    S <- S[testIndex,];
-    ## gpav correction
-    if(parallel){
-        S <- gpav.parallel(S, g, W=W, ncores=ncores);
-    }else{
-        S <- gpav.over.examples(S, g, W=W);
-    }
-    cat("gpav correction: done\n");
-    return(S);
+  ## parameters check
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
+  if(parallel==TRUE && ncores<2)
+    warning("increase number of cores to exploit the gpav parallel version");
+  if(parallel==FALSE && ncores>=2)
+    warning("set parallel to TRUE to exploit the gpav parallel version");
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization: done\n");
+  }
+  ## check root scores before running gpav
+  root <- root.node(g);
+  if(!(root %in% colnames(S))){
+    max.score <- max(S);
+    z <- rep(max.score, nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## shrink flat score matrix to test test
+  S <- S[testIndex,];
+  ## gpav correction
+  if(parallel){
+    S <- gpav.parallel(S, g, W=W, ncores=ncores);
+  }else{
+    S <- gpav.over.examples(S, g, W=W);
+  }
+  cat("gpav correction: done\n");
+  return(S);
 }

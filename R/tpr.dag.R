@@ -121,150 +121,150 @@
 #' S.tpr <- tpr.dag(S, g, root, positive="children", bottomup="threshold.free",
 #' topdown="gpav", t=0, w=0, W=NULL, parallel=FALSE, ncores=1);
 tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.free", topdown="gpav", t=0, w=0, W=NULL, parallel=FALSE, ncores=1){
-    ## parameters check
-    if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" &&
-        bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
-        stop("positive or bottomup or topdown value misspelled");
-    if(positive=="children" && bottomup=="tau")
-        stop("tau is a descens variant. Please set positive to descendants");
-    if(bottomup=="threshold" || bottomup=="tau")
-        w <- 0;
-    if(bottomup=="threshold.free"){
-        t <- 0;
-        w <- 0;
-    }
-    if(bottomup=="weighted.threshold.free")
-        t <-0;
-    if((t==1 || w==1) && topdown=="htd")
-        warning("when t or w is equal to 1, tpr-dag is reduced to htd-dag");
-    if(topdown=="gpav" && parallel==TRUE && ncores<2)
-        warning("increase number of cores to exploit the gpav parallel version");
-    if(topdown=="gpav" && parallel==FALSE && ncores>=2)
-        warning("set parallel to TRUE to exploit the gpav parallel version");
-    if(topdown=="htd" && (parallel==TRUE || ncores>=2))
-        warning("does not exist a parallel version of htd");
-    ## add root node if it does not exist
-    if(!(root %in% colnames(S))){
-        max.score <- max(S);
-        z <- rep(max.score,nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
-    }
-    ## check consistency between nodes of g and classes of S
-    class.check <- ncol(S)!=numNodes(g);
-    if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
-    ## computing graph levels
-    levels <- graph.levels(g,root);
-    ## bottom-up visit: positive children selection
-    if(positive=="children"){
-        chd.bup <- build.children.bottom.up(g,levels);
-        for(i in 1:length(chd.bup)){
-            if(length(chd.bup[[i]])!=0){
-                parent <- S[,names(chd.bup[i])];
-                children <- as.matrix(S[,chd.bup[[i]]]);
-                # colnames(children) <- chd.bup[[i]]
-                for(j in 1:length(parent)){
-                    if(bottomup=="threshold"){
-                        child.set <- children[j,] > t;    # positive children selection
-                        child.pos <- children[j,][child.set];
-                        parent[j] <- (parent[j] + sum(child.pos))/(1+length(child.pos));  # flat scores correction
-                    }else if(bottomup=="threshold.free"){
-                        child.set <- children[j,] > parent[j]; # positive children selection
-                        child.pos <- children[j,][child.set];
-                        parent[j] <- (parent[j] + sum(child.pos))/(1+length(child.pos));  # flat score correction
-                    }else if(bottomup=="weighted.threshold.free"){
-                        child.set <- children[j,] > parent[j];    # positive children selection
-                        child.pos <- children[j,][child.set];
-                        if(length(child.pos)!=0){
-                            parent[j] <- w*parent[j] + (1-w)*sum(child.pos)/length(child.pos);  # flat score correction
-                        }
-                    }else if(bottomup=="weighted.threshold"){
-                        child.set <- children[j,] > t;    # positive children selection
-                        child.pos <- children[j,][child.set];
-                        if(length(child.pos)!=0){
-                            parent[j] <- w*parent[j] + (1-w)*sum(child.pos)/length(child.pos);  # flat score prediction
-                        }
-                    }
-                }
-                S[,names(chd.bup[i])] <- parent;
+  ## parameters check
+  if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" &&
+    bottomup!="weighted.threshold" && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
+    stop("positive or bottomup or topdown value misspelled");
+  if(positive=="children" && bottomup=="tau")
+    stop("tau is a descens variant. Please set positive to descendants");
+  if(bottomup=="threshold" || bottomup=="tau")
+    w <- 0;
+  if(bottomup=="threshold.free"){
+    t <- 0;
+    w <- 0;
+  }
+  if(bottomup=="weighted.threshold.free")
+    t <-0;
+  if((t==1 || w==1) && topdown=="htd")
+    warning("when t or w is equal to 1, tpr-dag is reduced to htd-dag");
+  if(topdown=="gpav" && parallel==TRUE && ncores<2)
+    warning("increase number of cores to exploit the gpav parallel version");
+  if(topdown=="gpav" && parallel==FALSE && ncores>=2)
+    warning("set parallel to TRUE to exploit the gpav parallel version");
+  if(topdown=="htd" && (parallel==TRUE || ncores>=2))
+    warning("does not exist a parallel version of htd");
+  ## add root node if it does not exist
+  if(!(root %in% colnames(S))){
+    max.score <- max(S);
+    z <- rep(max.score,nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## check consistency between nodes of g and classes of S
+  class.check <- ncol(S)!=numNodes(g);
+  if(class.check)
+    stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
+  ## computing graph levels
+  levels <- graph.levels(g,root);
+  ## bottom-up visit: positive children selection
+  if(positive=="children"){
+    chd.bup <- build.children.bottom.up(g,levels);
+    for(i in 1:length(chd.bup)){
+      if(length(chd.bup[[i]])!=0){
+        parent <- S[,names(chd.bup[i])];
+        children <- as.matrix(S[,chd.bup[[i]]]);
+        # colnames(children) <- chd.bup[[i]]
+        for(j in 1:length(parent)){
+          if(bottomup=="threshold"){
+            child.set <- children[j,] > t;    # positive children selection
+            child.pos <- children[j,][child.set];
+            parent[j] <- (parent[j] + sum(child.pos))/(1+length(child.pos));  # flat scores correction
+          }else if(bottomup=="threshold.free"){
+            child.set <- children[j,] > parent[j]; # positive children selection
+            child.pos <- children[j,][child.set];
+            parent[j] <- (parent[j] + sum(child.pos))/(1+length(child.pos));  # flat score correction
+          }else if(bottomup=="weighted.threshold.free"){
+            child.set <- children[j,] > parent[j];    # positive children selection
+            child.pos <- children[j,][child.set];
+            if(length(child.pos)!=0){
+              parent[j] <- w*parent[j] + (1-w)*sum(child.pos)/length(child.pos);  # flat score correction
             }
-        }
-    ## bottom-up visit: positive descendants selection
-    }else if(positive=="descendants"){
-        if(bottomup=="tau")
-            chd.bup <- build.children.bottom.up(g,levels);
-        desc.bup <- build.descendants.bottom.up(g,levels);
-        nodes <- names(desc.bup);
-        for(i in 1:length(desc.bup)){
-            if(length(desc.bup[[i]])!=1){
-                node.curr <- nodes[i];
-                parent <- S[,names(desc.bup[i])];
-                tmp <- setdiff(desc.bup[[i]],node.curr);
-                if(bottomup=="tau"){
-                    delta <- setdiff(tmp, chd.bup[[i]]);  # descendants without children
-                    children <- as.matrix(S[,chd.bup[[i]]]);    # genes considering children node
-                    desc <-  as.matrix(S[,delta]);      # genes considering descendants nodes without children
-                }else{
-                    desc <- as.matrix(S[,tmp]);
-                }
-                for(j in 1:length(parent)){
-                    if(bottomup=="threshold"){
-                        desc.set <- desc[j,] > t;    # positive descendants selection
-                        desc.pos <- desc[j,][desc.set];
-                        parent[j] <- (parent[j] + sum(desc.pos))/(1+length(desc.pos));   # flat scores correction
-                    }else if(bottomup=="threshold.free"){
-                        desc.set <- desc[j,] > parent[j];   # positive descendants selection
-                        desc.pos <- desc[j,][desc.set];
-                        parent[j] <- (parent[j] + sum(desc.pos))/(1+length(desc.pos));   # flat scores correction
-                    }else if(bottomup=="weighted.threshold.free"){
-                        desc.set <- desc[j,] > parent[j];
-                        desc.pos <- desc[j,][desc.set];
-                        if(length(desc.pos)!=0){
-                            parent[j] <- w*parent[j] + (1-w)*sum(desc.pos)/length(desc.pos);  # flat scores correction
-                        }
-                    }else if(bottomup=="weighted.threshold"){
-                        desc.set <- desc[j,] > t;
-                        desc.pos <- desc[j,][desc.set];
-                        if(length(desc.pos)!=0){
-                            parent[j] <- w*parent[j] + (1-w)*sum(desc.pos)/length(desc.pos);  # flat scores correction
-                        }
-                    }else if(bottomup=="tau"){
-                        desc.set <- desc[j,] > parent[j];           # positive descendants (without children) selection
-                        desc.pos <- desc[j,][desc.set];
-                        child.set <- children[j,] > parent[j];      # positive children selection
-                        child.pos <- children[j,][child.set];
-                        parent[j] <- t * ((parent[j] + sum(child.pos))/(1+length(child.pos))) + (1-t) * ((parent[j] + sum(desc.pos))/(1+length(desc.pos)));
-                    }
-                    S[,names(desc.bup[i])] <- parent;
-                }
+          }else if(bottomup=="weighted.threshold"){
+            child.set <- children[j,] > t;    # positive children selection
+            child.pos <- children[j,][child.set];
+            if(length(child.pos)!=0){
+              parent[j] <- w*parent[j] + (1-w)*sum(child.pos)/length(child.pos);  # flat score prediction
             }
+          }
         }
+        S[,names(chd.bup[i])] <- parent;
+      }
     }
-    # top-down visit
-    if(topdown=="htd"){
-        par.tod <- build.parents.top.down(g,levels,root);
-        for(i in 1:length(par.tod)){
-            child <- S[,names(par.tod[i])];
-            parents <- as.matrix(S[,par.tod[[i]]]);
-            # colnames(parents) <- par.tod[[i]]
-            # Note: the version with an apply and an ifelse statement is slower ...
-            for(j in 1:length(child)){
-                x <- min(parents[j,]);
-                if(x < child[j]){
-                    child[j] <- x;    # hierarchical correction
-                }
-            }
-            S[,names(par.tod[i])] <- child;
-        }
-    }else if(topdown=="gpav"){
-        if(parallel){
-            S <- gpav.parallel(S, g, W=W, ncores=ncores);
+  ## bottom-up visit: positive descendants selection
+  }else if(positive=="descendants"){
+    if(bottomup=="tau")
+      chd.bup <- build.children.bottom.up(g,levels);
+    desc.bup <- build.descendants.bottom.up(g,levels);
+    nodes <- names(desc.bup);
+    for(i in 1:length(desc.bup)){
+      if(length(desc.bup[[i]])!=1){
+        node.curr <- nodes[i];
+        parent <- S[,names(desc.bup[i])];
+        tmp <- setdiff(desc.bup[[i]],node.curr);
+        if(bottomup=="tau"){
+          delta <- setdiff(tmp, chd.bup[[i]]);  # descendants without children
+          children <- as.matrix(S[,chd.bup[[i]]]);    # genes considering children node
+          desc <-  as.matrix(S[,delta]);      # genes considering descendants nodes without children
         }else{
-            S <- gpav.over.examples(S, W=W, g);
+          desc <- as.matrix(S[,tmp]);
         }
+        for(j in 1:length(parent)){
+          if(bottomup=="threshold"){
+            desc.set <- desc[j,] > t;    # positive descendants selection
+            desc.pos <- desc[j,][desc.set];
+            parent[j] <- (parent[j] + sum(desc.pos))/(1+length(desc.pos));   # flat scores correction
+          }else if(bottomup=="threshold.free"){
+            desc.set <- desc[j,] > parent[j];   # positive descendants selection
+            desc.pos <- desc[j,][desc.set];
+            parent[j] <- (parent[j] + sum(desc.pos))/(1+length(desc.pos));   # flat scores correction
+          }else if(bottomup=="weighted.threshold.free"){
+            desc.set <- desc[j,] > parent[j];
+            desc.pos <- desc[j,][desc.set];
+            if(length(desc.pos)!=0){
+              parent[j] <- w*parent[j] + (1-w)*sum(desc.pos)/length(desc.pos);  # flat scores correction
+            }
+          }else if(bottomup=="weighted.threshold"){
+            desc.set <- desc[j,] > t;
+            desc.pos <- desc[j,][desc.set];
+            if(length(desc.pos)!=0){
+              parent[j] <- w*parent[j] + (1-w)*sum(desc.pos)/length(desc.pos);  # flat scores correction
+            }
+          }else if(bottomup=="tau"){
+            desc.set <- desc[j,] > parent[j];           # positive descendants (without children) selection
+            desc.pos <- desc[j,][desc.set];
+            child.set <- children[j,] > parent[j];      # positive children selection
+            child.pos <- children[j,][child.set];
+            parent[j] <- t * ((parent[j] + sum(child.pos))/(1+length(child.pos))) + (1-t) * ((parent[j] + sum(desc.pos))/(1+length(desc.pos)));
+          }
+          S[,names(desc.bup[i])] <- parent;
+        }
+      }
     }
-    return(S);
+  }
+  # top-down visit
+  if(topdown=="htd"){
+    par.tod <- build.parents.top.down(g,levels,root);
+    for(i in 1:length(par.tod)){
+      child <- S[,names(par.tod[i])];
+      parents <- as.matrix(S[,par.tod[[i]]]);
+      # colnames(parents) <- par.tod[[i]]
+      # Note: the version with an apply and an ifelse statement is slower ...
+      for(j in 1:length(child)){
+        x <- min(parents[j,]);
+        if(x < child[j]){
+          child[j] <- x;    # hierarchical correction
+        }
+      }
+      S[,names(par.tod[i])] <- child;
+    }
+  }else if(topdown=="gpav"){
+    if(parallel){
+      S <- gpav.parallel(S, g, W=W, ncores=ncores);
+    }else{
+      S <- gpav.over.examples(S, W=W, g);
+    }
+  }
+  return(S);
 }
 
 #' @title TPR-DAG cross-validation experiments
@@ -340,132 +340,132 @@ tpr.dag <- function(S, g, root="00", positive="children", bottomup="threshold.fr
 #' bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE, ncores=1,
 #' threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL);
 tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children", bottomup="threshold", topdown="gpav", W=NULL,
-    parallel=FALSE, ncores=1, threshold=seq(from=0.1, to=0.9, by=0.1), weight=0, kk=5, seed=23, metric="auprc", n.round=NULL){
-    ## parameters check
-    if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold"
-        && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
-        stop("positive or bottomup or topdown value misspelled");
-    if(positive=="children" && bottomup=="tau")
-        stop("tau is a descens variant. Please set positive to descendants");
-    if(bottomup=="threshold" || bottomup=="tau")
-        weight <- 0;
-    if(bottomup=="threshold.free"){
-        threshold <- weight <- 0;
-        kk <- seed <- ann <- metric <- n.round <- NULL;
-    }
-    if(bottomup=="weighted.threshold.free")
-        threshold <- 0;
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type inconsistent");
-    if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
-        stop("smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
-    if(metric!="fmax" && metric!="auprc" && !is.null(metric))
-        stop("value of parameter metric misspelled");
-    if(is.null(metric) && bottomup!="threshold.free")
-        stop(paste0("the bottom-up approach ", bottomup, " is parametric"),". Select the metric on which maximize according to those available");
-    if(is.null(seed) && bottomup!="threshold.free")
-        stop("set seed to create folds");
-    if(is.null(ann) && bottomup!="threshold.free")
-        stop("the annotation matrix must be provided to maximize the hyper-parameter(s) of the chosen tpr-dag ensemble variant");
-    if(is.null(n.round) && (metric=="fmax" && !is.null(metric)))
-        stop("set n.round properly");
-    if(metric=="auprc" && !is.null(n.round))
-        n.round <- NULL;
-    ## add root node if it does not exist
-    root <- root.node(g);
-    if(!(root %in% colnames(S))){
-        max.score <- max(S);
-        z <- rep(max.score,nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
-    }
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done\n");
-    }
-    ## tpr-dag hierarchical correction
-    if(bottomup=="threshold.free"){
-        S.hier <- tpr.dag(S, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
-        cat("tpr-dag correction done\n");
-        rm(S); gc();
-    }else{
-        ## remove root node from ann matrix (root node must not be included in computing the performance)
-        if(root %in% colnames(ann))
-            ann <- ann[,-which(colnames(ann)==root)];
-        ## let's start k-fold crossing validation for choosing best threshold and weight maximizing on the selected metric
-        testIndex <- unstratified.cv.data(S, kk=kk, seed=seed);
-        S.hier <- c(); # variable to host the k-assembled sub-matrix
-        # train.top <- vector(mode="list", length=kk); ## for check
-        for(k in 1:kk){
-            ## train and test set
-            train <- S[-testIndex[[k]],];
-            ann.train <- ann[-testIndex[[k]],];
-            test <- S[testIndex[[k]],];
-            ## degenerate case when train or test set has just one row/example
-            if(!is.matrix(train)){
-                train.sample <- rownames(S)[-testIndex[[k]]];
-                train <- matrix(train, ncol=length(train), dimnames=list(train.sample, names(train)));
-                ann.train <- matrix(ann.train, ncol=length(ann.train), dimnames=list(train.sample, names(ann.train)));
+  parallel=FALSE, ncores=1, threshold=seq(from=0.1, to=0.9, by=0.1), weight=0, kk=5, seed=23, metric="auprc", n.round=NULL){
+  ## parameters check
+  if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold"
+    && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
+    stop("positive or bottomup or topdown value misspelled");
+  if(positive=="children" && bottomup=="tau")
+    stop("tau is a descens variant. Please set positive to descendants");
+  if(bottomup=="threshold" || bottomup=="tau")
+    weight <- 0;
+  if(bottomup=="threshold.free"){
+    threshold <- weight <- 0;
+    kk <- seed <- ann <- metric <- n.round <- NULL;
+  }
+  if(bottomup=="weighted.threshold.free")
+    threshold <- 0;
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type inconsistent");
+  if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
+    stop("smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
+  if(metric!="fmax" && metric!="auprc" && !is.null(metric))
+    stop("value of parameter metric misspelled");
+  if(is.null(metric) && bottomup!="threshold.free")
+    stop(paste0("the bottom-up approach ", bottomup, " is parametric"),". Select the metric on which maximize according to those available");
+  if(is.null(seed) && bottomup!="threshold.free")
+    stop("set seed to create folds");
+  if(is.null(ann) && bottomup!="threshold.free")
+    stop("the annotation matrix must be provided to maximize the hyper-parameter(s) of the chosen tpr-dag ensemble variant");
+  if(is.null(n.round) && (metric=="fmax" && !is.null(metric)))
+    stop("set n.round properly");
+  if(metric=="auprc" && !is.null(n.round))
+    n.round <- NULL;
+  ## add root node if it does not exist
+  root <- root.node(g);
+  if(!(root %in% colnames(S))){
+    max.score <- max(S);
+    z <- rep(max.score,nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization: done\n");
+  }
+  ## tpr-dag hierarchical correction
+  if(bottomup=="threshold.free"){
+    S.hier <- tpr.dag(S, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
+    cat("tpr-dag correction done\n");
+    rm(S); gc();
+  }else{
+    ## remove root node from ann matrix (root node must not be included in computing the performance)
+    if(root %in% colnames(ann))
+      ann <- ann[,-which(colnames(ann)==root)];
+    ## let's start k-fold crossing validation for choosing best threshold and weight maximizing on the selected metric
+    testIndex <- unstratified.cv.data(S, kk=kk, seed=seed);
+    S.hier <- c(); # variable to host the k-assembled sub-matrix
+    # train.top <- vector(mode="list", length=kk); ## for check
+    for(k in 1:kk){
+      ## train and test set
+      train <- S[-testIndex[[k]],];
+      ann.train <- ann[-testIndex[[k]],];
+      test <- S[testIndex[[k]],];
+      ## degenerate case when train or test set has just one row/example
+      if(!is.matrix(train)){
+        train.sample <- rownames(S)[-testIndex[[k]]];
+        train <- matrix(train, ncol=length(train), dimnames=list(train.sample, names(train)));
+        ann.train <- matrix(ann.train, ncol=length(ann.train), dimnames=list(train.sample, names(ann.train)));
+      }
+      if(!is.matrix(test)){
+        test.sample<- rownames(S)[testIndex[[k]]];
+        test <- matrix(test, ncol=length(test), dimnames=list(test.sample, names(test)));
+      }
+      ## parameters initialization
+      top.metric <- 0;
+      bestT <- 0;
+      bestW <- 0;
+      for(t in threshold){
+        for(w in weight){
+          pred.train <- tpr.dag(train, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
+          if(metric=="fmax"){
+            if(root %in% colnames(pred.train)){
+              pred.train <- pred.train[,-which(colnames(pred.train)==root)];
+              if(!is.matrix(pred.train)){
+                train.sample <- rownames(train);
+                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
+              }
             }
-            if(!is.matrix(test)){
-                test.sample<- rownames(S)[testIndex[[k]]];
-                test <- matrix(test, ncol=length(test), dimnames=list(test.sample, names(test)));
+            train.metric <- find.best.f(ann.train, pred.train, n.round=n.round, verbose=FALSE, b.per.example=FALSE)[["F"]];
+          }else{
+            if(root %in% colnames(pred.train)){
+              pred.train <- pred.train[,-which(colnames(pred.train)==root)];
+              if(!is.matrix(pred.train)){
+                train.sample <- rownames(train);
+                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
+              }
             }
-            ## parameters initialization
-            top.metric <- 0;
-            bestT <- 0;
-            bestW <- 0;
-            for(t in threshold){
-                for(w in weight){
-                    pred.train <- tpr.dag(train, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
-                    if(metric=="fmax"){
-                        if(root %in% colnames(pred.train)){
-                            pred.train <- pred.train[,-which(colnames(pred.train)==root)];
-                            if(!is.matrix(pred.train)){
-                                train.sample <- rownames(train);
-                                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
-                            }
-                        }
-                        train.metric <- find.best.f(ann.train, pred.train, n.round=n.round, verbose=FALSE, b.per.example=FALSE)[["F"]];
-                    }else{
-                        if(root %in% colnames(pred.train)){
-                            pred.train <- pred.train[,-which(colnames(pred.train)==root)];
-                            if(!is.matrix(pred.train)){
-                                train.sample <- rownames(train);
-                                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
-                            }
-                        }
-                        train.metric <- auprc.single.over.classes(ann.train, pred.train, folds=NULL, seed=NULL)$average;
-                    }
-                    if(train.metric > top.metric){
-                        top.metric <- train.metric;
-                        bestT <- t;
-                        bestW <- w;
-                        # train.top[[k]] <- c(metric=top.metric, best.thres=bestT, best.weight=bestW);
-                        if(bottomup=="threshold" || bottomup=="tau"){
-                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
-                        }else if(bottomup=="weighted.threshold.free"){
-                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
-                        }else{
-                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:",bestT, "best weight:", bestW, sep="\t", "\n");
-                        }
-                    }
-                }
+            train.metric <- auprc.single.over.classes(ann.train, pred.train, folds=NULL, seed=NULL)$average;
+          }
+          if(train.metric > top.metric){
+            top.metric <- train.metric;
+            bestT <- t;
+            bestW <- w;
+            # train.top[[k]] <- c(metric=top.metric, best.thres=bestT, best.weight=bestW);
+            if(bottomup=="threshold" || bottomup=="tau"){
+              cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
+            }else if(bottomup=="weighted.threshold.free"){
+              cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
+            }else{
+              cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:",bestT, "best weight:", bestW, sep="\t", "\n");
             }
-            ## test set
-            pred.test <- tpr.dag(test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
-            ## assembling the hierarchical scores of each k sub-matrix
-            S.hier <- rbind(S.hier, pred.test);
+          }
         }
-        ## put the rows (i.e. genes) of assembled k sub-matrix in the same order of the beginning matrix
-        S.hier <- S.hier[rownames(S),];
-        cat("tpr-dag correction done\n");
-        rm(S, ann, testIndex, pred.test, test, train, ann.train); gc();
+      }
+      ## test set
+      pred.test <- tpr.dag(test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
+      ## assembling the hierarchical scores of each k sub-matrix
+      S.hier <- rbind(S.hier, pred.test);
     }
-    return(S.hier);
+    ## put the rows (i.e. genes) of assembled k sub-matrix in the same order of the beginning matrix
+    S.hier <- S.hier[rownames(S),];
+    cat("tpr-dag correction done\n");
+    rm(S, ann, testIndex, pred.test, test, train, ann.train); gc();
+  }
+  return(S.hier);
 }
 
 #' @title TPR-DAG holdout experiments
@@ -544,141 +544,141 @@ tpr.dag.cv <- function(S, g, ann, norm=FALSE, norm.type=NULL, positive="children
 #' positive="children", bottomup="threshold.free", topdown="gpav", W=NULL, parallel=FALSE,
 #' ncores=1, threshold=0, weight=0, kk=NULL, seed=NULL, metric=NULL, n.round=NULL);
 tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=NULL, parallel=FALSE, ncores=1, positive="children", bottomup="threshold",
-    topdown="htd",  threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric="auprc", n.round=NULL){
-    ## parameters check
-    if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold"
-        && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
-        stop("positive or bottomup or topdown value misspelled");
-    if(positive=="children" && bottomup=="tau")
-        stop("tau is a descens variant. Please set positive to descendants");
-    if(bottomup=="threshold" || bottomup=="tau")
-        weight <- 0;
-    if(bottomup=="threshold.free"){
-        threshold <- weight <- 0;
-        kk <- seed <- ann <- metric <- n.round <- NULL;
+  topdown="htd",  threshold=seq(from=0.1, to=0.9, by=0.1), weight=seq(from=0.1, to=0.9, by=0.1), kk=5, seed=23, metric="auprc", n.round=NULL){
+  ## parameters check
+  if(positive!="children" && positive!="descendants" || bottomup!="threshold" && bottomup!="threshold.free" && bottomup!="weighted.threshold"
+    && bottomup!="weighted.threshold.free" && bottomup!="tau" || topdown!="htd" && topdown!="gpav")
+    stop("positive or bottomup or topdown value misspelled");
+  if(positive=="children" && bottomup=="tau")
+    stop("tau is a descens variant. Please set positive to descendants");
+  if(bottomup=="threshold" || bottomup=="tau")
+    weight <- 0;
+  if(bottomup=="threshold.free"){
+    threshold <- weight <- 0;
+    kk <- seed <- ann <- metric <- n.round <- NULL;
+  }
+  if(bottomup=="weighted.threshold.free")
+    threshold <- 0;
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type inconsistent");
+  if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
+    stop("smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
+  if(metric!="fmax" && metric!="auprc" && !is.null(metric))
+    stop("value of parameter metric misspelled");
+  if(is.null(metric) && bottomup!="threshold.free")
+    stop(paste0("the bottom-up approach ", bottomup, " is parametric"),". Select the metric on which maximize according to those available");
+  if(is.null(seed) && bottomup!="threshold.free")
+    stop("set seed to create folds");
+  if(is.null(ann) && bottomup!="threshold.free")
+    stop("the annotation matrix must be provided to maximize the hyper-parameter(s) of the chosen tpr-dag ensemble variant");
+  if(is.null(n.round) && (metric=="fmax" && !is.null(metric)))
+    stop("set n.round properly");
+  if(metric=="auprc" && !is.null(n.round))
+    n.round <- NULL;
+  ## add root node if it does not exist
+  root <- root.node(g);
+  if(!(root %in% colnames(S))){
+    max.score <- max(S);
+    z <- rep(max.score,nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization done\n");
+  }
+  ## shrink S to test indexes
+  S.test <- S[testIndex,];
+  ## degenerate case when test set has just one row/example
+  if(!is.matrix(S.test)){
+    test.sample <- rownames(S)[testIndex];
+    S.test <- matrix(S.test, ncol=length(S.test), dimnames=list(test.sample, names(S.test)));
+  }
+  ## tpr-dag correction
+  if(bottomup=="threshold.free"){
+    S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
+    cat("tpr-dag holdout correction done\n");
+    rm(S);
+  }else{
+    ## remove root node from ann matrix (root node must not be included in computing the performance)
+    if(root %in% colnames(ann))
+      ann <- ann[,-which(colnames(ann)==root)];
+    ## let's start k-fold crossing validation for choosing best threshold and weight maximizing on the selected metric
+    S.train <- S[-testIndex,];
+    ann.train <- ann[-testIndex,];
+    ## if train set has just one row/example stop since we cannot create fold for tuning hyper-parameters (kk>=2)
+    if(!is.matrix(S.train)){
+      stop("training matrix too small (only one example/row) for hyper-parameters tuning. Please use threshold.free strategy instead");
     }
-    if(bottomup=="weighted.threshold.free")
-        threshold <- 0;
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type inconsistent");
-    if((is.null(kk) || kk<=1) && bottomup!="threshold.free")
-        stop("smallest number of folds to define test and training set is 2. Set kk larger or equal to 2");
-    if(metric!="fmax" && metric!="auprc" && !is.null(metric))
-        stop("value of parameter metric misspelled");
-    if(is.null(metric) && bottomup!="threshold.free")
-        stop(paste0("the bottom-up approach ", bottomup, " is parametric"),". Select the metric on which maximize according to those available");
-    if(is.null(seed) && bottomup!="threshold.free")
-        stop("set seed to create folds");
-    if(is.null(ann) && bottomup!="threshold.free")
-        stop("the annotation matrix must be provided to maximize the hyper-parameter(s) of the chosen tpr-dag ensemble variant");
-    if(is.null(n.round) && (metric=="fmax" && !is.null(metric)))
-        stop("set n.round properly");
-    if(metric=="auprc" && !is.null(n.round))
-        n.round <- NULL;
-    ## add root node if it does not exist
-    root <- root.node(g);
-    if(!(root %in% colnames(S))){
-        max.score <- max(S);
-        z <- rep(max.score,nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
+    foldIndex <- unstratified.cv.data(S.train, kk=kk, seed=seed);
+    ## parameters initialization
+    top.metric <- 0;
+    bestT <- 0;
+    bestW <- 0;
+    for(k in 1:kk){
+      ## train and test set
+      train <- S.train[foldIndex[[k]],];
+      target.train <- ann.train[foldIndex[[k]],];
+      if(!is.matrix(train)){
+        train.sample <- rownames(S.train)[foldIndex[[k]]];
+        train <- matrix(train, ncol=length(train), dimnames=list(train.sample, names(train)));
+        target.train <- matrix(target.train, ncol=length(target.train), dimnames=list(train.sample, names(target.train)));
+      }
+      ## metric initialization            
+      for(t in threshold){
+        for(w in weight){
+          pred.train <- tpr.dag(train, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
+          if(metric=="fmax"){
+            if(root %in% colnames(pred.train)){
+              pred.train <- pred.train[,-which(colnames(pred.train)==root)];
+              if(!is.matrix(pred.train)){
+                train.sample <- rownames(target.train);
+                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
+              }
+            }
+            train.metric <- find.best.f(target.train, pred.train, n.round=n.round, verbose=FALSE, b.per.example=FALSE)[["F"]];
+          }else{
+            if(root %in% colnames(pred.train)){
+              pred.train <- pred.train[,-which(colnames(pred.train)==root)];
+              if(!is.matrix(pred.train)){
+                train.sample <- rownames(target.train);
+                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
+              }
+            }
+            train.metric <- auprc.single.over.classes(target.train, pred.train, folds=NULL, seed=NULL)$average;
+          }
+          if(train.metric > top.metric){
+            top.metric <- train.metric;
+            bestT <- t;
+            bestW <- w;
+            # train.top[[k]] <- c(metric=top.metric, best.thres=bestT, best.weight=bestW);
+            if(bottomup=="threshold" || bottomup=="tau"){
+              cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
+            }else if(bottomup=="weighted.threshold.free"){
+              cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
+            }else{
+              cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, "best weight:", bestW, sep="\t", "\n");
+            }
+          }
+        }
+      }
     }
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization done\n");
-    }
-    ## shrink S to test indexes
-    S.test <- S[testIndex,];
-    ## degenerate case when test set has just one row/example
-    if(!is.matrix(S.test)){
-        test.sample <- rownames(S)[testIndex];
-        S.test <- matrix(S.test, ncol=length(S.test), dimnames=list(test.sample, names(S.test)));
-    }
-    ## tpr-dag correction
-    if(bottomup=="threshold.free"){
-        S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=0, w=0, W=W, parallel=parallel, ncores=ncores);
-        cat("tpr-dag holdout correction done\n");
-        rm(S);
+    ## final best threshold
+    if(bottomup=="threshold" || bottomup=="tau"){
+      cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
+    }else if(bottomup=="weighted.threshold.free"){
+      cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
     }else{
-        ## remove root node from ann matrix (root node must not be included in computing the performance)
-        if(root %in% colnames(ann))
-            ann <- ann[,-which(colnames(ann)==root)];
-        ## let's start k-fold crossing validation for choosing best threshold and weight maximizing on the selected metric
-        S.train <- S[-testIndex,];
-        ann.train <- ann[-testIndex,];
-        ## if train set has just one row/example stop since we cannot create fold for tuning hyper-parameters (kk>=2)
-        if(!is.matrix(S.train)){
-            stop("training matrix too small (only one example/row) for hyper-parameters tuning. Please use threshold.free strategy instead");
-        }
-        foldIndex <- unstratified.cv.data(S.train, kk=kk, seed=seed);
-        ## parameters initialization
-        top.metric <- 0;
-        bestT <- 0;
-        bestW <- 0;
-        for(k in 1:kk){
-            ## train and test set
-            train <- S.train[foldIndex[[k]],];
-            target.train <- ann.train[foldIndex[[k]],];
-            if(!is.matrix(train)){
-                train.sample <- rownames(S.train)[foldIndex[[k]]];
-                train <- matrix(train, ncol=length(train), dimnames=list(train.sample, names(train)));
-                target.train <- matrix(target.train, ncol=length(target.train), dimnames=list(train.sample, names(target.train)));
-            }
-            ## metric initialization            
-            for(t in threshold){
-                for(w in weight){
-                    pred.train <- tpr.dag(train, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, w=w, t=t, W=W, parallel=parallel, ncores=ncores);
-                    if(metric=="fmax"){
-                        if(root %in% colnames(pred.train)){
-                            pred.train <- pred.train[,-which(colnames(pred.train)==root)];
-                            if(!is.matrix(pred.train)){
-                                train.sample <- rownames(target.train);
-                                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
-                            }
-                        }
-                        train.metric <- find.best.f(target.train, pred.train, n.round=n.round, verbose=FALSE, b.per.example=FALSE)[["F"]];
-                    }else{
-                        if(root %in% colnames(pred.train)){
-                            pred.train <- pred.train[,-which(colnames(pred.train)==root)];
-                            if(!is.matrix(pred.train)){
-                                train.sample <- rownames(target.train);
-                                pred.train <- matrix(pred.train, ncol=length(pred.train), dimnames=list(train.sample, names(pred.train)));
-                            }
-                        }
-                        train.metric <- auprc.single.over.classes(target.train, pred.train, folds=NULL, seed=NULL)$average;
-                    }
-                    if(train.metric > top.metric){
-                        top.metric <- train.metric;
-                        bestT <- t;
-                        bestW <- w;
-                        # train.top[[k]] <- c(metric=top.metric, best.thres=bestT, best.weight=bestW);
-                        if(bottomup=="threshold" || bottomup=="tau"){
-                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
-                        }else if(bottomup=="weighted.threshold.free"){
-                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
-                        }else{
-                            cat("training fold:", k, paste0("top ", metric, " avg found:"), top.metric, "best threshold:", bestT, "best weight:", bestW, sep="\t", "\n");
-                        }
-                    }
-                }
-            }
-        }
-        ## final best threshold
-        if(bottomup=="threshold" || bottomup=="tau"){
-            cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best threshold:", bestT, sep="\t", "\n");
-        }else if(bottomup=="weighted.threshold.free"){
-            cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best weight:", bestW, sep="\t", "\n");
-        }else{
-            cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best threshold:", bestT, "best weight:", bestW, sep="\t", "\n");
-        }
-        S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
-        cat("tpr-dag holdout correction done\n");
-        rm(S, S.test, S.train, train); gc();
+      cat("across", paste0(k, " training folds"), paste0("best ", metric, " avg found:"), top.metric, "best threshold:", bestT, "best weight:", bestW, sep="\t", "\n");
     }
-    return(S.hier);
+    S.hier <- tpr.dag(S.test, g, root=root, positive=positive, bottomup=bottomup, topdown=topdown, t=bestT, w=bestW, W=W, parallel=parallel, ncores=ncores);
+    cat("tpr-dag holdout correction done\n");
+    rm(S, S.test, S.train, train); gc();
+  }
+  return(S.hier);
 }
 
 #' @title Unstratified cross validation
@@ -695,22 +695,22 @@ tpr.dag.holdout <- function(S, g, ann, testIndex, norm=FALSE, norm.type=NULL, W=
 #' data(scores);
 #' foldIndex <- unstratified.cv.data(S, kk=5, seed=23);
 unstratified.cv.data <- function(S, kk=5, seed=NULL){
-    set.seed(seed);
-    examples <- 1:nrow(S);
-    n <- nrow(S);
-    size <- c();
-    folds <- vector(mode="list", length=kk)
-    names(folds) <- paste0(rep("fold",kk), 1:kk)
-    for(k in 1:kk){
-        first <- ((k - 1) * n) %/% kk
-        last <- (k * n) %/% kk
-        size <- last-first;
-        x    <- sample(examples,size);
-        folds[[k]] <- x;
-        examples <- setdiff(examples,x);
-    }
-    fold.check <- unlist(lapply(folds,length));
-    if(any(fold.check==0))
-        stop("number of folds selected too high: some folds have no examples. Please reduce the number of folds");
-    return(folds);
+  set.seed(seed);
+  examples <- 1:nrow(S);
+  n <- nrow(S);
+  size <- c();
+  folds <- vector(mode="list", length=kk)
+  names(folds) <- paste0(rep("fold",kk), 1:kk)
+  for(k in 1:kk){
+    first <- ((k - 1) * n) %/% kk
+    last <- (k * n) %/% kk
+    size <- last-first;
+    x    <- sample(examples,size);
+    folds[[k]] <- x;
+    examples <- setdiff(examples,x);
+  }
+  fold.check <- unlist(lapply(folds,length));
+  if(any(fold.check==0))
+    stop("number of folds selected too high: some folds have no examples. Please reduce the number of folds");
+  return(folds);
 }

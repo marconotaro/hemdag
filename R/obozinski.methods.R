@@ -30,72 +30,72 @@
 #' S.and <- obozinski.and(S,g,root);
 #' S.or  <- obozinski.or(S,g,root);
 obozinski.max <- function(S, g, root="00"){
-    if(!(root %in% colnames(S))) {
-        max.score <- max(S);
-        z <- rep(max.score,nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
-    }
-    ## check consistency between nodes of g and classes of S
-    class.check <- ncol(S)!=numNodes(g);
-    if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
-    desc <- build.descendants(g);
-    for(i in 1:length(desc)){
-        m <- as.matrix(S[,desc[[i]]]);
-        S[,names(desc[i])] <- apply(m, 1, max);
-    }
-    return(S);
+  if(!(root %in% colnames(S))) {
+    max.score <- max(S);
+    z <- rep(max.score,nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## check consistency between nodes of g and classes of S
+  class.check <- ncol(S)!=numNodes(g);
+  if(class.check)
+    stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
+  desc <- build.descendants(g);
+  for(i in 1:length(desc)){
+    m <- as.matrix(S[,desc[[i]]]);
+    S[,names(desc[i])] <- apply(m, 1, max);
+  }
+  return(S);
 }
 
 #' @rdname obozinski.heuristic.methods
 #' @export
 obozinski.and <- function(S, g, root="00"){
-    if(!(root %in% colnames(S))) {
-        max.score <- max(S);
-        z <- rep(max.score,nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
-    }
-    ## check consistency between nodes of g and classes of S
-    class.check <- ncol(S)!=numNodes(g);
-    if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
-    S.hier <- S;
-    anc <- build.ancestors(g);
-    for(i in 1:length(anc)){
-        m <- as.matrix(S[,anc[[i]]]);
-        idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
-        m.idx <- as.matrix(m[idx,]); ## handle case with one descendant -> apply needs a matrix
-        S.hier[idx,names(anc[i])] <- apply(m.idx, 1, prod);
-    }
-    rm(S); gc();
-    return(S.hier);
+  if(!(root %in% colnames(S))) {
+    max.score <- max(S);
+    z <- rep(max.score,nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## check consistency between nodes of g and classes of S
+  class.check <- ncol(S)!=numNodes(g);
+  if(class.check)
+    stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
+  S.hier <- S;
+  anc <- build.ancestors(g);
+  for(i in 1:length(anc)){
+    m <- as.matrix(S[,anc[[i]]]);
+    idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
+    m.idx <- as.matrix(m[idx,]); ## handle case with one descendant -> apply needs a matrix
+    S.hier[idx,names(anc[i])] <- apply(m.idx, 1, prod);
+  }
+  rm(S); gc();
+  return(S.hier);
 }
 
 #' @rdname obozinski.heuristic.methods
 #' @export
 obozinski.or <- function(S, g, root="00"){
-    if(!(root %in% colnames(S))) {
-        max.score <- max(S);
-        z <- rep(max.score,nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
-    }
-    ## check consistency between nodes of g and classes of S
-    class.check <- ncol(S)!=numNodes(g);
-    if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
-    S.hier <- S;
-    desc <- build.descendants(g);
-    for(i in 1:length(desc)){
-        m <- as.matrix(S[,desc[[i]]]);
-        idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
-        m.idx <- as.matrix(m[idx,]); ## handle case with one descendant -> apply needs a matrix
-        S.hier[idx,names(desc[i])] <- 1-(apply(1-m.idx,1,prod));
-    }
-    rm(S); gc();
-    return(S.hier);
+  if(!(root %in% colnames(S))) {
+    max.score <- max(S);
+    z <- rep(max.score,nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## check consistency between nodes of g and classes of S
+  class.check <- ncol(S)!=numNodes(g);
+  if(class.check)
+    stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
+  S.hier <- S;
+  desc <- build.descendants(g);
+  for(i in 1:length(desc)){
+    m <- as.matrix(S[,desc[[i]]]);
+    idx <- which(apply(m,1,sum)>0); ## consider only examples with scores greater than 0
+    m.idx <- as.matrix(m[idx,]); ## handle case with one descendant -> apply needs a matrix
+    S.hier[idx,names(desc[i])] <- 1-(apply(1-m.idx,1,prod));
+  }
+  rm(S); gc();
+  return(S.hier);
 }
 
 #' @title Obozinski's heuristic methods calling
@@ -123,28 +123,28 @@ obozinski.or <- function(S, g, root="00"){
 #' data(scores);
 #' S.and <- obozinski.methods(S, g, heuristic="and", norm=TRUE, norm.type="maxnorm");
 obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL){
-    ## check
-    if(heuristic!="max" && heuristic!="and" && heuristic!="or")
-        stop("the chosen heuristic method is not among those available or it has been misspelled");
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done\n");
-    }
-    ## Obozinski's hierarchical heuristic methods
-    root <- root.node(g);
-    if(heuristic=="and")
-        S <- obozinski.and(S, g, root);
-    if(heuristic=="max")
-        S <- obozinski.max(S, g, root);
-    if(heuristic=="or")
-        S <- obozinski.or(S, g, root);
-    cat("Obozinski's heuristic", heuristic, "correction: done\n");
-    return(S);
+  ## check
+  if(heuristic!="max" && heuristic!="and" && heuristic!="or")
+    stop("the chosen heuristic method is not among those available or it has been misspelled");
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization: done\n");
+  }
+  ## Obozinski's hierarchical heuristic methods
+  root <- root.node(g);
+  if(heuristic=="and")
+    S <- obozinski.and(S, g, root);
+  if(heuristic=="max")
+    S <- obozinski.max(S, g, root);
+  if(heuristic=="or")
+    S <- obozinski.or(S, g, root);
+  cat("Obozinski's heuristic", heuristic, "correction: done\n");
+  return(S);
 }
 
 #' @title Obozinski's heuristic methods -- holdout
@@ -175,28 +175,28 @@ obozinski.methods <- function(S, g, heuristic="and", norm=FALSE, norm.type=NULL)
 #' data(test.index);
 #' S.and <- obozinski.holdout(S, g, testIndex=test.index, heuristic="and", norm=FALSE, norm.type=NULL);
 obozinski.holdout <- function(S, g, testIndex, heuristic="and", norm=FALSE, norm.type=NULL){
-    ## check
-    if(heuristic!="max" && heuristic!="and" && heuristic!="or")
-        stop("the chosen heuristic method is not among those available or it has been misspelled");
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done\n");
-    }
-    ## shrinking score matrix to test test
-    S <- S[testIndex,];
-    ## Obozinski's hierarchical heuristic methods
-    root <- root.node(g);
-    if(heuristic=="and")
-        S <- obozinski.and(S, g, root);
-    if(heuristic=="max")
-        S <- obozinski.max(S, g, root);
-    if(heuristic=="or")
-        S <- obozinski.or(S, g, root);
-    cat("Obozinski's heuristic", heuristic, "correction: done\n");
-    return(S);
+  ## check
+  if(heuristic!="max" && heuristic!="and" && heuristic!="or")
+    stop("the chosen heuristic method is not among those available or it has been misspelled");
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization: done\n");
+  }
+  ## shrinking score matrix to test test
+  S <- S[testIndex,];
+  ## Obozinski's hierarchical heuristic methods
+  root <- root.node(g);
+  if(heuristic=="and")
+    S <- obozinski.and(S, g, root);
+  if(heuristic=="max")
+    S <- obozinski.max(S, g, root);
+  if(heuristic=="or")
+    S <- obozinski.or(S, g, root);
+  cat("Obozinski's heuristic", heuristic, "correction: done\n");
+  return(S);
 }

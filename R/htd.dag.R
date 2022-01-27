@@ -29,32 +29,32 @@
 #' root <- root.node(g);
 #' S.htd <- htd(S,g,root);
 htd <- function(S, g, root="00"){
-    levels <- graph.levels(g,root);
-    # a dummy root is added if it does not exist
-    if(!(root %in% colnames(S))){
-        max.score <- max(S);
-        z <- rep(max.score,nrow(S));
-        S <- cbind(z,S);
-        colnames(S)[1] <- root;
+  levels <- graph.levels(g,root);
+  # a dummy root is added if it does not exist
+  if(!(root %in% colnames(S))){
+    max.score <- max(S);
+    z <- rep(max.score,nrow(S));
+    S <- cbind(z,S);
+    colnames(S)[1] <- root;
+  }
+  ## check consistency between nodes of g and classes of S
+  class.check <- ncol(S)!=numNodes(g);
+  if(class.check)
+    stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
+  # nodes are scanned from top to bottom: a list par.tod with the parents for each node (ordered from top to bottom) is obtained
+  par.tod <- build.parents.top.down(g,levels,root)
+  for(i in 1:length(par.tod)){
+    child <- S[,names(par.tod[i])];
+    parents <- as.matrix(S[,par.tod[[i]]]);
+    # Note: the version with an apply and an ifelse statement is slower ...
+    for(j in 1:length(child)){
+      x <- min(parents[j,]);
+      if(x < child[j])
+        child[j] <- x;
     }
-    ## check consistency between nodes of g and classes of S
-    class.check <- ncol(S)!=numNodes(g);
-    if(class.check)
-        stop("mismatch between the number of nodes of the graph g and the number of classes of the score matrix S");
-    # nodes are scanned from top to bottom: a list par.tod with the parents for each node (ordered from top to bottom) is obtained
-    par.tod <- build.parents.top.down(g,levels,root)
-    for(i in 1:length(par.tod)){
-        child <- S[,names(par.tod[i])];
-        parents <- as.matrix(S[,par.tod[[i]]]);
-        # Note: the version with an apply and an ifelse statement is slower ...
-        for(j in 1:length(child)){
-            x <- min(parents[j,]);
-            if(x < child[j])
-                child[j] <- x;
-        }
-        S[,names(par.tod[i])] <- child;
-    }
-    return(S);
+    S[,names(par.tod[i])] <- child;
+  }
+  return(S);
 }
 
 #' @title HTD-DAG vanilla
@@ -76,21 +76,21 @@ htd <- function(S, g, root="00"){
 #' data(scores);
 #' S.htd <- htd.vanilla(S, g, norm=FALSE, norm.type=NULL);
 htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
-    ## check
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done\n");
-    }
-    ## htd correction
-    root <- root.node(g);
-    S <- htd(S, g, root);
-    cat("htd-dag correction: done\n");
-    return(S);
+  ## check
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization: done\n");
+  }
+  ## htd correction
+  root <- root.node(g);
+  S <- htd(S, g, root);
+  cat("htd-dag correction: done\n");
+  return(S);
 }
 
 #' @title HTD-DAG holdout
@@ -114,21 +114,21 @@ htd.vanilla <- function(S, g, norm=FALSE, norm.type=NULL){
 #' data(test.index);
 #' S.htd <- htd.holdout(S, g, testIndex=test.index, norm=FALSE, norm.type=NULL);
 htd.holdout <- function(S, g, testIndex, norm=FALSE, norm.type=NULL){
-    ## check
-    if(norm==TRUE && is.null(norm.type))
-        stop("choose a normalization methods among those available");
-    if(norm==FALSE && !is.null(norm.type))
-        stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
-    ## normalization
-    if(norm){
-        S <- scores.normalization(norm.type=norm.type, S);
-        cat(norm.type, "normalization: done\n");
-    }
-    ## shrinking score matrix to test test
-    S <- S[testIndex,];
-    ## hierarchical top-down
-    root <- root.node(g);
-    S <- htd(S, g, root);
-    cat("htd-dag correction: done\n");
-    return(S);
+  ## check
+  if(norm==TRUE && is.null(norm.type))
+    stop("choose a normalization methods among those available");
+  if(norm==FALSE && !is.null(norm.type))
+    stop("do you wanna or not normalize the matrix S? norm and norm.type are inconsistent");
+  ## normalization
+  if(norm){
+    S <- scores.normalization(norm.type=norm.type, S);
+    cat(norm.type, "normalization: done\n");
+  }
+  ## shrinking score matrix to test test
+  S <- S[testIndex,];
+  ## hierarchical top-down
+  root <- root.node(g);
+  S <- htd(S, g, root);
+  cat("htd-dag correction: done\n");
+  return(S);
 }

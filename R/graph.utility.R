@@ -15,30 +15,30 @@
 #' root <- root.node(g);
 #' lev <- graph.levels(g, root=root);
 graph.levels <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0)
-        stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root)
-        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
-    ed <- edges(g);
-    ew <- edgeWeights(g);
-    for(i in 1:length(ed)){
-        l <- length(ew[[i]]);
-        if(l!=0)
-            ew[[i]][1:l] <- -1;
-    }
-    edL <- vector(mode="list", length=length(ed));
-    names(edL) <- names(ed);
-    for(i in 1:length(ed)){
-        edL[[i]] <- list(edges=ed[[i]], weights=ew[[i]]);
-    }
-    G <- graphNEL(nodes=nodes(g), edgeL=edL, edgemode="directed");
-    depth.G <- bellman.ford.sp(G,root)$distance;
-    depth.G <- -depth.G
-    levels <- vector(mode="list", length=max(depth.G)+1);
-    names(levels) <- paste(rep("level", max(depth.G)+1), 0:max(depth.G), sep="_");
-    for(i in 1:(max(depth.G)+1))
-        levels[[i]] <- names(which(depth.G==i-1));
-    return(levels);
+  if(sum(nodes(g) %in% root)==0)
+    stop("root node not found in g. Insert the root node");
+  if(root.node(g)!=root)
+    stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
+  ed <- edges(g);
+  ew <- edgeWeights(g);
+  for(i in 1:length(ed)){
+    l <- length(ew[[i]]);
+    if(l!=0)
+      ew[[i]][1:l] <- -1;
+  }
+  edL <- vector(mode="list", length=length(ed));
+  names(edL) <- names(ed);
+  for(i in 1:length(ed)){
+    edL[[i]] <- list(edges=ed[[i]], weights=ew[[i]]);
+  }
+  G <- graphNEL(nodes=nodes(g), edgeL=edL, edgemode="directed");
+  depth.G <- bellman.ford.sp(G,root)$distance;
+  depth.G <- -depth.G
+  levels <- vector(mode="list", length=max(depth.G)+1);
+  names(levels) <- paste(rep("level", max(depth.G)+1), 0:max(depth.G), sep="_");
+  for(i in 1:(max(depth.G)+1))
+    levels[[i]] <- names(which(depth.G==i-1));
+  return(levels);
 }
 
 #' @title Flip graph
@@ -50,21 +50,21 @@ graph.levels <- function(g, root="00"){
 #' data(graph);
 #' g.flipped <- compute.flipped.graph(g);
 compute.flipped.graph <- function(g){
-    ed <- edges(g);
-    ndL <- vector(mode="list", length=length(ed));
-    names(ndL) <- names(ed);
-    for(i in 1:length(ed)){
-        children <- ed[[i]];
-        parent   <- names(ed[i]);
-        if(length(children)!=0){
-            for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
-        }
+  ed <- edges(g);
+  ndL <- vector(mode="list", length=length(ed));
+  names(ndL) <- names(ed);
+  for(i in 1:length(ed)){
+    children <- ed[[i]];
+    parent   <- names(ed[i]);
+    if(length(children)!=0){
+      for(j in 1:length(children))
+        ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
     }
-    for (i in 1:length(ndL))
-        ndL[[i]] <- list(edges=ndL[[i]]);
-    og <- graphNEL(nodes=nodes(g), edgeL=ndL, edgemode="directed");
-    return(og);
+  }
+  for (i in 1:length(ndL))
+    ndL[[i]] <- list(edges=ndL[[i]]);
+  og <- graphNEL(nodes=nodes(g), edgeL=ndL, edgemode="directed");
+  return(og);
 }
 
 #' @name build.parents
@@ -87,24 +87,24 @@ compute.flipped.graph <- function(g){
 #' and its vector is the set of its parents (the root node is not included).
 #' @export
 build.parents <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0)
-        stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root)
-        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
-    nd <- nodes(g)
-    ndL <- vector(mode="list", length=length(nd));
-    names(ndL) <- nd;
-    ed <- edges(g);
-    for(i in 1:length(ed)){
-        children <- ed[[i]];
-        parent   <- names(ed[i]);
-        if(length(children)!=0){
-            for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
-        }
+  if(sum(nodes(g) %in% root)==0)
+    stop("root node not found in g. Insert the root node");
+  if(root.node(g)!=root)
+    stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
+  nd <- nodes(g)
+  ndL <- vector(mode="list", length=length(nd));
+  names(ndL) <- nd;
+  ed <- edges(g);
+  for(i in 1:length(ed)){
+    children <- ed[[i]];
+    parent   <- names(ed[i]);
+    if(length(children)!=0){
+      for(j in 1:length(children))
+        ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
     }
-    ndL <- ndL[-which(names(ndL)==root)];
-    return(ndL);
+  }
+  ndL <- ndL[-which(names(ndL)==root)];
+  return(ndL);
 }
 
 #' @rdname build.parents
@@ -112,24 +112,24 @@ build.parents <- function(g, root="00"){
 #' and its vector is the set of its parents. The order of nodes follows the levels of the graph from root (excluded) to leaves.
 #' @export
 build.parents.top.down <- function(g,levels, root="00"){
-    if(sum(nodes(g) %in% root)==0)
-        stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root)
-        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
-    ord.nd <- unlist(levels);
-    ndL <- vector(mode="list", length=length(ord.nd));
-    names(ndL) <- ord.nd;
-    ed <- edges(g);
-    for(i in 1:length(ed)){
-        children <- ed[[i]];
-        parent   <- names(ed[i]);
-        if(length(children)!=0){
-            for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
-        }
+  if(sum(nodes(g) %in% root)==0)
+    stop("root node not found in g. Insert the root node");
+  if(root.node(g)!=root)
+    stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
+  ord.nd <- unlist(levels);
+  ndL <- vector(mode="list", length=length(ord.nd));
+  names(ndL) <- ord.nd;
+  ed <- edges(g);
+  for(i in 1:length(ed)){
+    children <- ed[[i]];
+    parent   <- names(ed[i]);
+    if(length(children)!=0){
+      for(j in 1:length(children))
+        ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
     }
-    ndL <- ndL[-which(names(ndL)==root)];
-    return(ndL);
+  }
+  ndL <- ndL[-which(names(ndL)==root)];
+  return(ndL);
 }
 
 #' @rdname build.parents
@@ -137,24 +137,24 @@ build.parents.top.down <- function(g,levels, root="00"){
 #' graph (i.e. child node) and its vector is the set of its parents. The nodes are ordered from leaves to root (excluded).
 #' @export
 build.parents.bottom.up <- function(g,levels, root="00"){
-    if(sum(nodes(g) %in% root)==0)
-        stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root)
-        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
-    flip.ord.nd <- rev(unlist(levels));
-    ndL <- vector(mode="list", length=length(flip.ord.nd));
-    names(ndL) <- flip.ord.nd;
-    ed <- edges(g);
-    for(i in 1:length(ed)){
-        children <- ed[[i]];
-        parent   <- names(ed[i]);
-        if(length(children)!=0){
-            for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
-        }
+  if(sum(nodes(g) %in% root)==0)
+    stop("root node not found in g. Insert the root node");
+  if(root.node(g)!=root)
+    stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
+  flip.ord.nd <- rev(unlist(levels));
+  ndL <- vector(mode="list", length=length(flip.ord.nd));
+  names(ndL) <- flip.ord.nd;
+  ed <- edges(g);
+  for(i in 1:length(ed)){
+    children <- ed[[i]];
+    parent   <- names(ed[i]);
+    if(length(children)!=0){
+      for(j in 1:length(children))
+        ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
     }
-    ndL <- ndL[-which(names(ndL)==root)];
-    return(ndL);
+  }
+  ndL <- ndL[-which(names(ndL)==root)];
+  return(ndL);
 }
 
 #' @rdname build.parents
@@ -162,24 +162,24 @@ build.parents.bottom.up <- function(g,levels, root="00"){
 #' and its vector is the set of its parents. The nodes are ordered according to a topological sorting, i.e. parents node come before children node.
 #' @export
 build.parents.topological.sorting <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0)
-        stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root)
-        stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
-    ord.nd <- tsort(g);
-    ndL <- vector(mode="list", length=length(ord.nd));
-    names(ndL) <- ord.nd;
-    ed <- edges(g);
-    for(i in 1:length(ed)){
-        children <- ed[[i]];
-        parent   <- names(ed[i]);
-        if(length(children)!=0){
-            for(j in 1:length(children))
-                ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
-        }
+  if(sum(nodes(g) %in% root)==0)
+    stop("root node not found in g. Insert the root node");
+  if(root.node(g)!=root)
+    stop("root is not the right root node of g. Use the function root.node(g) to find the root node of g");
+  ord.nd <- tsort(g);
+  ndL <- vector(mode="list", length=length(ord.nd));
+  names(ndL) <- ord.nd;
+  ed <- edges(g);
+  for(i in 1:length(ed)){
+    children <- ed[[i]];
+    parent   <- names(ed[i]);
+    if(length(children)!=0){
+      for(j in 1:length(children))
+        ndL[[children[j]]] <- c(ndL[[children[j]]],parent);
     }
-    ndL <- ndL[-which(names(ndL)==root)];
-    return(ndL);
+  }
+  ndL <- ndL[-which(names(ndL)==root)];
+  return(ndL);
 }
 
 #' @name build.descendants
@@ -200,12 +200,12 @@ build.parents.topological.sorting <- function(g, root="00"){
 #' is the set of its descendants including also \eqn{x}.
 #' @export
 build.descendants <- function(g){
-    name.nodes <- nodes(g);
-    g2 <- transitive.closure(g);
-    desc <- edges(g2);
-    for(x in name.nodes)
-        desc[[x]] <- c(desc[[x]],x);
-    return(desc);
+  name.nodes <- nodes(g);
+  g2 <- transitive.closure(g);
+  desc <- edges(g2);
+  for(x in name.nodes)
+    desc[[x]] <- c(desc[[x]],x);
+  return(desc);
 }
 
 #' @rdname build.descendants
@@ -214,12 +214,12 @@ build.descendants <- function(g){
 #' The nodes are ordered from root (included) to leaves.
 #' @export
 build.descendants.per.level <- function(g,levels){
-    ord.nd <- unlist(levels);
-    g2 <- transitive.closure(g);
-    desc <- edges(g2)[ord.nd];
-    for(x in ord.nd)
-        desc[[x]] <- c(desc[[x]],x);
-    return(desc);
+  ord.nd <- unlist(levels);
+  g2 <- transitive.closure(g);
+  desc <- edges(g2)[ord.nd];
+  for(x in ord.nd)
+    desc[[x]] <- c(desc[[x]],x);
+  return(desc);
 }
 
 #' @rdname build.descendants
@@ -227,12 +227,12 @@ build.descendants.per.level <- function(g,levels){
 #' the graph and its vector is the set of its descendants including also \eqn{x}. The nodes are ordered from leaves to root (included).
 #' @export
 build.descendants.bottom.up <- function(g,levels) {
-    flip.ord.nd <- rev(unlist(levels));
-    g2 <- transitive.closure(g);
-    desc <- edges(g2)[flip.ord.nd];
-    for(x in flip.ord.nd)
-        desc[[x]] <- c(desc[[x]],x);
-    return(desc);
+  flip.ord.nd <- rev(unlist(levels));
+  g2 <- transitive.closure(g);
+  desc <- edges(g2)[flip.ord.nd];
+  for(x in flip.ord.nd)
+    desc[[x]] <- c(desc[[x]],x);
+  return(desc);
 }
 
 #' @name build.children
@@ -253,7 +253,7 @@ build.descendants.bottom.up <- function(g,levels) {
 #' is the set of its children.
 #' @export
 build.children <- function(g){
-    return(edges(g));
+  return(edges(g));
 }
 
 #' @rdname build.children
@@ -261,13 +261,13 @@ build.children <- function(g){
 #' of the graph (i.e. parent node) and its vector is the set of its children. The nodes are ordered from root (included) to leaves.
 #' @export
 build.children.top.down <- function(g,levels){
-    child <- build.children(g)
-    nd <- c();
-    for(i in 1:length(levels)){
-        level.nodes <- levels[[i]];
-        nd <- append(nd,child[level.nodes]);
-    }
-    return(nd);
+  child <- build.children(g)
+  nd <- c();
+  for(i in 1:length(levels)){
+    level.nodes <- levels[[i]];
+    nd <- append(nd,child[level.nodes]);
+  }
+  return(nd);
 }
 
 #' @rdname build.children
@@ -275,10 +275,10 @@ build.children.top.down <- function(g,levels){
 #' of the graph (i.e. parent node) and its vector is the set of its children. The nodes are ordered from leaves (included) to root.
 #' @export
 build.children.bottom.up <- function(g,levels){
-    flip.ord.nd <- rev(unlist(levels));
-    ed <- edges(g);
-    nd <- ed[flip.ord.nd];
-    return(nd);
+  flip.ord.nd <- rev(unlist(levels));
+  ed <- edges(g);
+  nd <- ed[flip.ord.nd];
+  return(nd);
 }
 
 #' @name build.ancestors
@@ -299,13 +299,13 @@ build.children.bottom.up <- function(g,levels){
 #' is the set of its ancestors including also \eqn{x}.
 #' @export
 build.ancestors <- function(g){
-    og <- compute.flipped.graph(g);
-    names.nodes <- nodes(og);
-    og2 <- transitive.closure(og);
-    anc <- edges(og2);
-    for(x in names.nodes)
-        anc[[x]] <- c(anc[[x]],x);
-    return(anc);
+  og <- compute.flipped.graph(g);
+  names.nodes <- nodes(og);
+  og2 <- transitive.closure(og);
+  anc <- edges(og2);
+  for(x in names.nodes)
+    anc[[x]] <- c(anc[[x]],x);
+  return(anc);
 }
 
 #' @rdname build.ancestors
@@ -313,13 +313,13 @@ build.ancestors <- function(g){
 #' of the graph and its vector is the set of its ancestors including also \eqn{x}. The nodes are ordered from root (included) to leaves.
 #' @export
 build.ancestors.per.level <- function(g,levels){
-    og <- compute.flipped.graph(g);
-    ord.nd <- unlist(levels);
-    og2 <- transitive.closure(og);
-    anc <- edges(og2)[ord.nd];
-    for(x in ord.nd)
-        anc[[x]] <- c(anc[[x]],x);
-    return(anc);
+  og <- compute.flipped.graph(g);
+  ord.nd <- unlist(levels);
+  og2 <- transitive.closure(og);
+  anc <- edges(og2)[ord.nd];
+  for(x in ord.nd)
+    anc[[x]] <- c(anc[[x]],x);
+  return(anc);
 }
 
 #' @rdname build.ancestors
@@ -327,13 +327,13 @@ build.ancestors.per.level <- function(g,levels){
 #' graph and its vector is the set of its ancestors including also \eqn{x}. The nodes are ordered from leaves to root (included).
 #' @export
 build.ancestors.bottom.up <- function(g,levels){
-    og <- compute.flipped.graph(g);
-    flip.ord.nd <- rev(unlist(levels));
-    og2 <- transitive.closure(og);
-    anc <- edges(og2)[flip.ord.nd];
-    for(x in flip.ord.nd)
-        anc[[x]] <- c(anc[[x]],x);
-    return(anc);
+  og <- compute.flipped.graph(g);
+  flip.ord.nd <- rev(unlist(levels));
+  og2 <- transitive.closure(og);
+  anc <- edges(og2)[flip.ord.nd];
+  for(x in flip.ord.nd)
+    anc[[x]] <- c(anc[[x]],x);
+  return(anc);
 }
 
 #' @title Root node
@@ -345,9 +345,9 @@ build.ancestors.bottom.up <- function(g,levels){
 #' data(graph);
 #' root <- root.node(g);
 root.node <- function(g){
-    d <- degree(g);
-    root <- names(which(d$inDegree==0));
-    return(root);
+  d <- degree(g);
+  root <- names(which(d$inDegree==0));
+  return(root);
 }
 
 #' @title Leaves
@@ -359,9 +359,9 @@ root.node <- function(g){
 #' data(graph);
 #' leaves <- find.leaves(g);
 find.leaves <- function(g){
-    d <- degree(g);
-    leaves <- names(which(d$outDegree==0));
-    return(leaves);
+  d <- degree(g);
+  leaves <- names(which(d$outDegree==0));
+  return(leaves);
 }
 
 #' @title Distances from leaves
@@ -374,13 +374,13 @@ find.leaves <- function(g){
 #' data(graph);
 #' dist.leaves <- distances.from.leaves(g);
 distances.from.leaves <- function(g){
-    leaves <- find.leaves(g);
-    n.leaves <- length(leaves);
-    og <- compute.flipped.graph(g);
-    og <- addNode("root", og);
-    og <- addEdge(rep("root",n.leaves), leaves, og, rep(1,n.leaves));
-    dist <- acc(og,"root")[[1]]-1;
-    return(dist);
+  leaves <- find.leaves(g);
+  n.leaves <- length(leaves);
+  og <- compute.flipped.graph(g);
+  og <- addNode("root", og);
+  og <- addEdge(rep("root",n.leaves), leaves, og, rep(1,n.leaves));
+  dist <- acc(og,"root")[[1]]-1;
+  return(dist);
 }
 
 #' @title Constraints matrix
@@ -394,11 +394,11 @@ distances.from.leaves <- function(g){
 #' data(graph);
 #' m <- constraints.matrix(g);
 constraints.matrix <- function(g){
-    eM <- edgeMatrix(g);
-    eM <- cbind(eM[2,],eM[1,]);
-    nd <- nodes(g);
-    dimnames(eM) <- list(nd[eM[,2]], c("child","parent"))
-    return(eM);
+  eM <- edgeMatrix(g);
+  eM <- cbind(eM[2,],eM[1,]);
+  nd <- nodes(g);
+  dimnames(eM) <- list(nd[eM[,2]], c("child","parent"))
+  return(eM);
 }
 
 #' @title Build subgraph
@@ -414,22 +414,22 @@ constraints.matrix <- function(g){
 #' nd <- anc[["HP:0001371"]];
 #' subg <- build.subgraph(nd, g, edgemode="directed");
 build.subgraph <- function(nd, g, edgemode="directed"){
-    ed <- edges(g);
-    ed.sel <- ed[nd];
-    ndL <- vector(mode="list", length=length(ed.sel));
-    names(ndL) <- names(ed.sel);
-    for(i in 1:length(ed.sel)){
-        parent   <- names(ed.sel[i]);
-        children <- ed.sel[[i]];
-        if(length(children!=0)){
-            children.map <- children[children %in% nd]
-            ndL[[i]] <- append(ndL[[i]],children.map);
-        }
+  ed <- edges(g);
+  ed.sel <- ed[nd];
+  ndL <- vector(mode="list", length=length(ed.sel));
+  names(ndL) <- names(ed.sel);
+  for(i in 1:length(ed.sel)){
+    parent   <- names(ed.sel[i]);
+    children <- ed.sel[[i]];
+    if(length(children!=0)){
+      children.map <- children[children %in% nd]
+      ndL[[i]] <- append(ndL[[i]],children.map);
     }
-    for (i in 1:length(ndL))
-        ndL[[i]] <- list(edges=ndL[[i]]);
-    G <- graphNEL(nodes=nd, edgeL=ndL, edgemode=edgemode);
-    return(G);
+  }
+  for (i in 1:length(ndL))
+    ndL[[i]] <- list(edges=ndL[[i]]);
+  G <- graphNEL(nodes=nd, edgeL=ndL, edgemode=edgemode);
+  return(G);
 }
 
 #' @title DAG checker
@@ -444,20 +444,20 @@ build.subgraph <- function(nd, g, edgemode="directed"){
 #' root <- root.node(g);
 #' check.dag.integrity(g, root=root);
 check.dag.integrity <- function(g, root="00"){
-    if(sum(nodes(g) %in% root)==0)
-        stop("root node not found in g. Insert the root node");
-    if(root.node(g)!=root)
-        stop("the supplied root node is not the right root node of g. Use the function root.node(g) to find the root node of g");
+  if(sum(nodes(g) %in% root)==0)
+    stop("root node not found in g. Insert the root node");
+  if(root.node(g)!=root)
+    stop("the supplied root node is not the right root node of g. Use the function root.node(g) to find the root node of g");
   all.nodes <- nodes(g);
   acc.nodes <- names(acc(g,root)[[1]]);
   if((length(all.nodes) - length(acc.nodes)) > 1) {
-        n <- setdiff(all.nodes,c(acc.nodes,root));
-        cat("not all nodes accessible from root\n");
-        cat("nodes not accessible from root:\n");
-        cat(n,"\n");
-    }else{
-        cat("dag is ok\n")
-    };
+    n <- setdiff(all.nodes,c(acc.nodes,root));
+    cat("not all nodes accessible from root\n");
+    cat("nodes not accessible from root:\n");
+    cat(n,"\n");
+  }else{
+    cat("dag is ok\n")
+  };
 }
 
 #' @name hierarchical.checkers
@@ -493,60 +493,60 @@ check.dag.integrity <- function(g, root="00"){
 #' check.hierarchy.single.sample(S.hier.single.example, g, root=root);
 #' check.hierarchy(S.hier, g, root);
 check.hierarchy.single.sample <- function(y.hier,g, root="00"){
-    if(!(root %in% names(y.hier))){
-        max.score <- max(y.hier);
-        y.hier <- c(max.score,y.hier);
-        names(y.hier)[1] <- root;
-    }
-    par <- build.parents(g,root);
-    v <- c()
-    for(i in 1:length(par)){
-        child <- y.hier[names(par[i])];
-        parents <- y.hier[par[[i]]]
-        x <- parents >= child
-        y <- any(x==0)
-        v <- append(v,y)
-    }
-    names(v) <- names(par)
-    violated <- any(v==TRUE);
-    if(violated)
-        status = "NOTOK"
-    else
-        status = "OK";
-    h <- as.factor(v);
-    k <- summary(h);
-    l <- list(status=status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
-    return(l);
+  if(!(root %in% names(y.hier))){
+    max.score <- max(y.hier);
+    y.hier <- c(max.score,y.hier);
+    names(y.hier)[1] <- root;
+  }
+  par <- build.parents(g,root);
+  v <- c()
+  for(i in 1:length(par)){
+    child <- y.hier[names(par[i])];
+    parents <- y.hier[par[[i]]]
+    x <- parents >= child
+    y <- any(x==0)
+    v <- append(v,y)
+  }
+  names(v) <- names(par)
+  violated <- any(v==TRUE);
+  if(violated)
+    status = "NOTOK"
+  else
+    status = "OK";
+  h <- as.factor(v);
+  k <- summary(h);
+  l <- list(status=status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
+  return(l);
 }
 
 #' @rdname hierarchical.checkers
 #' @export
 check.hierarchy <- function(S.hier,g, root="00"){
-    if(!(root %in% colnames(S.hier))){
-        max.score <- max(S.hier);
-        z <- rep(max.score,nrow(S.hier));
-        S.hier <- cbind(z,S.hier);
-        colnames(S.hier)[1] <- root;
-    }
-    par <- build.parents(g,root);
-    v <- c()
-    for(i in 1:length(par)){
-        child <- S.hier[,names(par[i])];
-        parents <- S.hier[,par[[i]]]
-        x <- parents >= child
-        y <- any(x==0)
-        v <- append(v,y)
-    }
-    names(v) <- names(par)
-    violated <- any(v==TRUE);
-    if(violated)
-        status = "NOTOK"
-    else
-        status = "OK";
-    h <- as.factor(v);
-    k <- summary(h);
-    l <- list(status=status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
-    return(l);
+  if(!(root %in% colnames(S.hier))){
+    max.score <- max(S.hier);
+    z <- rep(max.score,nrow(S.hier));
+    S.hier <- cbind(z,S.hier);
+    colnames(S.hier)[1] <- root;
+  }
+  par <- build.parents(g,root);
+  v <- c()
+  for(i in 1:length(par)){
+    child <- S.hier[,names(par[i])];
+    parents <- S.hier[,par[[i]]]
+    x <- parents >= child
+    y <- any(x==0)
+    v <- append(v,y)
+  }
+  names(v) <- names(par)
+  violated <- any(v==TRUE);
+  if(violated)
+    status = "NOTOK"
+  else
+    status = "OK";
+  h <- as.factor(v);
+  k <- summary(h);
+  l <- list(status=status, hierarchy.constraints.broken=v, hierarchy.constraints.satisfied=k);
+  return(l);
 }
 
 #' @title Lexicographical topological sorting
@@ -561,25 +561,25 @@ check.hierarchy <- function(S.hier,g, root="00"){
 #' data(graph);
 #' T <- lexicographical.topological.sort(g);
 lexicographical.topological.sort <- function(g){
-    ## check self-loop: graph with self-loop cannot be processed
-    indegree <- degree(g)$inDegree;
-    if(!(any(indegree==0))){
-        stop("input graph g contains self-loop"); ## self-loop detect
-    }
-    T <- c();
-    indegree <- degree(g)$inDegree;
-    while(length(indegree)!=0){
-        queue <- names(which(indegree==0));
-        if(length(queue)==0)
-            stop("input graph g contains self-loop"); ## check self-loop
-        queue <- queue[order(queue, decreasing=FALSE)];
-        T <- append(T, queue[1]);
-        indegree <- indegree[-which(names(indegree)==queue[1])];
-        processed <- adj(g, queue)[[1]];
-        s <- indegree[processed] - 1;
-        indegree[processed] <- s;
-    }
-    return(T);
+  ## check self-loop: graph with self-loop cannot be processed
+  indegree <- degree(g)$inDegree;
+  if(!(any(indegree==0))){
+    stop("input graph g contains self-loop"); ## self-loop detect
+  }
+  T <- c();
+  indegree <- degree(g)$inDegree;
+  while(length(indegree)!=0){
+    queue <- names(which(indegree==0));
+    if(length(queue)==0)
+      stop("input graph g contains self-loop"); ## check self-loop
+    queue <- queue[order(queue, decreasing=FALSE)];
+    T <- append(T, queue[1]);
+    indegree <- indegree[-which(names(indegree)==queue[1])];
+    processed <- adj(g, queue)[[1]];
+    s <- indegree[processed] - 1;
+    indegree[processed] <- s;
+  }
+  return(T);
 }
 
 #' @title Build consistent graph
@@ -596,15 +596,15 @@ lexicographical.topological.sort <- function(g){
 #' G <- graph::addEdge(c("X","Y","Z"), c("HP:0011844","HP:0009810","HP:0012385"), G);
 #' G <- build.consistent.graph(G, root=root);
 build.consistent.graph <- function(g=g, root="00"){
-    nd <- nodes(g);
-    if(length(root.node(g))>1){
-        dk.sp <- dijkstra.sp(g, start=root)$distance;
-        nd <- nd[which(dk.sp!=Inf)];
-        ndinc <- names(dk.sp[which(dk.sp==Inf)]);
-        cat("removed nodes not accessible from root:", paste(1:length(ndinc), "\t", ndinc), sep="\n");
-    }
-    g <- build.subgraph(nd, g);
-    return(g);
+  nd <- nodes(g);
+  if(length(root.node(g))>1){
+    dk.sp <- dijkstra.sp(g, start=root)$distance;
+    nd <- nd[which(dk.sp!=Inf)];
+    ndinc <- names(dk.sp[which(dk.sp==Inf)]);
+    cat("removed nodes not accessible from root:", paste(1:length(ndinc), "\t", ndinc), sep="\n");
+  }
+  g <- build.subgraph(nd, g);
+  return(g);
 }
 
 #' @title Weighted adjacency matrix
@@ -618,26 +618,26 @@ build.consistent.graph <- function(g=g, root="00"){
 #' edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");
 #' W <- weighted.adjacency.matrix(file=edges);
 weighted.adjacency.matrix <- function(file="edges.txt"){
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        m <- read.table(gzfile(file), colClasses="character", stringsAsFactors=FALSE);
-    }else{
-        m <- as.matrix(read.table(file, colClasses="character", stringsAsFactors=FALSE));
-    }
-    nodesname <- as.vector(as.matrix((m[,1:2])));
-    charcheck <- any(suppressWarnings(is.na(as.numeric(nodesname))));
-    if(charcheck){
-        nodes <- sort(unique(as.vector(as.matrix(m[,1:2])))); ##NB: df must be converted as matrix to make as.vector working..
-    }else{
-        nodes <- as.character(sort(as.numeric(unique(as.vector(m[,1:2])))));
-    }
-    n.nodes <- length(nodes);
-    # building the adjacency matrix
-    W <- matrix(0, nrow=n.nodes, ncol=n.nodes);
-    dimnames(W) <- list(nodes,nodes);
-    W[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
-    W[cbind(m[,2], m[,1])] <- as.numeric(m[,3]);
-    return(W);
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    m <- read.table(gzfile(file), colClasses="character", stringsAsFactors=FALSE);
+  }else{
+    m <- as.matrix(read.table(file, colClasses="character", stringsAsFactors=FALSE));
+  }
+  nodesname <- as.vector(as.matrix((m[,1:2])));
+  charcheck <- any(suppressWarnings(is.na(as.numeric(nodesname))));
+  if(charcheck){
+    nodes <- sort(unique(as.vector(as.matrix(m[,1:2])))); ##NB: df must be converted as matrix to make as.vector working..
+  }else{
+    nodes <- as.character(sort(as.numeric(unique(as.vector(m[,1:2])))));
+  }
+  n.nodes <- length(nodes);
+  # building the adjacency matrix
+  W <- matrix(0, nrow=n.nodes, ncol=n.nodes);
+  dimnames(W) <- list(nodes,nodes);
+  W[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
+  W[cbind(m[,2], m[,1])] <- as.numeric(m[,3]);
+  return(W);
 }
 
 #' @title Tupla matrix
@@ -655,23 +655,23 @@ weighted.adjacency.matrix <- function(file="edges.txt"){
 #' file <- tempfile();
 #' tupla.matrix(W, output.file=file, digits=3);
 tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
-    im <- which(m!=0, arr.ind=TRUE);
-    rows <- rownames(im);
-    ## degenerate case when m is symmetric and some interactions are zero
-    if(isSymmetric(m) && any(rowSums(m)==0)){
-        colrep.names <- intersect(colnames(m), rows);
-    }else{
-        colrep.names <- colnames(m);
-    }
-    colrep.times <- table(im[,2]);
-    cols <- rep(colrep.names, times=colrep.times);
-    df <- data.frame(row=rows, col=cols, score=m[im]);
-    tmp <- strsplit(output.file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        write.table(format(df,digits=digits), file=gzfile(output.file), quote=FALSE, row.names=FALSE, col.names=FALSE);
-    }else{
-        write.table(format(df,digits=digits), file=output.file, quote=FALSE, row.names=FALSE, col.names=FALSE);
-    }
+  im <- which(m!=0, arr.ind=TRUE);
+  rows <- rownames(im);
+  ## degenerate case when m is symmetric and some interactions are zero
+  if(isSymmetric(m) && any(rowSums(m)==0)){
+    colrep.names <- intersect(colnames(m), rows);
+  }else{
+    colrep.names <- colnames(m);
+  }
+  colrep.times <- table(im[,2]);
+  cols <- rep(colrep.names, times=colrep.times);
+  df <- data.frame(row=rows, col=cols, score=m[im]);
+  tmp <- strsplit(output.file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    write.table(format(df,digits=digits), file=gzfile(output.file), quote=FALSE, row.names=FALSE, col.names=FALSE);
+  }else{
+    write.table(format(df,digits=digits), file=output.file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+  }
 }
 
 #' @name build.scores.matrix
@@ -688,86 +688,86 @@ tupla.matrix <- function(m, output.file="net.file.gz", digits=3){
 #' S <- build.scores.matrix.from.list(file.list, split="[(\t,|)]");
 #' S <- build.scores.matrix.from.tupla(file.tupla);
 build.scores.matrix.from.list <- function(file="scores.list.txt", split="[(\t,|)]"){ ## split=[(,=)]
-    ## read scores file and build a matrix with 3 columns: gene/annotations/scores
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        con <- gzfile(file);
-        line <- readLines(con);
-        close(con);
-    }else{
-        line <- readLines(file);
+  ## read scores file and build a matrix with 3 columns: gene/annotations/scores
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    con <- gzfile(file);
+    line <- readLines(con);
+    close(con);
+  }else{
+    line <- readLines(file);
+  }
+  tmp  <- strsplit(line, split=split, perl=TRUE);
+  gene.names <- sapply(tmp, `[[`, 1);
+  ## scores and ontology terms list
+  scores.list <- ann.list <- vector(mode="list", length=length(gene.names));
+  names(scores.list) <- gene.names;
+  names(ann.list) <- gene.names;
+  for(i in 1:length(tmp)){
+    x <- suppressWarnings(as.numeric(tmp[[i]][-1])); ## NA by coercion -> first element is the gene/protein name
+    y <- x[!is.na(x=x)];
+    scores.list[[i]] <- y;
+    z <- is.na(x);
+    ann.list[[i]] <- tmp[[i]][-1][z]
+  }
+  num.edges <-  length(unlist(ann.list)); ## check: num.score <- length(unlist(scores.list)); num.edges==num.score; ## TRUE
+  num.v <- length(ann.list);
+  m <- matrix(character(num.edges*3), ncol=3);
+  count <- 0;
+  node1 <- names(ann.list);
+  for (i in 1:num.v) {
+    x <- ann.list[[i]];
+    y <- scores.list[[i]]
+    len.x <- length(x);
+    if (len.x!=0){
+      for (j in 1:len.x) {
+        count <- count + 1;
+        m[count,] <- c(node1[i], x[j], y[j]);
+      }
     }
-    tmp  <- strsplit(line, split=split, perl=TRUE);
-    gene.names <- sapply(tmp, `[[`, 1);
-    ## scores and ontology terms list
-    scores.list <- ann.list <- vector(mode="list", length=length(gene.names));
-    names(scores.list) <- gene.names;
-    names(ann.list) <- gene.names;
-    for(i in 1:length(tmp)){
-        x <- suppressWarnings(as.numeric(tmp[[i]][-1])); ## NA by coercion -> first element is the gene/protein name
-        y <- x[!is.na(x=x)];
-        scores.list[[i]] <- y;
-        z <- is.na(x);
-        ann.list[[i]] <- tmp[[i]][-1][z]
-    }
-    num.edges <-  length(unlist(ann.list)); ## check: num.score <- length(unlist(scores.list)); num.edges==num.score; ## TRUE
-    num.v <- length(ann.list);
-    m <- matrix(character(num.edges*3), ncol=3);
-    count <- 0;
-    node1 <- names(ann.list);
-    for (i in 1:num.v) {
-        x <- ann.list[[i]];
-        y <- scores.list[[i]]
-        len.x <- length(x);
-        if (len.x!=0){
-            for (j in 1:len.x) {
-                count <- count + 1;
-                m[count,] <- c(node1[i], x[j], y[j]);
-            }
-        }
-    }
-    ## build the hierarchical score matrix in R
-    samplename <- m[,1];
-    charcheck <- any(suppressWarnings(is.na(as.numeric(samplename))));
-    if(charcheck){
-        genes <- sort(unique(samplename));
-    }else{
-        genes <- as.character(sort(as.numeric(unique(samplename))));
-    }
-    ngene <- length(genes);
-    feat  <- sort(unique(m[,2]));
-    nfeat <- length(feat);
-    ## return score matrix
-    S <- matrix(0, nrow=ngene, ncol=nfeat);
-    dimnames(S) <- list(genes, feat);
-    S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
-    return(S);
+  }
+  ## build the hierarchical score matrix in R
+  samplename <- m[,1];
+  charcheck <- any(suppressWarnings(is.na(as.numeric(samplename))));
+  if(charcheck){
+    genes <- sort(unique(samplename));
+  }else{
+    genes <- as.character(sort(as.numeric(unique(samplename))));
+  }
+  ngene <- length(genes);
+  feat  <- sort(unique(m[,2]));
+  nfeat <- length(feat);
+  ## return score matrix
+  S <- matrix(0, nrow=ngene, ncol=nfeat);
+  dimnames(S) <- list(genes, feat);
+  S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
+  return(S);
 }
 
 #' @rdname build.scores.matrix
 #' @export
 build.scores.matrix.from.tupla <- function(file="scores.tupla.txt"){
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        m <- read.table(gzfile(file), colClasses="character", stringsAsFactors=FALSE);
-    }else{
-        m <- as.matrix(read.table(file, colClasses="character", stringsAsFactors=FALSE));
-    }
-    prsname <- as.vector(as.matrix((m[,1])));
-    charcheck <- any(suppressWarnings(is.na(as.numeric(prsname))));
-    if(charcheck){
-        prs <- sort(unique(as.vector(as.matrix(m[,1])))); ##NB:df must be converted as matrix to make as.vector working..
-    }else{
-        prs <- as.character(sort(as.numeric(unique(as.vector(m[,1])))));
-    }
-    terms <- sort(unique(as.vector(as.matrix(m[,2]))));
-    n.prs <- length(prs);
-    n.obo <- length(terms);
-    # building score matrix
-    S <- matrix(0, nrow=n.prs, ncol=n.obo);
-    dimnames(S) <- list(prs,terms);
-    S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
-    return(S);
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    m <- read.table(gzfile(file), colClasses="character", stringsAsFactors=FALSE);
+  }else{
+    m <- as.matrix(read.table(file, colClasses="character", stringsAsFactors=FALSE));
+  }
+  prsname <- as.vector(as.matrix((m[,1])));
+  charcheck <- any(suppressWarnings(is.na(as.numeric(prsname))));
+  if(charcheck){
+    prs <- sort(unique(as.vector(as.matrix(m[,1])))); ##NB:df must be converted as matrix to make as.vector working..
+  }else{
+    prs <- as.character(sort(as.numeric(unique(as.vector(m[,1])))));
+  }
+  terms <- sort(unique(as.vector(as.matrix(m[,2]))));
+  n.prs <- length(prs);
+  n.obo <- length(terms);
+  # building score matrix
+  S <- matrix(0, nrow=n.prs, ncol=n.obo);
+  dimnames(S) <- list(prs,terms);
+  S[cbind(m[,1], m[,2])] <- as.numeric(m[,3]);
+  return(S);
 }
 
 
@@ -784,48 +784,48 @@ build.scores.matrix.from.tupla <- function(file="scores.tupla.txt"){
 #' hpobo <- "http://purl.obolibrary.org/obo/hp.obo";
 #' build.edges.from.hpo.obo(obofile=hpobo, file="hp.edge");}
 build.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
-    tmp <- strsplit(obofile, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        con <- gzfile(obofile);
-        line <- readLines(con);
-        close(con);
-    }else{
-        line <- readLines(obofile);
+  tmp <- strsplit(obofile, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    con <- gzfile(obofile);
+    line <- readLines(con);
+    close(con);
+  }else{
+    line <- readLines(obofile);
+  }
+  n.lines <- length(line);
+  m <- matrix(character(1000000*2), ncol=2);
+  colnames(m) <- c("source", "destination");
+  i <- 1;
+  j <- 0; # number of edges;
+  while(i<=n.lines){
+    while((i<=n.lines) && (line[i]!="[Term]")){
+      i <- i + 1;
     }
-    n.lines <- length(line);
-    m <- matrix(character(1000000*2), ncol=2);
-    colnames(m) <- c("source", "destination");
-    i <- 1;
-    j <- 0; # number of edges;
-    while(i<=n.lines){
-        while((i<=n.lines) && (line[i]!="[Term]")){
-            i <- i + 1;
-        }
-        if(i>=n.lines){break();}
-        i <- i + 1; # id
-        destination <- strsplit(line[i], split="[ ]")[[1]][2];
-        while( (line[i]!="") && (strsplit(line[i], split="[ ]")[[1]][1]!="is_a:") ){ # checking first is_a entry
-            i <- i + 1;
-        }
-        if (line[i] == ""){next();}  # we are at the end of the record and is_a has been found
-        source <- strsplit(line[i], split="[ ]")[[1]][2];
-        j <- j + 1;
-        i <- i + 1;
-        m[j,]<-c(source,destination);
-        while( (line[i]!="") && (strsplit(line[i], split="[ ]")[[1]][1]=="is_a:") ){# checking successive is_a entry
-            source <- strsplit(line[i], split="[ ]")[[1]][2];
-            i <- i + 1;
-            j <- j + 1;
-            m[j,]<-c(source,destination);
-        }
+    if(i>=n.lines){break();}
+    i <- i + 1; # id
+    destination <- strsplit(line[i], split="[ ]")[[1]][2];
+    while( (line[i]!="") && (strsplit(line[i], split="[ ]")[[1]][1]!="is_a:") ){ # checking first is_a entry
+      i <- i + 1;
     }
-    m <- m[1:j,];
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        write.table(m, file=gzfile(file), quote=FALSE, row.names=FALSE, col.names=FALSE);
-    }else{
-        write.table(m, file=file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+    if (line[i] == ""){next();}  # we are at the end of the record and is_a has been found
+    source <- strsplit(line[i], split="[ ]")[[1]][2];
+    j <- j + 1;
+    i <- i + 1;
+    m[j,]<-c(source,destination);
+    while( (line[i]!="") && (strsplit(line[i], split="[ ]")[[1]][1]=="is_a:") ){# checking successive is_a entry
+      source <- strsplit(line[i], split="[ ]")[[1]][2];
+      i <- i + 1;
+      j <- j + 1;
+      m[j,]<-c(source,destination);
     }
+  }
+  m <- m[1:j,];
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    write.table(m, file=gzfile(file), quote=FALSE, row.names=FALSE, col.names=FALSE);
+  }else{
+    write.table(m, file=file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+  }
 }
 
 #' @title Write a directed graph on file
@@ -839,27 +839,27 @@ build.edges.from.hpo.obo <- function(obofile="hp.obo", file="edge.file"){
 #' file <- tempfile();
 #' write.graph(g, file=file);
 write.graph <- function(g, file="graph.txt.gz"){
-    num.edges <- length(unlist(edges(g)));
-    num.v <- numNodes(g);
-    m <- matrix(character(num.edges*2), ncol=2);
-    res <- edges(g);
-    count <- 0;
-    node1 <- names(res);
-    for (i in 1:num.v) {
-        x <- res[[i]];
-    len.x <- length(x);
-    if (len.x!=0)
-        for (j in 1:len.x) {
-            count <- count + 1;
-            m[count,] <- c(node1[i],x[j]);
-        }
+  num.edges <- length(unlist(edges(g)));
+  num.v <- numNodes(g);
+  m <- matrix(character(num.edges*2), ncol=2);
+  res <- edges(g);
+  count <- 0;
+  node1 <- names(res);
+  for (i in 1:num.v) {
+    x <- res[[i]];
+  len.x <- length(x);
+  if (len.x!=0)
+    for (j in 1:len.x) {
+      count <- count + 1;
+      m[count,] <- c(node1[i],x[j]);
     }
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        write.table(m, file=gzfile(file), quote=FALSE, row.names=FALSE, col.names=FALSE);
-    }else{
-        write.table(m, file=file, quote=FALSE, row.names=FALSE, col.names=FALSE);
-    }
+  }
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    write.table(m, file=gzfile(file), quote=FALSE, row.names=FALSE, col.names=FALSE);
+  }else{
+    write.table(m, file=file, quote=FALSE, row.names=FALSE, col.names=FALSE);
+  }
 }
 
 #' @title Read a directed graph from a file
@@ -872,23 +872,23 @@ write.graph <- function(g, file="graph.txt.gz"){
 #' ed <- system.file("extdata/graph.edges.txt.gz", package= "HEMDAG");
 #' g <- read.graph(file=ed);
 read.graph <- function(file="graph.txt.gz"){
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        m <- as.matrix(read.table(gzfile(file), colClasses="character"));
-    }else{
-        m <- as.matrix(read.table(file, colClasses="character"));
-    }
-    thenodes<-sort(unique(as.vector(m))); # nodes
-    n.nodes <- length(thenodes);
-    n.edges <- nrow(m);
-    # building the graph
-    edL <- vector("list", length=n.nodes);
-    names(edL) <- thenodes;
-    for(i in 1:n.nodes)
-        edL[[i]]<-list(edges=NULL);
-    g <- graphNEL(nodes=thenodes, edgeL=edL, edgemode="directed");
-    g <- addEdge(m[1:n.edges,1], m[1:n.edges,2], g, rep(1,n.edges));
-    return(g);
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    m <- as.matrix(read.table(gzfile(file), colClasses="character"));
+  }else{
+    m <- as.matrix(read.table(file, colClasses="character"));
+  }
+  thenodes<-sort(unique(as.vector(m))); # nodes
+  n.nodes <- length(thenodes);
+  n.edges <- nrow(m);
+  # building the graph
+  edL <- vector("list", length=n.nodes);
+  names(edL) <- thenodes;
+  for(i in 1:n.nodes)
+    edL[[i]]<-list(edges=NULL);
+  g <- graphNEL(nodes=thenodes, edgeL=edL, edgemode="directed");
+  g <- addEdge(m[1:n.edges,1], m[1:n.edges,2], g, rep(1,n.edges));
+  return(g);
 }
 
 #' @title Read an undirected graph from a file
@@ -901,21 +901,21 @@ read.graph <- function(file="graph.txt.gz"){
 #' edges <- system.file("extdata/edges.txt.gz", package="HEMDAG");
 #' g <- read.undirected.graph(file=edges);
 read.undirected.graph <- function(file="graph.txt.gz"){
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        m <- as.matrix(read.table(gzfile(file), colClasses="character"));
-    }else{
-        m <- as.matrix(read.table(file, colClasses="character"));
-    }
-    thenodes<-sort(unique(as.vector(m[,1:2]))); # nodes
-    n.nodes <- length(thenodes);
-    n.edges <- nrow(m);
-    # building the graph
-    edL <- vector("list", length=n.nodes);
-    names(edL) <- thenodes;
-    for(i in 1:n.nodes)
-        edL[[i]]<-list(edges=NULL);
-    g <- graphNEL(nodes=thenodes, edgeL=edL, edgemode="undirected");
-    g <- addEdge(m[1:n.edges,1], m[1:n.edges,2], g, as.numeric(m[1:n.edges,3]));
-    return(g);
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    m <- as.matrix(read.table(gzfile(file), colClasses="character"));
+  }else{
+    m <- as.matrix(read.table(file, colClasses="character"));
+  }
+  thenodes<-sort(unique(as.vector(m[,1:2]))); # nodes
+  n.nodes <- length(thenodes);
+  n.edges <- nrow(m);
+  # building the graph
+  edL <- vector("list", length=n.nodes);
+  names(edL) <- thenodes;
+  for(i in 1:n.nodes)
+    edL[[i]]<-list(edges=NULL);
+  g <- graphNEL(nodes=thenodes, edgeL=edL, edgemode="undirected");
+  g <- addEdge(m[1:n.edges,1], m[1:n.edges,2], g, as.numeric(m[1:n.edges,3]));
+  return(g);
 }

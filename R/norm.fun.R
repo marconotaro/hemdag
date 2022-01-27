@@ -11,14 +11,14 @@
 #' data(scores);
 #' maxnorm <- normalize.max(S);
 normalize.max <- function(S){
-    classes <- colnames(S);
-    maximum <- apply(S,2,max);
-    for(class in classes){
-        if(maximum[class] != 0){
-            S[,class] <- S[,class]/maximum[class];
-        }
+  classes <- colnames(S);
+  maximum <- apply(S,2,max);
+  for(class in classes){
+    if(maximum[class] != 0){
+      S[,class] <- S[,class]/maximum[class];
     }
-    return(S);
+  }
+  return(S);
 }
 
 #' @title Scores normalization function
@@ -39,18 +39,18 @@ normalize.max <- function(S){
 #'     scores.normalization(norm.type=norm.type, S=S);
 #' }
 scores.normalization <- function(norm.type="maxnorm", S){
-    if(norm.type=="maxnorm"){
-        ## Max Normalization
-        S <- normalize.max(S);
-    }else if(norm.type=="qnorm"){
-        ## Quantile Normalization
-        ## note: normalize.quantiles function returns a unnamed matrix. colnames are essential for hierarchical algorithms
-        S.norm <- normalize.quantiles(S);
-        dimnames(S.norm) <- list(rownames(S),colnames(S));
-        S <- S.norm;
-        rm(S.norm);
-    }else{
-        stop("the chosen normalization method is not among those available or it was misspelled");
-    }
-    return(S);
+  if(norm.type=="maxnorm"){
+    ## Max Normalization
+    S <- normalize.max(S);
+  }else if(norm.type=="qnorm"){
+    ## Quantile Normalization
+    ## note: normalize.quantiles function returns a unnamed matrix. colnames are essential for hierarchical algorithms
+    S.norm <- normalize.quantiles(S);
+    dimnames(S.norm) <- list(rownames(S),colnames(S));
+    S <- S.norm;
+    rm(S.norm);
+  }else{
+    stop("the chosen normalization method is not among those available or it was misspelled");
+  }
+  return(S);
 }

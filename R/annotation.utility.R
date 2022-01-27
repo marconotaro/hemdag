@@ -16,38 +16,38 @@
 #' gene2pheno <- system.file("extdata/gene2pheno.txt.gz", package="HEMDAG");
 #' spec.ann <- specific.annotation.matrix(file=gene2pheno);
 specific.annotation.matrix <- function(file="gene2pheno.txt.gz"){
-    tmp <- strsplit(file, "[.,/,_]")[[1]];
-    if(any(tmp %in% "gz")){
-        con <- gzfile(file);
-        line <- readLines(con);
-        close(con);
-    }else{
-        line <- readLines(file);
-    }
-    tmp <- strsplit(line, split="[(\\s+,\t)|]", perl=TRUE); #nb: space (or tab) before pipe useful to separate gene from obo terms
-    genenames <- c();
-    for(i in 1:length(tmp)) genenames <- c(genenames,tmp[[i]][1]);
-    ann.list <- list();
-    for(i in 1:length(tmp)) ann.list[[i]] <- unique(tmp[[i]])[-1];
-    names(ann.list) <- genenames;
-    oboID <- unique(unlist(ann.list));
-    n.genes <- length(genenames);
-    n.oboID <- length(oboID);
-    m <- matrix(integer(n.genes * n.oboID), nrow=n.genes);
-    rownames(m) <- genenames;
-    colnames(m) <- oboID;
-    for (i in genenames){
-        spec.ann <- ann.list[[i]];
-        m[i, spec.ann] <- 1;
-    }
-    charcheck <- any(suppressWarnings(is.na(as.numeric(genenames))));
-    if(charcheck){
-        m <- m[sort(rownames(m)),sort(colnames(m))];
-    }else{
-        rname <- as.character(sort(as.numeric(genenames)));
-        m <- m[rname, sort(colnames(m))];
-    }
-    return(m);
+  tmp <- strsplit(file, "[.,/,_]")[[1]];
+  if(any(tmp %in% "gz")){
+    con <- gzfile(file);
+    line <- readLines(con);
+    close(con);
+  }else{
+    line <- readLines(file);
+  }
+  tmp <- strsplit(line, split="[(\\s+,\t)|]", perl=TRUE); #nb: space (or tab) before pipe useful to separate gene from obo terms
+  genenames <- c();
+  for(i in 1:length(tmp)) genenames <- c(genenames,tmp[[i]][1]);
+  ann.list <- list();
+  for(i in 1:length(tmp)) ann.list[[i]] <- unique(tmp[[i]])[-1];
+  names(ann.list) <- genenames;
+  oboID <- unique(unlist(ann.list));
+  n.genes <- length(genenames);
+  n.oboID <- length(oboID);
+  m <- matrix(integer(n.genes * n.oboID), nrow=n.genes);
+  rownames(m) <- genenames;
+  colnames(m) <- oboID;
+  for (i in genenames){
+    spec.ann <- ann.list[[i]];
+    m[i, spec.ann] <- 1;
+  }
+  charcheck <- any(suppressWarnings(is.na(as.numeric(genenames))));
+  if(charcheck){
+    m <- m[sort(rownames(m)),sort(colnames(m))];
+  }else{
+    rname <- as.character(sort(as.numeric(genenames)));
+    m <- m[rname, sort(colnames(m))];
+  }
+  return(m);
 }
 
 #' @title Specific annotations list
@@ -60,13 +60,13 @@ specific.annotation.matrix <- function(file="gene2pheno.txt.gz"){
 #' spec.list <- specific.annotation.list(L);
 specific.annotation.list <- function(ann){
  ann.list <- apply(ann, 1, function(gene){
-        terms <- which(gene==1);
-        return(names(gene[terms]));
-    });
-    ## when ann has one positive per row ann.list is a vector -> force to list
-    if(sum(ann) == nrow(ann))
-        ann.list <- as.list(ann.list);
-    return(ann.list);
+    terms <- which(gene==1);
+    return(names(gene[terms]));
+  });
+  ## when ann has one positive per row ann.list is a vector -> force to list
+  if(sum(ann) == nrow(ann))
+    ann.list <- as.list(ann.list);
+  return(ann.list);
 }
 
 #' @title Transitive closure of annotations
@@ -83,30 +83,30 @@ specific.annotation.list <- function(ann){
 #' anc <- build.ancestors(g);
 #' tca <- transitive.closure.annotations(L, anc);
 transitive.closure.annotations <- function(ann.spec, anc){
-    ## build annotation list
-    ann.list <- specific.annotation.list(ann.spec);
-    ## construct the full empty annotation matrix
-    genes <- rownames(ann.spec);
-    n.genes <- length(genes);
-    oboIDs <- names(anc);
-    n.oboID <- length(anc);
-    obo.ann <- matrix(numeric(n.oboID * n.genes), nrow=n.genes, ncol=n.oboID);    #empty label matrix
-    dimnames(obo.ann) <- list(genes,oboIDs);
-    ## fill the full empty annotation matrix with the most specific annotation
-    obo.spec.term <- colnames(ann.spec); # the most specific obo terms
-    # might happen that there are same obo IDs that are classified as "obsolete" in obo file, but that still exist in the annotation file
-    obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete obo terms...
-    obo.ann[genes,obo.spec.term.sel] <- ann.spec[,obo.spec.term.sel];
-    ## transitive closure: annotation propagation from the most specific nodes to all its ancestors
-    for (i in genes){
-        spec.ann <- ann.list[[i]];
-        all.anc <- lapply(spec.ann, function(x) return(anc[[x]]));
-        all.anc <- unique(unlist(all.anc));
-        obo.ann[i, all.anc] <- 1;  # setting the annotations derived by transitive closure
-    }
-    ## remove obo empty terms
-    obo.ann <- obo.ann[,colSums(obo.ann)!=0];
-    return(obo.ann);
+  ## build annotation list
+  ann.list <- specific.annotation.list(ann.spec);
+  ## construct the full empty annotation matrix
+  genes <- rownames(ann.spec);
+  n.genes <- length(genes);
+  oboIDs <- names(anc);
+  n.oboID <- length(anc);
+  obo.ann <- matrix(numeric(n.oboID * n.genes), nrow=n.genes, ncol=n.oboID);    #empty label matrix
+  dimnames(obo.ann) <- list(genes,oboIDs);
+  ## fill the full empty annotation matrix with the most specific annotation
+  obo.spec.term <- colnames(ann.spec); # the most specific obo terms
+  # might happen that there are same obo IDs that are classified as "obsolete" in obo file, but that still exist in the annotation file
+  obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete obo terms...
+  obo.ann[genes,obo.spec.term.sel] <- ann.spec[,obo.spec.term.sel];
+  ## transitive closure: annotation propagation from the most specific nodes to all its ancestors
+  for (i in genes){
+    spec.ann <- ann.list[[i]];
+    all.anc <- lapply(spec.ann, function(x) return(anc[[x]]));
+    all.anc <- unique(unlist(all.anc));
+    obo.ann[i, all.anc] <- 1;  # setting the annotations derived by transitive closure
+  }
+  ## remove obo empty terms
+  obo.ann <- obo.ann[,colSums(obo.ann)!=0];
+  return(obo.ann);
 }
 
 #' @title Full annotation matrix
@@ -128,32 +128,32 @@ transitive.closure.annotations <- function(ann.spec, anc){
 #' anc <- build.ancestors(g);
 #' full.ann <- full.annotation.matrix(W, anc, L);
 full.annotation.matrix <- function(W, anc, ann.spec){
-    ## construction of annotation list
-    ann.list <- specific.annotation.list(ann.spec);
-    ## construction the full empty annotation matrix
-    genes <- rownames(W);
-    n.genes <- length(genes);
-    oboIDs <- names(anc);
-    n.oboID <- length(anc);
-    obo.ann <- matrix(numeric(n.oboID * n.genes), nrow=n.genes, ncol=n.oboID);    #empty label matrix
-    dimnames(obo.ann) <- list(genes,oboIDs);
-    ## fill the full empty annotation matrix with the most specific annotation
-    genes2obo <- rownames(ann.spec);              # all genes that are associated with obo terms
-    genes.sel <- genes[genes %in% genes2obo];     # genes 2 obo terms 2 entrez id of wadj
-    obo.spec.term <- colnames(ann.spec);          # the most specific obo terms
-    #might happen that there are same obo IDs that are classified as "obsolete" in obo file, but that still exist in the annotation file (e.g. build 1233)
-    obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete obo terms...
-    obo.ann[genes.sel,obo.spec.term.sel] <- ann.spec[genes.sel,obo.spec.term.sel];    # setting the most specific annotations
-    ## transitive closure: annotation propagation from the most specific nodes to all its ancestors
-    for (i in genes){
-        spec.ann <- ann.list[[i]];
-        all.anc <- lapply(spec.ann, function(x) return(anc[[x]]));
-        all.anc <- unique(unlist(all.anc));
-        obo.ann[i, all.anc] <- 1;  # setting the annotations derived by transitive closure
-    }
-    ## remove obo empty terms
-    obo.ann <- obo.ann[,colSums(obo.ann)!=0];
-    return(obo.ann);
+  ## construction of annotation list
+  ann.list <- specific.annotation.list(ann.spec);
+  ## construction the full empty annotation matrix
+  genes <- rownames(W);
+  n.genes <- length(genes);
+  oboIDs <- names(anc);
+  n.oboID <- length(anc);
+  obo.ann <- matrix(numeric(n.oboID * n.genes), nrow=n.genes, ncol=n.oboID);    #empty label matrix
+  dimnames(obo.ann) <- list(genes,oboIDs);
+  ## fill the full empty annotation matrix with the most specific annotation
+  genes2obo <- rownames(ann.spec);              # all genes that are associated with obo terms
+  genes.sel <- genes[genes %in% genes2obo];     # genes 2 obo terms 2 entrez id of wadj
+  obo.spec.term <- colnames(ann.spec);          # the most specific obo terms
+  #might happen that there are same obo IDs that are classified as "obsolete" in obo file, but that still exist in the annotation file (e.g. build 1233)
+  obo.spec.term.sel <- oboIDs[oboIDs  %in% obo.spec.term]; # removing obsolete obo terms...
+  obo.ann[genes.sel,obo.spec.term.sel] <- ann.spec[genes.sel,obo.spec.term.sel];    # setting the most specific annotations
+  ## transitive closure: annotation propagation from the most specific nodes to all its ancestors
+  for (i in genes){
+    spec.ann <- ann.list[[i]];
+    all.anc <- lapply(spec.ann, function(x) return(anc[[x]]));
+    all.anc <- unique(unlist(all.anc));
+    obo.ann[i, all.anc] <- 1;  # setting the annotations derived by transitive closure
+  }
+  ## remove obo empty terms
+  obo.ann <- obo.ann[,colSums(obo.ann)!=0];
+  return(obo.ann);
 }
 
 #' @title Build submatrix
@@ -167,8 +167,8 @@ full.annotation.matrix <- function(W, anc, ann.spec){
 #' data(labels);
 #' subm <- build.submatrix(L,5);
 build.submatrix <- function(ann,n){
-    ann.sel <- ann[,colSums(ann)>n];
-    return(ann.sel);
+  ann.sel <- ann[,colSums(ann)>n];
+  return(ann.sel);
 }
 
 #' @title Annotation matrix checker
@@ -186,29 +186,29 @@ build.submatrix <- function(ann,n){
 #' tca <- transitive.closure.annotations(L, anc);
 #' check.annotation.matrix.integrity(anc, L, tca);
 check.annotation.matrix.integrity <- function(anc, ann.spec, ann){
-    ## construction of annotation list
-    ann.list <- specific.annotation.list(ann.spec);
-    genes <- rownames(ann);
-    check <- c();
-    for (i in genes){
-        spec.ann <- which(ann[i,]==1);
-        len.ann <- length(spec.ann);
-        all.anc <- lapply(ann.list[[i]], function(x) return(anc[[x]]));
-        all.anc <- unique(unlist(all.anc));
-        len.anc <- length(all.anc);
-        cmp <- len.anc == len.ann;
-        if(cmp==TRUE){
-            check <- c(check,"OK");
-        } else {
-            check <- c(check,"NOTOK");
-        }
+  ## construction of annotation list
+  ann.list <- specific.annotation.list(ann.spec);
+  genes <- rownames(ann);
+  check <- c();
+  for (i in genes){
+    spec.ann <- which(ann[i,]==1);
+    len.ann <- length(spec.ann);
+    all.anc <- lapply(ann.list[[i]], function(x) return(anc[[x]]));
+    all.anc <- unique(unlist(all.anc));
+    len.anc <- length(all.anc);
+    cmp <- len.anc == len.ann;
+    if(cmp==TRUE){
+      check <- c(check,"OK");
+    } else {
+      check <- c(check,"NOTOK");
     }
-    names(check) <- genes;
-    violated <- any(check!="OK");
-    if(violated){
-        n <- names(check)[check=="NOTOK"];
-        cat("check.annotation.matrix: NOTOK. Transitive closure NOT RESPECTED\n");
-    }else{
-        cat("check.annotation.matrix: OK\n");
-    }
+  }
+  names(check) <- genes;
+  violated <- any(check!="OK");
+  if(violated){
+    n <- names(check)[check=="NOTOK"];
+    cat("check.annotation.matrix: NOTOK. Transitive closure NOT RESPECTED\n");
+  }else{
+    cat("check.annotation.matrix: OK\n");
+  }
 }

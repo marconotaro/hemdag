@@ -13,5 +13,5 @@
 ## quiet concerns of R CMD check.
 ## avoid warning: no visible binding for global variable
 if(getRversion() >= "2.15.1"){
-    utils::globalVariables(c("curvetypes","detectCores","i"));
+  utils::globalVariables(c("curvetypes","detectCores","i"));
 }
